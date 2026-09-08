@@ -107,6 +107,58 @@ test.describe('OdontoCare AI — Dashboard UI & Multi-Tenant E2E Evaluation', ()
     // Captura 6: Clínicas actualizadas
     await page.screenshot({ path: path.join(screenshotsDir, '06-clinics-updated.png'), fullPage: true });
 
+    // 5.b. Suite de Precios & Doctores (Catálogo Grounding y Especialistas)
+    await page.locator('#btn-nav-catalog').click();
+    await expect(page.locator('#tab-catalog')).toBeVisible();
+    await expect(page.locator('#page-title')).toHaveText('Precios & Doctores');
+
+    // Esperar a que se rendericen los pills y tablas
+    await expect(page.locator('#catalog-clinics-bar button').first()).toBeVisible();
+    await expect(page.locator('#catalog-doctors-tbody tr').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('#catalog-treatments-tbody tr').first()).toBeVisible({ timeout: 5000 });
+
+    // Captura 10: Suite Completa de Precios, Servicios & Doctores
+    await page.screenshot({ path: path.join(screenshotsDir, '10-catalog-prices-and-doctors.png'), fullPage: true });
+
+    // Probar búsqueda y filtrado en tiempo real de tratamientos
+    const searchInput = page.locator('#treatment-search-input');
+    await searchInput.fill('Limpieza');
+    await page.waitForTimeout(300);
+    const filteredRows = page.locator('#catalog-treatments-tbody tr');
+    await expect(filteredRows.first()).toContainText('Limpieza');
+
+    // Captura 11: Filtrado en tiempo real
+    await page.screenshot({ path: path.join(screenshotsDir, '11-catalog-treatment-search-filter.png'), fullPage: true });
+
+    // Limpiar búsqueda
+    await searchInput.fill('');
+    await page.waitForTimeout(300);
+
+    // Probar botón de sugerencia rápida "⚡ + Brackets ($350-$550)"
+    await page.locator('button', { hasText: '⚡ + Brackets' }).click();
+    const modalTreatment = page.locator('#modal-treatment');
+    await expect(modalTreatment).toBeVisible();
+    await expect(page.locator('#treatment-name')).toHaveValue('Brackets Metálicos Convencionales');
+    await expect(page.locator('#treatment-price')).toHaveValue('$350 - $550 USD');
+
+    // Captura 12: Modal Tratamiento precargado con plantilla
+    await page.screenshot({ path: path.join(screenshotsDir, '12-treatment-modal-prefilled.png') });
+    await page.locator('#modal-treatment button', { hasText: 'Cancelar' }).click();
+    await expect(modalTreatment).not.toBeVisible();
+
+    // Probar Modal de Agregar Doctor
+    await page.locator('button', { hasText: '+ Agregar Doctor' }).click();
+    const modalDoctor = page.locator('#modal-doctor');
+    await expect(modalDoctor).toBeVisible();
+    await page.locator('#doc-name').fill('Dra. Valentina Paredes');
+    await page.locator('#doc-specialty').selectOption('endodoncia');
+    await page.locator('#doc-calendar-id').fill('dra.paredes@odontocare.com');
+
+    // Captura 13: Formulario Modal de Nuevo Doctor
+    await page.screenshot({ path: path.join(screenshotsDir, '13-doctor-modal-form.png') });
+    await page.locator('#modal-doctor button', { hasText: 'Cancelar' }).click();
+    await expect(modalDoctor).not.toBeVisible();
+
     // 6. Pestaña de Flujos del Bot
     await page.locator('#btn-nav-flows').click();
     await expect(page.locator('#tab-flows')).toBeVisible();

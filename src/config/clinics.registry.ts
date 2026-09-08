@@ -177,6 +177,123 @@ export class ClinicsRegistry {
     }
     return res;
   }
+
+  // --- GESTIÓN DE DOCTORES & ESPECIALISTAS ---
+  public addDoctor(clinicId: string, doctor: Doctor): boolean {
+    const clinic = this.clinics.get(clinicId);
+    if (!clinic) return false;
+    if (!clinic.doctors) clinic.doctors = [];
+    const existingIndex = clinic.doctors.findIndex(d => d.id === doctor.id);
+    if (existingIndex >= 0) {
+      clinic.doctors[existingIndex] = doctor;
+    } else {
+      clinic.doctors.push(doctor);
+    }
+    this.save(clinic);
+    return true;
+  }
+
+  public updateDoctor(clinicId: string, doctor: Doctor): boolean {
+    return this.addDoctor(clinicId, doctor);
+  }
+
+  public deleteDoctor(clinicId: string, doctorId: string): boolean {
+    const clinic = this.clinics.get(clinicId);
+    if (!clinic || !clinic.doctors) return false;
+    clinic.doctors = clinic.doctors.filter(d => d.id !== doctorId);
+    this.save(clinic);
+    return true;
+  }
+
+  // --- GESTIÓN DE CATÁLOGO DE SERVICIOS & PRECIOS ---
+  public addTreatment(clinicId: string, treatment: Treatment): boolean {
+    const clinic = this.clinics.get(clinicId);
+    if (!clinic) return false;
+    if (!clinic.treatments) clinic.treatments = [];
+    clinic.treatments.push(treatment);
+    this.save(clinic);
+    return true;
+  }
+
+  public updateTreatment(clinicId: string, index: number, treatment: Treatment): boolean {
+    const clinic = this.clinics.get(clinicId);
+    if (!clinic || !clinic.treatments || index < 0 || index >= clinic.treatments.length) return false;
+    clinic.treatments[index] = treatment;
+    this.save(clinic);
+    return true;
+  }
+
+  public deleteTreatment(clinicId: string, index: number): boolean {
+    const clinic = this.clinics.get(clinicId);
+    if (!clinic || !clinic.treatments || index < 0 || index >= clinic.treatments.length) return false;
+    clinic.treatments.splice(index, 1);
+    this.save(clinic);
+    return true;
+  }
+
+  public seedSuggestedTreatments(clinicId: string): Treatment[] {
+    const clinic = this.clinics.get(clinicId);
+    if (!clinic) return [];
+    const suggested: Treatment[] = [
+      {
+        name: 'Limpieza Dental Profiláctica (Ultrasonido)',
+        specialty: 'odontologia_general',
+        priceRange: '$35 - $45 USD',
+        description: 'Eliminación completa de sarro con ultrasonido, pulido dental y aplicación de flúor remineralizante.'
+      },
+      {
+        name: 'Valoración de Ortodoncia & Estudio Diagnóstico',
+        specialty: 'ortodoncia',
+        priceRange: '$20 USD (gratuita al contratar tratamiento)',
+        description: 'Estudio fotográfico digital y diagnóstico cefalométrico para brackets o alineadores invisibles.'
+      },
+      {
+        name: 'Brackets Metálicos Convencionales o Autoligados',
+        specialty: 'ortodoncia',
+        priceRange: '$350 - $600 USD (Inicial + cuotas de $35)',
+        description: 'Alineación y corrección oclusal completa con aparatología fija de última tecnología.'
+      },
+      {
+        name: 'Cirugía de Cordales (Muelas del Juicio)',
+        specialty: 'cirugia_implantes',
+        priceRange: '$60 - $120 USD por pieza según complejidad',
+        description: 'Extracción quirúrgica atraumática con anestesia local computarizada y sutura reabsorbible.'
+      },
+      {
+        name: 'Implante Dental de Titanio Grado Médico',
+        specialty: 'cirugia_implantes',
+        priceRange: '$650 - $900 USD (incluye corona definitiva)',
+        description: 'Rehabilitación fija de alta estética y biocompatibilidad ósea con garantía clínica.'
+      },
+      {
+        name: 'Blanqueamiento Dental LED / Láser en Consultorio',
+        specialty: 'odontologia_general',
+        priceRange: '$120 - $180 USD',
+        description: 'Aclaramiento dental seguro de 2 a 4 tonos en una sola sesión de 45 minutos.'
+      },
+      {
+        name: 'Endodoncia Unirradicular o Multirradicular',
+        specialty: 'endodoncia',
+        priceRange: '$90 - $160 USD',
+        description: 'Tratamiento de conductos con instrumentación rotatoria y obturación termoplastificada tridimensional.'
+      },
+      {
+        name: 'Diseño de Sonrisa con Carillas de Resina de Alta Estética',
+        specialty: 'odontologia_general',
+        priceRange: '$50 - $90 USD por carilla',
+        description: 'Modelado estético directo para armonizar forma, tamaño y color de la sonrisa.'
+      }
+    ];
+
+    if (!clinic.treatments) clinic.treatments = [];
+    for (const item of suggested) {
+      if (!clinic.treatments.some(t => t.name.toLowerCase() === item.name.toLowerCase())) {
+        clinic.treatments.push(item);
+      }
+    }
+    this.save(clinic);
+    return clinic.treatments;
+  }
 }
 
 export const clinicsRegistry = new ClinicsRegistry();

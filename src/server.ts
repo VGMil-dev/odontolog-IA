@@ -171,6 +171,70 @@ export function createServer() {
     return res.status(200).json({ ok: success, targetPhone });
   });
 
+  // 7. API Multi-Tenant: Gestión de Doctores & Especialistas
+  app.get('/api/clinics/:id/doctors', (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const clinic = clinicsRegistry.getById(clinicId);
+    if (!clinic) return res.status(404).json({ ok: false, error: 'Clínica no encontrada' });
+    return res.status(200).json({ ok: true, doctors: clinic.doctors || [] });
+  });
+
+  app.post('/api/clinics/:id/doctors', authService.requireAdminAuth, (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const doctor = req.body;
+    if (!doctor?.id || !doctor?.name || !doctor?.specialty) {
+      return res.status(400).json({ ok: false, error: 'id, name y specialty son requeridos' });
+    }
+    const success = clinicsRegistry.addDoctor(clinicId, doctor);
+    return res.status(200).json({ ok: success });
+  });
+
+  app.delete('/api/clinics/:id/doctors/:doctorId', authService.requireAdminAuth, (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const doctorId = Array.isArray(req.params.doctorId) ? req.params.doctorId[0] : req.params.doctorId;
+    const success = clinicsRegistry.deleteDoctor(clinicId, doctorId);
+    return res.status(200).json({ ok: success });
+  });
+
+  // 8. API Multi-Tenant: Gestión de Catálogo de Tratamientos & Precios Oficiales
+  app.get('/api/clinics/:id/treatments', (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const clinic = clinicsRegistry.getById(clinicId);
+    if (!clinic) return res.status(404).json({ ok: false, error: 'Clínica no encontrada' });
+    return res.status(200).json({ ok: true, treatments: clinic.treatments || [] });
+  });
+
+  app.post('/api/clinics/:id/treatments', authService.requireAdminAuth, (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const treatment = req.body;
+    if (!treatment?.name || !treatment?.priceRange) {
+      return res.status(400).json({ ok: false, error: 'name y priceRange son requeridos' });
+    }
+    const success = clinicsRegistry.addTreatment(clinicId, treatment);
+    return res.status(200).json({ ok: success });
+  });
+
+  app.put('/api/clinics/:id/treatments/:index', authService.requireAdminAuth, (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const index = parseInt(Array.isArray(req.params.index) ? req.params.index[0] : req.params.index, 10);
+    const treatment = req.body;
+    const success = clinicsRegistry.updateTreatment(clinicId, index, treatment);
+    return res.status(200).json({ ok: success });
+  });
+
+  app.delete('/api/clinics/:id/treatments/:index', authService.requireAdminAuth, (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const index = parseInt(Array.isArray(req.params.index) ? req.params.index[0] : req.params.index, 10);
+    const success = clinicsRegistry.deleteTreatment(clinicId, index);
+    return res.status(200).json({ ok: success });
+  });
+
+  app.post('/api/clinics/:id/treatments/seed-suggested', authService.requireAdminAuth, (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const treatments = clinicsRegistry.seedSuggestedTreatments(clinicId);
+    return res.status(200).json({ ok: true, count: treatments.length, treatments });
+  });
+
   // 7. API Multi-Tenant: Citas Agendadas en Tiempo Real
   app.get('/api/appointments', (_req: Request, res: Response) => {
     const clinicId = _req.query.clinicId as string | undefined;

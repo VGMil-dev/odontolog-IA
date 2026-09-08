@@ -210,5 +210,69 @@
     ],
     "createdAt": "2026-09-08T22:05:11.964Z",
     "updatedAt": "2026-09-08T22:05:11.964Z"
+  },
+  {
+    "clinicId": "dental_manta_8914",
+    "name": "Clínica Dental Pacífico Manta 8914",
+    "city": "Manta",
+    "address": "Av. Flavio Reyes y Calle 18",
+    "phone": "+593 99 876 5432",
+    "emergencyPhone": "+593 99 876 5432",
+    "calendarId": "agenda.manta@gmail.com",
+    "metaPhoneNumberId": "dental_manta_8914",
+    "whatsappInstance": "dental_manta_8914",
+    "doctors": [
+      {
+        "id": "doc_1",
+        "name": "Dr. Principal",
+        "specialty": "odontologia_general",
+        "specialtyLabel": "Odontología General",
+        "availableDays": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "hours": {
+          "start": "09:00",
+          "end": "18:00"
+        }
+      }
+    ],
+    "createdAt": "2026-09-08T22:19:19.230Z",
+    "updatedAt": "2026-09-08T22:19:19.230Z"
+  },
+  {
+    "clinicId": "dental_manta_5693",
+    "name": "Clínica Dental Pacífico Manta 5693",
+    "city": "Manta",
+    "address": "Av. Flavio Reyes y Calle 18",
+    "phone": "+593 99 876 5432",
+    "emergencyPhone": "+593 99 876 5432",
+    "calendarId": "agenda.manta@gmail.com",
+    "metaPhoneNumberId": "dental_manta_5693",
+    "whatsappInstance": "dental_manta_5693",
+    "doctors": [
+      {
+        "id": "doc_1",
+        "name": "Dr. Principal",
+        "specialty": "odontologia_general",
+        "specialtyLabel": "Odontología General",
+        "availableDays": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "hours": {
+          "start": "09:00",
+          "end": "18:00"
+        }
+      }
+    ],
+    "createdAt": "2026-09-08T22:21:45.980Z",
+    "updatedAt": "2026-09-08T22:21:45.980Z"
   }
 ]

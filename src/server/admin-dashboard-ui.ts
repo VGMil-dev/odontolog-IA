@@ -1299,7 +1299,8 @@ export function getAdminDashboardHtml(): string {
       padding: 20px;
     }
 
-    .modal-backdrop.open {
+    .modal-backdrop.open,
+    .modal-backdrop.active {
       display: flex;
     }
 
@@ -1374,6 +1375,97 @@ export function getAdminDashboardHtml(): string {
       background: white;
       padding: 8px;
     }
+
+    /* SUITE DE PRECIOS & DOCTORES */
+    .catalog-clinic-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .catalog-clinic-pill:hover {
+      background: var(--bg-hover);
+      color: #FFFFFF;
+      border-color: rgba(255,255,255,0.15);
+    }
+
+    .catalog-clinic-pill.active {
+      background: var(--accent-emerald);
+      color: #0B132B;
+      border-color: var(--accent-emerald);
+      box-shadow: 0 4px 12px rgba(0, 210, 106, 0.3);
+    }
+
+    .badge-specialty {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+    .badge-specialty.general { background: rgba(0, 210, 106, 0.15); color: #00D26A; border: 1px solid rgba(0, 210, 106, 0.3); }
+    .badge-specialty.ortodoncia { background: rgba(59, 130, 246, 0.15); color: #3B82F6; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-specialty.cirugia { background: rgba(255, 107, 74, 0.15); color: #FF6B4A; border: 1px solid rgba(255, 107, 74, 0.3); }
+    .badge-specialty.pediatria { background: rgba(6, 182, 212, 0.15); color: #06B6D4; border: 1px solid rgba(6, 182, 212, 0.3); }
+    .badge-specialty.endodoncia { background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    .day-chip {
+      background: var(--bg-card-elevated);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      display: inline-block;
+    }
+    .day-chip.active {
+      background: rgba(0, 210, 106, 0.15);
+      color: #00D26A;
+      border-color: rgba(0, 210, 106, 0.3);
+    }
+
+    .suggested-pill-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .suggested-pill-btn:hover {
+      background: rgba(0, 210, 106, 0.15);
+      color: var(--accent-emerald);
+      border-color: var(--accent-emerald);
+      transform: translateY(-1px);
+    }
+
+    .table-data-row {
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background 0.15s;
+    }
+    .table-data-row:hover {
+      background: var(--bg-hover);
+    }
   </style>
 </head>
 <body>
@@ -1443,9 +1535,14 @@ export function getAdminDashboardHtml(): string {
           <span class="nav-badge" id="nav-clinics-badge">2</span>
         </button>
 
+        <button class="nav-item" id="btn-nav-catalog" onclick="switchNavTab('catalog')">
+          <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+          <span>Precios & Doctores</span>
+        </button>
+
         <button class="nav-item" id="btn-nav-channels" onclick="switchNavTab('channels')">
           <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path></svg>
-          <span>Canales QR</span>
+          <span>Canales Meta/TG</span>
         </button>
 
         <button class="nav-item" id="btn-nav-flows" onclick="switchNavTab('flows')">
@@ -1811,6 +1908,131 @@ export function getAdminDashboardHtml(): string {
           </div>
         </div>
 
+        <!-- ================= PESTAÑA CATÁLOGO: PRECIOS & DOCTORES ================= -->
+        <div id="tab-catalog" class="tab-panel">
+          <div class="section-header-flex">
+            <div>
+              <h2 class="section-title">🏷️ Gestión de Precios, Servicios & Doctores</h2>
+              <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">
+                Administra el equipo médico, asigna especialistas a tratamientos y define tarifas oficiales en USD para cada odontología.
+              </p>
+            </div>
+          </div>
+
+          <!-- BARRA DE SELECCIÓN DE CLÍNICA -->
+          <div style="margin-bottom: 24px;">
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">
+              Seleccionar Sede Odontológica:
+            </div>
+            <div id="catalog-clinics-bar" style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <!-- Inyectado vía JavaScript -->
+            </div>
+          </div>
+
+          <!-- SECCIÓN 1: DOCTORES & ESPECIALISTAS -->
+          <div class="bento-card" style="margin-bottom: 24px;">
+            <div class="card-header-flex" style="margin-bottom: 16px;">
+              <div>
+                <div class="card-title" style="display:flex; align-items:center; gap:8px;">
+                  <span>👨‍⚕️</span> Equipo de Doctores & Especialistas
+                </div>
+                <div class="card-subtitle">Horarios, turnos y sincronización con Google Calendar</div>
+              </div>
+              <button class="btn-emerald-cta" onclick="openDoctorModal()">
+                <span>+</span> Agregar Doctor
+              </button>
+            </div>
+
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">
+                    <th style="padding: 10px 12px;">Doctor</th>
+                    <th style="padding: 10px 12px;">Especialidad</th>
+                    <th style="padding: 10px 12px;">Horario</th>
+                    <th style="padding: 10px 12px;">Días Laborales</th>
+                    <th style="padding: 10px 12px;">Duración</th>
+                    <th style="padding: 10px 12px;">Google Calendar ID</th>
+                    <th style="padding: 10px 12px; text-align: right;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="catalog-doctors-tbody">
+                  <!-- Inyectado vía JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 2: CATÁLOGO DE SERVICIOS & PRECIOS OFICIALES -->
+          <div class="bento-card">
+            <div class="card-header-flex" style="margin-bottom: 16px;">
+              <div>
+                <div class="card-title" style="display:flex; align-items:center; gap:8px;">
+                  <span>🦷</span> Catálogo de Procedimientos & Tarifas Oficiales (Grounding IA)
+                </div>
+                <div class="card-subtitle">Valeria IA consulta estas tarifas para evitar alucinaciones económicas</div>
+              </div>
+              <div style="display: flex; gap: 10px;">
+                <button class="pill-btn" style="background: rgba(0, 210, 106, 0.15); color: var(--accent-emerald); border-color: rgba(0, 210, 106, 0.3);" onclick="seedSuggestedTreatments()">
+                  ⚡ Cargar Sugeridos
+                </button>
+                <button class="btn-emerald-cta" onclick="openTreatmentModal()">
+                  <span>+</span> Nuevo Tratamiento
+                </button>
+              </div>
+            </div>
+
+            <!-- FILTRO Y BÚSQUEDA EN TIEMPO REAL -->
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; align-items: center;">
+              <div class="search-box" style="width: 300px;">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="treatment-search-input" placeholder="Buscar procedimiento, especialidad..." oninput="filterTreatments()" />
+              </div>
+
+              <select id="treatment-specialty-filter" onchange="filterTreatments()" class="form-input" style="width: 220px; padding: 7px 12px; font-size: 12px;">
+                <option value="all">Todas las Especialidades</option>
+                <option value="odontologia_general">Odontología General</option>
+                <option value="ortodoncia">Ortodoncia</option>
+                <option value="cirugia_implantes">Cirugía & Implantes</option>
+                <option value="endodoncia">Endodoncia</option>
+                <option value="odontopediatria">Odontopediatría</option>
+              </select>
+
+              <div id="treatments-count-badge" style="font-size: 12px; color: var(--text-muted); margin-left: auto;">
+                0 tratamientos registrados
+              </div>
+            </div>
+
+            <!-- PLANTILLAS RÁPIDAS SUGERIDAS -->
+            <div style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">Agregar Rápido:</span>
+              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Limpieza Dental Ultrasonido', 'odontologia_general', '$35 - $45 USD', 'Profilaxis completa con cavitrón ultrasónico y pulido dental.')">⚡ + Limpieza ($35-$45)</button>
+              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Brackets Metálicos Convencionales', 'ortodoncia', '$350 - $550 USD', 'Alineación dental integral con brackets de acero de alta precisión.')">⚡ + Brackets ($350-$550)</button>
+              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Cirugía de Cordales (Terceros Molares)', 'cirugia_implantes', '$70 - $120 USD', 'Extracción quirúrgica atraumática con sutura reabsorbible.')">⚡ + Cordales ($70-$120)</button>
+              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Blanqueamiento Dental LED', 'odontologia_general', '$120 - $180 USD', 'Aclaramiento dental seguro en consultorio de hasta 3 tonos.')">⚡ + Blanqueamiento ($120-$180)</button>
+              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Implante de Titanio Grado Médico', 'cirugia_implantes', '$700 - $950 USD', 'Fijación de raíz artificial de titanio con corona estética.')">⚡ + Implante ($700-$950)</button>
+            </div>
+
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">
+                    <th style="padding: 10px 12px;">Procedimiento</th>
+                    <th style="padding: 10px 12px;">Especialidad</th>
+                    <th style="padding: 10px 12px;">Rango de Precio Oficial</th>
+                    <th style="padding: 10px 12px;">Doctor Asignado</th>
+                    <th style="padding: 10px 12px;">Explicación Médica IA</th>
+                    <th style="padding: 10px 12px; text-align: right;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="catalog-treatments-tbody">
+                  <!-- Inyectado vía JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- ================= PESTAÑA 3: CANALES (WHATSAPP QR & TELEGRAM) ================= -->
         <div id="tab-channels" class="tab-panel">
           <div class="section-header-flex">
@@ -2134,6 +2356,135 @@ export function getAdminDashboardHtml(): string {
     </div>
   </div>
 
+  <!-- MODAL 4: GESTIÓN DE DOCTOR -->
+  <div class="modal-backdrop" id="modal-doctor">
+    <div class="modal-card" style="max-width: 540px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 36px; height: 36px; background: rgba(0, 210, 106, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">👨‍⚕️</div>
+          <h2 style="font-size: 19px; font-weight: 800; color: #FFFFFF;" id="modal-doctor-title">Agregar Doctor / Especialista</h2>
+        </div>
+        <button onclick="closeDoctorModal()" style="background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="form-doctor" onsubmit="saveDoctorSettings(event)" style="display: flex; flex-direction: column; gap: 14px; margin-top: 14px;">
+        <input type="hidden" id="doc-edit-id" value="" />
+        
+        <div class="form-group">
+          <label class="form-label">Nombre Completo del Doctor</label>
+          <input type="text" id="doc-name" class="form-input" placeholder="ej. Dra. Pamela Alvear" required />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label">Especialidad Principal</label>
+            <select id="doc-specialty" class="form-input" required>
+              <option value="odontologia_general">Odontología General</option>
+              <option value="ortodoncia">Ortodoncia</option>
+              <option value="cirugia_implantes">Cirugía & Implantes</option>
+              <option value="endodoncia">Endodoncia</option>
+              <option value="odontopediatria">Odontopediatría</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Duración de Cita (Minutos)</label>
+            <input type="number" id="doc-duration" class="form-input" min="15" max="180" step="5" value="45" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label">Hora Inicio Atención</label>
+            <input type="time" id="doc-start-hour" class="form-input" value="08:30" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hora Fin Atención</label>
+            <input type="time" id="doc-end-hour" class="form-input" value="17:30" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Días Laborales Disponibles</label>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px;">
+            <label style="display:flex; align-items:center; gap:4px; font-size:12px; color:#FFF; cursor:pointer;"><input type="checkbox" id="doc-day-1" value="1" checked /> Lun</label>
+            <label style="display:flex; align-items:center; gap:4px; font-size:12px; color:#FFF; cursor:pointer;"><input type="checkbox" id="doc-day-2" value="2" checked /> Mar</label>
+            <label style="display:flex; align-items:center; gap:4px; font-size:12px; color:#FFF; cursor:pointer;"><input type="checkbox" id="doc-day-3" value="3" checked /> Mié</label>
+            <label style="display:flex; align-items:center; gap:4px; font-size:12px; color:#FFF; cursor:pointer;"><input type="checkbox" id="doc-day-4" value="4" checked /> Jue</label>
+            <label style="display:flex; align-items:center; gap:4px; font-size:12px; color:#FFF; cursor:pointer;"><input type="checkbox" id="doc-day-5" value="5" checked /> Vie</label>
+            <label style="display:flex; align-items:center; gap:4px; font-size:12px; color:#FFF; cursor:pointer;"><input type="checkbox" id="doc-day-6" value="6" /> Sáb</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Google Calendar ID (o Correo Sincronizado)</label>
+          <input type="text" id="doc-calendar-id" class="form-input" placeholder="ej. dra.alvear@odontocare.com o ID de calendario" required />
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
+          <button type="button" class="pill-btn" onclick="closeDoctorModal()">Cancelar</button>
+          <button type="submit" class="btn-emerald-cta">Guardar Doctor</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 5: GESTIÓN DE TRATAMIENTO -->
+  <div class="modal-backdrop" id="modal-treatment">
+    <div class="modal-card" style="max-width: 540px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 36px; height: 36px; background: rgba(0, 210, 106, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🦷</div>
+          <h2 style="font-size: 19px; font-weight: 800; color: #FFFFFF;" id="modal-treatment-title">Nuevo Tratamiento & Tarifa</h2>
+        </div>
+        <button onclick="closeTreatmentModal()" style="background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="form-treatment" onsubmit="saveTreatmentSettings(event)" style="display: flex; flex-direction: column; gap: 14px; margin-top: 14px;">
+        <input type="hidden" id="treatment-edit-index" value="-1" />
+        
+        <div class="form-group">
+          <label class="form-label">Nombre del Procedimiento</label>
+          <input type="text" id="treatment-name" class="form-input" placeholder="ej. Limpieza Dental Profiláctica (Ultrasonido)" required />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label">Especialidad</label>
+            <select id="treatment-specialty" class="form-input" required>
+              <option value="odontologia_general">Odontología General</option>
+              <option value="ortodoncia">Ortodoncia</option>
+              <option value="cirugia_implantes">Cirugía & Implantes</option>
+              <option value="endodoncia">Endodoncia</option>
+              <option value="odontopediatria">Odontopediatría</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Rango de Precio Oficial (USD)</label>
+            <input type="text" id="treatment-price" class="form-input" placeholder="ej. $35 - $45 USD" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Doctor o Especialista Preferente</label>
+          <select id="treatment-doctor-select" class="form-input">
+            <option value="">Cualquier especialista disponible</option>
+            <!-- Llenado dinámicamente con doctores de la clínica -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Explicación Médica para la IA (Grounding)</label>
+          <textarea id="treatment-desc" class="form-input" rows="3" placeholder="Describe brevemente en qué consiste el procedimiento para que Valeria IA oriente con precisión médica al paciente." required style="resize:vertical;"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
+          <button type="button" class="pill-btn" onclick="closeTreatmentModal()">Cancelar</button>
+          <button type="submit" class="btn-emerald-cta">Guardar Tratamiento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     let currentClinics = [];
     let activeChatClinicId = '';
@@ -2185,6 +2536,10 @@ export function getAdminDashboardHtml(): string {
       }
     ];
 
+    let activeCatalogClinicId = '';
+    let currentDoctorsList = [];
+    let currentTreatmentsList = [];
+
     // ================= NAVEGACIÓN ENTRE TABS =================
     function switchNavTab(tabKey) {
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -2199,12 +2554,438 @@ export function getAdminDashboardHtml(): string {
       const titleMap = {
         'overview': 'Dashboard',
         'clinics': 'Red de Clínicas Odontológicas',
+        'catalog': 'Precios & Doctores',
         'channels': 'Canales WhatsApp & Telegram',
         'flows': 'Verificador de Flujos Conversacionales',
         'appointments': 'Agenda y Citas Médicas',
         'playground': 'Playground Multi-Tenant'
       };
       document.getElementById('page-title').innerText = titleMap[tabKey] || 'Dashboard';
+
+      if (tabKey === 'catalog') {
+        renderCatalogView();
+      }
+    }
+
+    function goToClinicCatalog(clinicId) {
+      activeCatalogClinicId = clinicId;
+      switchNavTab('catalog');
+    }
+
+    // ================= SUITE DE PRECIOS & DOCTORES =================
+    async function renderCatalogView() {
+      if (!currentClinics || currentClinics.length === 0) {
+        await fetchClinics();
+      }
+      if (!activeCatalogClinicId && currentClinics.length > 0) {
+        activeCatalogClinicId = currentClinics[0].clinicId;
+      }
+      renderCatalogClinicPills();
+      await fetchCatalogDoctors();
+      await fetchCatalogTreatments();
+    }
+
+    function renderCatalogClinicPills() {
+      const container = document.getElementById('catalog-clinics-bar');
+      if (!container) return;
+      container.innerHTML = currentClinics.map(c => \`
+        <button class="catalog-clinic-pill \${c.clinicId === activeCatalogClinicId ? 'active' : ''}" onclick="selectCatalogClinic('\${c.clinicId}')">
+          <span>🏥</span> \${c.name} (\${c.city})
+        </button>
+      \`).join('');
+    }
+
+    async function selectCatalogClinic(clinicId) {
+      activeCatalogClinicId = clinicId;
+      renderCatalogClinicPills();
+      await fetchCatalogDoctors();
+      await fetchCatalogTreatments();
+    }
+
+    // --- DOCTORES ---
+    async function fetchCatalogDoctors() {
+      const tbody = document.getElementById('catalog-doctors-tbody');
+      if (!tbody) return;
+      if (!activeCatalogClinicId) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:16px;">Selecciona una clínica.</td></tr>';
+        return;
+      }
+      try {
+        const res = await fetch('/api/clinics/' + activeCatalogClinicId + '/doctors', {
+          headers: getAuthHeaders()
+        });
+        const data = await res.json();
+        currentDoctorsList = data.doctors || [];
+        renderCatalogDoctors();
+        updateTreatmentDoctorDropdown();
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--accent-coral); padding:16px;">Error al cargar doctores.</td></tr>';
+      }
+    }
+
+    function renderCatalogDoctors() {
+      const tbody = document.getElementById('catalog-doctors-tbody');
+      if (!tbody) return;
+      if (currentDoctorsList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:20px;">No hay doctores registrados para esta sede. Agrega uno con el botón superior.</td></tr>';
+        return;
+      }
+
+      const dayNames = { 1: 'Lun', 2: 'Mar', 3: 'Mié', 4: 'Jue', 5: 'Vie', 6: 'Sáb', 7: 'Dom' };
+      const specialtyClassMap = {
+        'odontologia_general': 'general',
+        'ortodoncia': 'ortodoncia',
+        'cirugia_implantes': 'cirugia',
+        'endodoncia': 'endodoncia',
+        'odontopediatria': 'pediatria'
+      };
+
+      tbody.innerHTML = currentDoctorsList.map(doc => {
+        const sClass = specialtyClassMap[doc.specialty] || 'general';
+        const daysHtml = [1,2,3,4,5,6].map(d => {
+          const isAct = doc.availableDays && doc.availableDays.includes(d);
+          return \`<span class="day-chip \${isAct ? 'active' : ''}">\${dayNames[d]}</span>\`;
+        }).join(' ');
+
+        return \`
+          <tr class="table-data-row">
+            <td style="padding: 12px; font-weight: 700; color: #FFF;">👨‍⚕️ \${doc.name}</td>
+            <td style="padding: 12px;">
+              <span class="badge-specialty \${sClass}">\${(doc.specialty || '').replace('_', ' ')}</span>
+            </td>
+            <td style="padding: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);">
+              \${doc.workingHours?.start || '08:30'} - \${doc.workingHours?.end || '17:30'}
+            </td>
+            <td style="padding: 12px;">\${daysHtml}</td>
+            <td style="padding: 12px; font-family: var(--font-mono); color: var(--accent-emerald);">
+              \${doc.appointmentDurationMinutes || 45} min
+            </td>
+            <td style="padding: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              \${doc.calendarId || 'primary'}
+            </td>
+            <td style="padding: 12px; text-align: right; white-space: nowrap;">
+              <button class="pill-btn" onclick="openDoctorModal('\${doc.id}')" style="padding: 4px 8px; font-size: 11px; margin-right: 4px;">✏️</button>
+              <button class="pill-btn" onclick="deleteDoctor('\${doc.id}')" style="padding: 4px 8px; font-size: 11px; color: var(--accent-coral);">🗑️</button>
+            </td>
+          </tr>
+        \`;
+      }).join('');
+    }
+
+    function openDoctorModal(doctorId) {
+      const modal = document.getElementById('modal-doctor');
+      const title = document.getElementById('modal-doctor-title');
+      const editIdInput = document.getElementById('doc-edit-id');
+
+      if (doctorId) {
+        const doc = currentDoctorsList.find(d => d.id === doctorId);
+        if (!doc) return;
+        title.innerText = 'Editar Doctor: ' + doc.name;
+        editIdInput.value = doc.id;
+        document.getElementById('doc-name').value = doc.name;
+        document.getElementById('doc-specialty').value = doc.specialty;
+        document.getElementById('doc-duration').value = doc.appointmentDurationMinutes || 45;
+        document.getElementById('doc-start-hour').value = doc.workingHours?.start || '08:30';
+        document.getElementById('doc-end-hour').value = doc.workingHours?.end || '17:30';
+        document.getElementById('doc-calendar-id').value = doc.calendarId || '';
+        
+        for (let i = 1; i <= 6; i++) {
+          const cb = document.getElementById('doc-day-' + i);
+          if (cb) cb.checked = doc.availableDays ? doc.availableDays.includes(i) : true;
+        }
+      } else {
+        title.innerText = 'Agregar Doctor / Especialista';
+        editIdInput.value = '';
+        document.getElementById('form-doctor').reset();
+        document.getElementById('doc-duration').value = '45';
+        document.getElementById('doc-start-hour').value = '08:30';
+        document.getElementById('doc-end-hour').value = '17:30';
+        for (let i = 1; i <= 5; i++) {
+          const cb = document.getElementById('doc-day-' + i);
+          if (cb) cb.checked = true;
+        }
+        const sCb = document.getElementById('doc-day-6');
+        if (sCb) sCb.checked = false;
+      }
+      modal.classList.add('open');
+      modal.classList.add('active');
+    }
+
+    function closeDoctorModal() {
+      const modal = document.getElementById('modal-doctor');
+      modal.classList.remove('open');
+      modal.classList.remove('active');
+    }
+
+    async function saveDoctorSettings(e) {
+      e.preventDefault();
+      const editId = document.getElementById('doc-edit-id').value.trim();
+      const name = document.getElementById('doc-name').value.trim();
+      const specialty = document.getElementById('doc-specialty').value;
+      const duration = parseInt(document.getElementById('doc-duration').value, 10) || 45;
+      const startHour = document.getElementById('doc-start-hour').value;
+      const endHour = document.getElementById('doc-end-hour').value;
+      const calendarId = document.getElementById('doc-calendar-id').value.trim();
+
+      const days = [];
+      for (let i = 1; i <= 6; i++) {
+        const cb = document.getElementById('doc-day-' + i);
+        if (cb && cb.checked) days.push(i);
+      }
+
+      const id = editId || ('doc_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 5));
+
+      const doctorPayload = {
+        id,
+        name,
+        specialty,
+        workingHours: { start: startHour, end: endHour },
+        availableDays: days.length > 0 ? days : [1, 2, 3, 4, 5],
+        appointmentDurationMinutes: duration,
+        calendarId: calendarId || 'primary'
+      };
+
+      try {
+        const res = await fetch('/api/clinics/' + activeCatalogClinicId + '/doctors', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(doctorPayload)
+        });
+        const data = await res.json();
+        if (data.ok) {
+          closeDoctorModal();
+          await fetchCatalogDoctors();
+        } else {
+          alert('Error al guardar doctor: ' + (data.error || 'Desconocido'));
+        }
+      } catch (err) {
+        alert('Error de conexión al guardar doctor.');
+      }
+    }
+
+    async function deleteDoctor(doctorId) {
+      if (!confirm('¿Estás seguro de eliminar este doctor de la clínica?')) return;
+      try {
+        const res = await fetch('/api/clinics/' + activeCatalogClinicId + '/doctors/' + doctorId, {
+          method: 'DELETE',
+          headers: getAuthHeaders()
+        });
+        const data = await res.json();
+        if (data.ok) {
+          await fetchCatalogDoctors();
+        } else {
+          alert('No se pudo eliminar el doctor.');
+        }
+      } catch (err) {
+        alert('Error de conexión al eliminar doctor.');
+      }
+    }
+
+    // --- TRATAMIENTOS & PRECIOS ---
+    async function fetchCatalogTreatments() {
+      const tbody = document.getElementById('catalog-treatments-tbody');
+      if (!tbody) return;
+      if (!activeCatalogClinicId) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:16px;">Selecciona una clínica.</td></tr>';
+        return;
+      }
+      try {
+        const res = await fetch('/api/clinics/' + activeCatalogClinicId + '/treatments', {
+          headers: getAuthHeaders()
+        });
+        const data = await res.json();
+        currentTreatmentsList = data.treatments || [];
+        filterTreatments();
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--accent-coral); padding:16px;">Error al cargar tratamientos.</td></tr>';
+      }
+    }
+
+    function filterTreatments() {
+      const searchVal = (document.getElementById('treatment-search-input')?.value || '').toLowerCase().trim();
+      const specFilter = document.getElementById('treatment-specialty-filter')?.value || 'all';
+
+      let filtered = currentTreatmentsList.map((item, idx) => ({ ...item, _originalIndex: idx })).filter(item => {
+        const matchesSearch = !searchVal || 
+          item.name.toLowerCase().includes(searchVal) ||
+          (item.description && item.description.toLowerCase().includes(searchVal)) ||
+          item.priceRange.toLowerCase().includes(searchVal);
+        const matchesSpec = specFilter === 'all' || item.specialty === specFilter;
+        return matchesSearch && matchesSpec;
+      });
+
+      renderCatalogTreatments(filtered);
+      const countBadge = document.getElementById('treatments-count-badge');
+      if (countBadge) {
+        countBadge.innerText = currentTreatmentsList.length + ' tratamientos registrados (' + filtered.length + ' mostrados)';
+      }
+    }
+
+    function renderCatalogTreatments(list) {
+      const tbody = document.getElementById('catalog-treatments-tbody');
+      if (!tbody) return;
+
+      if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:24px;">No se encontraron procedimientos con los filtros actuales. Usa "+ Nuevo Tratamiento" o "⚡ Cargar Sugeridos".</td></tr>';
+        return;
+      }
+
+      const specialtyClassMap = {
+        'odontologia_general': 'general',
+        'ortodoncia': 'ortodoncia',
+        'cirugia_implantes': 'cirugia',
+        'endodoncia': 'endodoncia',
+        'odontopediatria': 'pediatria'
+      };
+
+      tbody.innerHTML = list.map(item => {
+        const sClass = specialtyClassMap[item.specialty] || 'general';
+        const assignedDoc = item.assignedDoctorId 
+          ? (currentDoctorsList.find(d => d.id === item.assignedDoctorId)?.name || 'Especialista (' + item.assignedDoctorId + ')')
+          : 'Cualquier especialista disponible';
+
+        return \`
+          <tr class="table-data-row">
+            <td style="padding: 12px; font-weight: 700; color: #FFF;">🦷 \${item.name}</td>
+            <td style="padding: 12px;">
+              <span class="badge-specialty \${sClass}">\${(item.specialty || 'general').replace('_', ' ')}</span>
+            </td>
+            <td style="padding: 12px; font-weight: 800; color: var(--accent-emerald); font-family: var(--font-mono);">
+              \${item.priceRange}
+            </td>
+            <td style="padding: 12px; font-size: 12px; color: var(--text-muted);">
+              \${assignedDoc === 'Cualquier especialista disponible' ? '<span style="color:var(--text-dim);">🌐 ' + assignedDoc + '</span>' : '👨‍⚕️ <strong>' + assignedDoc + '</strong>'}
+            </td>
+            <td style="padding: 12px; font-size: 12px; color: var(--text-muted); max-width: 280px; line-height: 1.4;">
+              \${item.description || 'Sin descripción médica configurada.'}
+            </td>
+            <td style="padding: 12px; text-align: right; white-space: nowrap;">
+              <button class="pill-btn" onclick="openTreatmentModal(\${item._originalIndex})" style="padding: 4px 8px; font-size: 11px; margin-right: 4px;">✏️</button>
+              <button class="pill-btn" onclick="deleteTreatment(\${item._originalIndex})" style="padding: 4px 8px; font-size: 11px; color: var(--accent-coral);">🗑️</button>
+            </td>
+          </tr>
+        \`;
+      }).join('');
+    }
+
+    function updateTreatmentDoctorDropdown() {
+      const select = document.getElementById('treatment-doctor-select');
+      if (!select) return;
+      let html = '<option value="">Cualquier especialista disponible</option>';
+      currentDoctorsList.forEach(d => {
+        html += \`<option value="\${d.id}">\${d.name} (\${d.specialty.replace('_', ' ')})</option>\`;
+      });
+      select.innerHTML = html;
+    }
+
+    function openTreatmentModal(index) {
+      updateTreatmentDoctorDropdown();
+      const modal = document.getElementById('modal-treatment');
+      const title = document.getElementById('modal-treatment-title');
+      const editIndexInput = document.getElementById('treatment-edit-index');
+
+      if (typeof index === 'number' && index >= 0 && index < currentTreatmentsList.length) {
+        const item = currentTreatmentsList[index];
+        title.innerText = 'Editar Tratamiento: ' + item.name;
+        editIndexInput.value = index;
+        document.getElementById('treatment-name').value = item.name;
+        document.getElementById('treatment-specialty').value = item.specialty || 'odontologia_general';
+        document.getElementById('treatment-price').value = item.priceRange;
+        document.getElementById('treatment-doctor-select').value = item.assignedDoctorId || '';
+        document.getElementById('treatment-desc').value = item.description || '';
+      } else {
+        title.innerText = 'Nuevo Tratamiento & Tarifa';
+        editIndexInput.value = '-1';
+        document.getElementById('form-treatment').reset();
+      }
+      modal.classList.add('open');
+      modal.classList.add('active');
+    }
+
+    function closeTreatmentModal() {
+      const modal = document.getElementById('modal-treatment');
+      modal.classList.remove('open');
+      modal.classList.remove('active');
+    }
+
+    async function saveTreatmentSettings(e) {
+      e.preventDefault();
+      const editIndex = parseInt(document.getElementById('treatment-edit-index').value, 10);
+      const name = document.getElementById('treatment-name').value.trim();
+      const specialty = document.getElementById('treatment-specialty').value;
+      const priceRange = document.getElementById('treatment-price').value.trim();
+      const assignedDoctorId = document.getElementById('treatment-doctor-select').value || undefined;
+      const description = document.getElementById('treatment-desc').value.trim();
+
+      const payload = { name, specialty, priceRange, assignedDoctorId, description };
+
+      try {
+        let res;
+        if (editIndex >= 0) {
+          res = await fetch('/api/clinics/' + activeCatalogClinicId + '/treatments/' + editIndex, {
+            method: 'PUT',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(payload)
+          });
+        } else {
+          res = await fetch('/api/clinics/' + activeCatalogClinicId + '/treatments', {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(payload)
+          });
+        }
+        const data = await res.json();
+        if (data.ok) {
+          closeTreatmentModal();
+          await fetchCatalogTreatments();
+        } else {
+          alert('Error al guardar tratamiento: ' + (data.error || 'Desconocido'));
+        }
+      } catch (err) {
+        alert('Error de conexión al guardar tratamiento.');
+      }
+    }
+
+    async function deleteTreatment(index) {
+      if (!confirm('¿Estás seguro de eliminar este procedimiento del catálogo?')) return;
+      try {
+        const res = await fetch('/api/clinics/' + activeCatalogClinicId + '/treatments/' + index, {
+          method: 'DELETE',
+          headers: getAuthHeaders()
+        });
+        const data = await res.json();
+        if (data.ok) {
+          await fetchCatalogTreatments();
+        } else {
+          alert('No se pudo eliminar el tratamiento.');
+        }
+      } catch (err) {
+        alert('Error de conexión al eliminar tratamiento.');
+      }
+    }
+
+    async function seedSuggestedTreatments() {
+      if (!confirm('¿Deseas precargar el catálogo con tratamientos sugeridos de alta demanda (Limpieza, Brackets, Cordales, Implantes, Blanqueamiento)?')) return;
+      try {
+        const res = await fetch('/api/clinics/' + activeCatalogClinicId + '/treatments/seed-suggested', {
+          method: 'POST',
+          headers: getAuthHeaders()
+        });
+        const data = await res.json();
+        if (data.ok) {
+          await fetchCatalogTreatments();
+        }
+      } catch (err) {
+        alert('Error al precargar catálogo sugerido.');
+      }
+    }
+
+    function applyQuickSuggestion(name, specialty, price, desc) {
+      openTreatmentModal(-1);
+      document.getElementById('treatment-name').value = name;
+      document.getElementById('treatment-specialty').value = specialty;
+      document.getElementById('treatment-price').value = price;
+      document.getElementById('treatment-desc').value = desc;
     }
 
     // ================= AUTH SESSION =================
@@ -2354,15 +3135,18 @@ export function getAdminDashboardHtml(): string {
               </div>
             </div>
 
-            <div class="card-actions-grid">
+            <div class="card-actions-grid" style="grid-template-columns: 1fr 1fr; gap: 8px;">
               <button class="btn-action-channel wa" onclick="openWhatsappModal('\${c.clinicId}')">
                 🛡️ Meta WhatsApp
               </button>
               <button class="btn-action-channel tg" onclick="openTelegramModal('\${c.clinicId}')">
                 ✈️ Telegram
               </button>
+              <button class="btn-action-channel" style="background: rgba(0, 210, 106, 0.15); color: var(--accent-emerald); border: 1px solid rgba(0, 210, 106, 0.3);" onclick="goToClinicCatalog('\${c.clinicId}')">
+                🏷️ Precios & Doctores
+              </button>
               <button class="btn-action-channel play" onclick="openClinicInPlayground('\${c.clinicId}')">
-                💬 Probar
+                💬 Probar Chat
               </button>
             </div>
           </div>

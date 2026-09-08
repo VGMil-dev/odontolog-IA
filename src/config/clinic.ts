@@ -17,6 +17,7 @@ export interface Treatment {
   specialty: string;
   priceRange: string;
   description: string;
+  assignedDoctorId?: string;
 }
 
 export interface ClinicConfig {
