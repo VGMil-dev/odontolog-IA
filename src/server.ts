@@ -5,9 +5,14 @@ import { redisService } from './services/redis.service.js';
 import { chatwootService } from './services/chatwoot.service.js';
 import { whatsappChannel } from './channels/whatsapp.js';
 import { clinicManager } from './config/clinic.js';
+import { clinicsRegistry } from './config/clinics.registry.js';
+import { calendarService } from './services/calendar.service.js';
 import { agentCore } from './agent/core.js';
 import { cleanChatFormatting } from './channels/telegram.js';
 import { getChatUiHtml } from './server/chat-ui.js';
+import { getAdminDashboardHtml } from './server/admin-dashboard-ui.js';
+import { authService } from './services/auth.service.js';
+import { evolutionService } from './services/evolution.service.js';
 import { PrivacyService } from './services/privacy.service.js';
 import { SecureLogger } from './utils/logger.js';
 
@@ -49,7 +54,96 @@ export function createServer() {
     res.send(getChatUiHtml());
   });
 
-  // 3. Direct Chat API Endpoint (Testing / REST Integration)
+  // 3. Torre de Control & Dashboard Multi-Agente (Gestor de Clínicas y Flujos)
+  app.get(['/dashboard', '/admin'], (_req: Request, res: Response) => {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(getAdminDashboardHtml());
+  });
+
+  // 4. Autenticación Administrativa (BuilderBot Style)
+  app.post('/api/auth/login', (req: Request, res: Response) => {
+    const { username, password } = req.body || {};
+    if (!username || !password) {
+      return res.status(400).json({ ok: false, error: 'Usuario y contraseña requeridos.' });
+    }
+
+    const isValid = authService.validateCredentials(username, password);
+    if (!isValid) {
+      return res.status(401).json({ ok: false, error: 'Credenciales inválidas.' });
+    }
+
+    const token = authService.createSessionToken(username);
+    return res.status(200).json({
+      ok: true,
+      token,
+      user: username,
+      expiresIn: '7d',
+    });
+  });
+
+  app.get('/api/auth/verify', (req: Request, res: Response) => {
+    const authHeader = req.headers['authorization'] || '';
+    const token = authHeader.startsWith('Bearer ') ? authHeader.substring(7).trim() : '';
+    const { valid, user } = authService.verifyToken(token);
+    return res.status(200).json({ ok: valid, user });
+  });
+
+  // 5. WhatsApp Instance & QR Code Provider (Evolution API)
+  app.get('/api/whatsapp/qr/:instanceName', async (req: Request, res: Response) => {
+    try {
+      const instanceName = Array.isArray(req.params.instanceName) ? req.params.instanceName[0] : req.params.instanceName;
+      const qrData = await evolutionService.getConnectQr(instanceName);
+      return res.status(200).json({ ok: true, ...qrData });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  app.get('/api/whatsapp/status/:instanceName', async (req: Request, res: Response) => {
+    try {
+      const instanceName = Array.isArray(req.params.instanceName) ? req.params.instanceName[0] : req.params.instanceName;
+      const state = await evolutionService.getConnectionState(instanceName);
+      return res.status(200).json({ ok: true, state });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  // 6. API Multi-Tenant: Gestión de Clínicas Odontológicas
+  app.get('/api/clinics', (_req: Request, res: Response) => {
+    return res.status(200).json({
+      ok: true,
+      clinics: clinicsRegistry.getAll(),
+    });
+  });
+
+  app.post('/api/clinics', authService.requireAdminAuth, (req: Request, res: Response) => {
+    try {
+      const data = req.body;
+      if (!data?.clinicId || !data?.name) {
+        return res.status(400).json({ ok: false, error: 'clinicId y name son requeridos.' });
+      }
+      const saved = clinicsRegistry.save(data);
+      return res.status(201).json({ ok: true, clinic: saved });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  app.delete('/api/clinics/:id', authService.requireAdminAuth, (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const success = clinicsRegistry.delete(clinicId);
+    return res.status(200).json({ ok: success });
+  });
+
+  // 7. API Multi-Tenant: Citas Agendadas en Tiempo Real
+  app.get('/api/appointments', (_req: Request, res: Response) => {
+    const clinicId = _req.query.clinicId as string | undefined;
+    const appointments = calendarService.getAllAppointments(clinicId);
+    return res.status(200).json({ ok: true, appointments });
+  });
+
+  // 6. Direct Chat API Endpoint (Testing / REST Integration Multi-Agente)
   app.post('/api/chat', async (req: Request, res: Response) => {
     try {
       const message = req.body?.message;
@@ -64,12 +158,17 @@ export function createServer() {
         ? req.body.userId.trim()
         : 'debug-web-user';
 
-      const agentResponse = await agentCore.processMessage(userId, message.trim());
+      const clinicId = (req.body?.clinicId && typeof req.body.clinicId === 'string')
+        ? req.body.clinicId.trim()
+        : undefined;
+
+      const agentResponse = await agentCore.processMessage(userId, message.trim(), clinicId);
       const cleanReply = cleanChatFormatting(agentResponse.text);
 
       return res.status(200).json({
         ok: true,
         userId,
+        clinicId: agentResponse.clinicId,
         reply: cleanReply,
         rawReply: agentResponse.text,
         modelUsed: agentResponse.modelUsed,

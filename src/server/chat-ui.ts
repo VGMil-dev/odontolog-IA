@@ -16,15 +16,15 @@ export function getChatUiHtml(): string {
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-main: #0b132b;
-      --bg-card: #1c2541;
-      --bg-bubble-bot: #1e293b;
-      --bg-bubble-user: #0284c7;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --accent: #06b6d4;
-      --accent-glow: rgba(6, 182, 212, 0.25);
-      --border: #334155;
+      --bg-main: #14171A;
+      --bg-card: #1F2328;
+      --bg-bubble-bot: #242930;
+      --bg-bubble-user: #00D26A;
+      --text-main: #FFFFFF;
+      --text-muted: #8E9BAE;
+      --accent: #00D26A;
+      --accent-glow: rgba(0, 210, 106, 0.3);
+      --border: rgba(255, 255, 255, 0.08);
       --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
@@ -246,9 +246,10 @@ export function getChatUiHtml(): string {
 
     .message-row.user .bubble {
       background: var(--bg-bubble-user);
-      color: #ffffff;
+      color: #0B132B;
+      font-weight: 600;
       border-bottom-right-radius: 2px;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+      box-shadow: 0 4px 14px var(--accent-glow);
     }
 
     .message-row.bot .bubble {

@@ -5,6 +5,7 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { env } from '../config/env.js';
 import { buildSystemPrompt } from './prompts.js';
 import { createOdontoTools } from './tools.js';
+import { clinicsRegistry } from '../config/clinics.registry.js';
 import { SessionCryptoService } from '../services/session-crypto.js';
 import { OdontoGuardrails } from './guardrails.js';
 import { PrivacyService } from '../services/privacy.service.js';
@@ -17,6 +18,7 @@ export interface AgentResponse {
   modelUsed: string;
   durationMs: number;
   reasoningSteps: string[];
+  clinicId?: string;
 }
 
 export class OdontoAgentCore {
@@ -103,9 +105,11 @@ export class OdontoAgentCore {
    * Procesa el mensaje del usuario utilizando la cascada de modelos con Vercel AI SDK,
    * guardrails pre/post y cumplimiento normativo ISO 42001 / LOPDP.
    */
-  public async processMessage(userId: string, incomingText: string): Promise<AgentResponse> {
+  public async processMessage(userId: string, incomingText: string, clinicId?: string): Promise<AgentResponse> {
     const startTime = Date.now();
     const reasoningSteps: string[] = [];
+
+    const clinic = (clinicId ? clinicsRegistry.getById(clinicId) : null) || clinicsRegistry.getDefault();
 
     // 1. Guardrail de entrada: Detección de Jailbreak y desvío de rol
     const inputCheck = OdontoGuardrails.inspectInput(incomingText);
@@ -116,6 +120,7 @@ export class OdontoAgentCore {
         modelUsed: 'guardrail/input-filter',
         durationMs: Date.now() - startTime,
         reasoningSteps: [`Guardrail de entrada activado: ${inputCheck.blockedReason}`],
+        clinicId: clinic.clinicId,
       };
     }
 
@@ -128,6 +133,7 @@ export class OdontoAgentCore {
         modelUsed: 'privacy/right-to-erasure',
         durationMs: Date.now() - startTime,
         reasoningSteps: ['Derecho al olvido ejecutado exitosamente conforme a LOPDP Ecuador.'],
+        clinicId: clinic.clinicId,
       };
     }
 
@@ -152,8 +158,8 @@ export class OdontoAgentCore {
         history = history.slice(-16);
       }
 
-      const systemPrompt = buildSystemPrompt();
-      const tools = createOdontoTools(userId);
+      const systemPrompt = buildSystemPrompt(clinic);
+      const tools = createOdontoTools(userId, clinic.clinicId);
 
       let modelUsed = env.PRIMARY_MODEL;
       let responseText = '';
@@ -240,6 +246,7 @@ export class OdontoAgentCore {
         modelUsed,
         durationMs,
         reasoningSteps,
+        clinicId: clinic.clinicId,
       };
     } finally {
       this.processingUsers.delete(userId);

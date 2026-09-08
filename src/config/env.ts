@@ -8,6 +8,11 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
   HOST: z.string().default('0.0.0.0'),
   ACTIVE_PROVIDER: z.enum(['telegram', 'meta', 'console']).default('telegram'),
+
+  // Admin Dashboard Security (BuilderBot style)
+  ADMIN_USER: z.string().default('admin'),
+  ADMIN_PASSWORD: z.string().default('odontocare2026'),
+  ADMIN_SESSION_SECRET: z.string().default('odonto_admin_secret_key_2026'),
   
   // AI Keys
   AI_GATEWAY_API_KEY: z.string().optional(),
