@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # -------------------------------------------------------------
+  # 🧠 1. OdontoCare IA — Motor Inteligente Desacoplado
+  # -------------------------------------------------------------
+  odontocare-ai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: odontocare-ai-core
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      - TZ=America/Guayaquil
+      - REDIS_URL=redis://redis:6379
+      - ACTIVE_PROVIDER=${ACTIVE_PROVIDER:-telegram}
+      - PRIMARY_MODEL=${PRIMARY_MODEL:-openai/gpt-4o-mini}
+      - FALLBACK_MODEL=${FALLBACK_MODEL:-google/gemini-2.5-flash}
+      - VERCEL_AI_GATEWAY_KEY=${VERCEL_AI_GATEWAY_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_GENERATIVE_AI_API_KEY=${GOOGLE_GENERATIVE_AI_API_KEY}
+      - ASSEMBLYAI_API_KEY=${ASSEMBLYAI_API_KEY}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_ADMIN_CHAT_ID=${TELEGRAM_ADMIN_CHAT_ID}
+      - CHATWOOT_BASE_URL=${CHATWOOT_BASE_URL}
+      - CHATWOOT_API_ACCESS_TOKEN=${CHATWOOT_API_ACCESS_TOKEN}
+      - CHATWOOT_ACCOUNT_ID=${CHATWOOT_ACCOUNT_ID:-1}
+      - CHATWOOT_INBOX_ID=${CHATWOOT_INBOX_ID:-1}
+      - EVOLUTION_API_URL=http://evolution-api:8080
+      - EVOLUTION_API_KEY=${EVOLUTION_API_KEY:-odonto_evolution_secret_2026}
+      - EVOLUTION_INSTANCE_NAME=${EVOLUTION_INSTANCE_NAME:-odontocare}
+      - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID:-primary}
+    volumes:
+      - ./clinic.config.json:/app/clinic.config.json:ro
+      - ./.sessions.json:/app/.sessions.json:rw
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - odontocare-net
+
+  # -------------------------------------------------------------
+  # ⚡ 2. Redis — Buffer Anti-Ráfagas, Colas y Bloqueos Distribuidos
+  # -------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: odontocare-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - odontocare-net
+
+  # -------------------------------------------------------------
+  # 📱 3. Evolution API — Conector Multidispositivo de WhatsApp
+  # -------------------------------------------------------------
+  evolution-api:
+    image: atendai/evolution-api:v2.1.2
+    container_name: odontocare-evolution-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVER_URL=http://localhost:8080
+      - DOCKER_ENV=true
+      - AUTHENTICATION_API_KEY=${EVOLUTION_API_KEY:-odonto_evolution_secret_2026}
+      - DATABASE_ENABLED=false
+      - CACHE_REDIS_ENABLED=true
+      - CACHE_REDIS_URI=redis://redis:6379/1
+      - CACHE_REDIS_PREFIX_KEY=evolution
+      - WEBHOOK_GLOBAL_ENABLED=true
+      - WEBHOOK_GLOBAL_URL=http://odontocare-ai:3000/webhooks/whatsapp
+      - WEBHOOK_EVENTS_MESSAGES_UPSERT=true
+    volumes:
+      - evolution_instances:/evolution/instances
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - odontocare-net
+
+networks:
+  odontocare-net:
+    driver: bridge
+
+volumes:
+  redis_data:
+  evolution_instances:
