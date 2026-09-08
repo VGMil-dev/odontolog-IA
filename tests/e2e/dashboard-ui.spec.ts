@@ -59,18 +59,20 @@ test.describe('OdontoCare AI — Dashboard UI & Multi-Tenant E2E Evaluation', ()
     // Captura 3: Grid de Clínicas Multi-Tenant
     await page.screenshot({ path: path.join(screenshotsDir, '03-clinics-grid.png'), fullPage: true });
 
-    // 4. Modal Conectar WhatsApp QR (Evolution API)
+    // 4. Modal Conectar WhatsApp (Meta Cloud API Oficial)
     await page.locator('.btn-action-channel.wa').first().click();
     const modalWa = page.locator('#modal-whatsapp-qr');
     await expect(modalWa).toBeVisible();
-    await expect(modalWa.locator('#wa-qr-container')).toBeVisible();
+    await expect(modalWa.locator('#meta-phone-number-id')).toBeVisible();
+    await expect(modalWa.locator('#meta-waba-id')).toBeVisible();
+    await expect(modalWa.locator('#meta-access-token')).toBeVisible();
     
-    // Esperar 1.5s para que consulte Evolution API
-    await page.waitForTimeout(1500);
+    // Esperar 500ms para renderizado suave
+    await page.waitForTimeout(500);
 
-    // Captura 4: Modal QR WhatsApp
+    // Captura 4: Modal Meta WhatsApp Cloud API Oficial
     await page.screenshot({ path: path.join(screenshotsDir, '04-whatsapp-qr-modal.png') });
-    await page.locator('#modal-whatsapp-qr button', { hasText: 'Listo' }).click();
+    await page.locator('#modal-whatsapp-qr button', { hasText: 'Cerrar' }).click();
     await expect(modalWa).not.toBeVisible();
 
     // 5. Crear Nueva Odontología

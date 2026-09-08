@@ -136,6 +136,41 @@ export function createServer() {
     return res.status(200).json({ ok: success });
   });
 
+  // Configuración de Credenciales Oficiales de Meta Cloud API para una Clínica
+  app.post('/api/clinics/:id/meta-whatsapp', authService.requireAdminAuth, (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const clinic = clinicsRegistry.getById(clinicId);
+    if (!clinic) {
+      return res.status(404).json({ ok: false, error: 'Clínica no encontrada.' });
+    }
+
+    const { metaPhoneNumberId, metaWabaId, metaAccessToken } = req.body;
+    clinic.metaPhoneNumberId = metaPhoneNumberId !== undefined ? metaPhoneNumberId : clinic.metaPhoneNumberId;
+    clinic.metaWabaId = metaWabaId !== undefined ? metaWabaId : clinic.metaWabaId;
+    clinic.metaAccessToken = metaAccessToken !== undefined ? metaAccessToken : clinic.metaAccessToken;
+
+    clinicsRegistry.save(clinic);
+    return res.status(200).json({ ok: true, clinic });
+  });
+
+  // Envío de Prueba de Meta Cloud API
+  app.post('/api/clinics/:id/meta-whatsapp/test', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const clinic = clinicsRegistry.getById(clinicId);
+    if (!clinic) {
+      return res.status(404).json({ ok: false, error: 'Clínica no encontrada.' });
+    }
+
+    const targetPhone = req.body?.phone || clinic.emergencyPhone;
+    const success = await whatsappChannel.sendMetaCloudMessage(
+      targetPhone,
+      `🦷 *OdontoCare IA*: Verificación oficial de Meta WhatsApp Cloud API para ${clinic.name}. Conexión 100% oficial y protegida contra baneos.`,
+      clinic
+    );
+
+    return res.status(200).json({ ok: success, targetPhone });
+  });
+
   // 7. API Multi-Tenant: Citas Agendadas en Tiempo Real
   app.get('/api/appointments', (_req: Request, res: Response) => {
     const clinicId = _req.query.clinicId as string | undefined;
@@ -225,13 +260,23 @@ export function createServer() {
     }
   });
 
-  // 7. WhatsApp Webhook (Evolution API / Meta Cloud API)
+  // 7. WhatsApp Webhook (Meta Cloud API Oficial / Evolution API fallback)
   app.post('/webhooks/whatsapp', async (req: Request, res: Response) => {
     try {
-      const configuredApiKey = env.EVOLUTION_API_KEY;
+      // 1. Si viene de Meta WhatsApp Cloud API (Graph API Oficial v21.0)
+      if (req.body?.object === 'whatsapp_business_account' || req.body?.entry?.[0]?.changes) {
+        // Meta exige confirmación HTTP 200 de inmediato
+        res.status(200).json({ status: 'received' });
+        // Procesamiento en segundo plano de mensaje y enrutamiento a la clínica
+        whatsappChannel.handleMetaCloudWebhook(req.body).catch((err) => {
+          SecureLogger.error('Server', 'Error en procesamiento asíncrono de Meta Cloud:', err);
+        });
+        return;
+      }
 
-      // Si es un evento de Evolution API y hay una API Key configurada
+      // 2. Si es un evento legado de Evolution API
       if (req.body?.event) {
+        const configuredApiKey = env.EVOLUTION_API_KEY;
         const headerKey = (req.headers['apikey'] || req.headers['x-api-key'] || '') as string;
         if (configuredApiKey && configuredApiKey.length > 0) {
           const expected = Buffer.from(configuredApiKey);
@@ -246,21 +291,12 @@ export function createServer() {
         return res.status(200).json(result);
       }
 
-      // Si viene de Meta Cloud API
-      const entry = req.body?.entry?.[0];
-      const changes = entry?.changes?.[0];
-      const value = changes?.value;
-      const message = value?.messages?.[0];
-
-      if (message) {
-        const from = message.from;
-        SecureLogger.info('Server', `Mensaje Meta Cloud API recibido de usuario ${SecureLogger.maskPhone(from)}`);
-      }
-
-      res.status(200).json({ status: 'received' });
+      return res.status(200).json({ status: 'ignored' });
     } catch (err: any) {
       SecureLogger.error('Server', 'Error en webhook de WhatsApp:', err);
-      res.status(500).json({ error: 'Webhook processing failed' });
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Webhook processing failed' });
+      }
     }
   });
 

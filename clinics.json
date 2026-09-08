@@ -106,6 +106,9 @@
     ],
     "calendarId": "primary",
     "whatsappInstance": "odontocare_cuenca",
+    "metaPhoneNumberId": "109827364512345",
+    "metaWabaId": "987654321012345",
+    "metaAccessToken": "EAAG...meta_system_token_cuenca",
     "createdAt": "2026-09-08T20:07:17.063Z",
     "updatedAt": "2026-09-08T20:07:17.064Z"
   },
@@ -175,5 +178,37 @@
     ],
     "createdAt": "2026-09-08T20:07:17.064Z",
     "updatedAt": "2026-09-08T20:07:17.064Z"
+  },
+  {
+    "clinicId": "dental_manta_1563",
+    "name": "Clínica Dental Pacífico Manta 1563",
+    "city": "Manta",
+    "address": "Av. Flavio Reyes y Calle 18",
+    "phone": "+593 99 876 5432",
+    "emergencyPhone": "+593 99 876 5432",
+    "calendarId": "agenda.manta@gmail.com",
+    "metaPhoneNumberId": "dental_manta_1563",
+    "whatsappInstance": "dental_manta_1563",
+    "doctors": [
+      {
+        "id": "doc_1",
+        "name": "Dr. Principal",
+        "specialty": "odontologia_general",
+        "specialtyLabel": "Odontología General",
+        "availableDays": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "hours": {
+          "start": "09:00",
+          "end": "18:00"
+        }
+      }
+    ],
+    "createdAt": "2026-09-08T22:05:11.964Z",
+    "updatedAt": "2026-09-08T22:05:11.964Z"
   }
 ]

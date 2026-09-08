@@ -32,9 +32,13 @@ services:
       - EVOLUTION_API_URL=http://evolution-api:8080
       - EVOLUTION_API_KEY=${EVOLUTION_API_KEY:-odonto_evolution_secret_2026}
       - EVOLUTION_INSTANCE_NAME=${EVOLUTION_INSTANCE_NAME:-odontocare}
+      - META_WA_ACCESS_TOKEN=${META_WA_ACCESS_TOKEN}
+      - META_WA_PHONE_NUMBER_ID=${META_WA_PHONE_NUMBER_ID}
+      - META_WA_VERIFY_TOKEN=${META_WA_VERIFY_TOKEN:-odonto_verify_token_2026}
       - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID:-primary}
     volumes:
       - ./clinic.config.json:/app/clinic.config.json:ro
+      - ./clinics.json:/app/clinics.json:rw
       - ./.sessions.json:/app/.sessions.json:rw
     depends_on:
       redis:
@@ -63,9 +67,10 @@ services:
       - odontocare-net
 
   # -------------------------------------------------------------
-  # 🐘 3. PostgreSQL — Persistencia para Evolution API
+  # 🐘 3. PostgreSQL — Persistencia para Evolution API (Opcional)
   # -------------------------------------------------------------
   postgres:
+    profiles: ["legacy-evolution"]
     image: postgres:16-alpine
     container_name: odontocare-postgres
     restart: unless-stopped
@@ -84,9 +89,10 @@ services:
       - odontocare-net
 
   # -------------------------------------------------------------
-  # 📱 4. Evolution API — Conector Multidispositivo de WhatsApp
+  # 📱 4. Evolution API — Conector Multidispositivo de WhatsApp (Opcional)
   # -------------------------------------------------------------
   evolution-api:
+    profiles: ["legacy-evolution"]
     image: evoapicloud/evolution-api:v2.1.2
     container_name: odontocare-evolution-api
     restart: unless-stopped

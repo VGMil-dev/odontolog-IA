@@ -6,6 +6,9 @@ import { SecureLogger } from '../utils/logger.js';
 export interface ClinicEntity extends ClinicConfig {
   calendarId?: string;
   whatsappInstance?: string;
+  metaPhoneNumberId?: string;
+  metaWabaId?: string;
+  metaAccessToken?: string;
   telegramToken?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -126,6 +129,15 @@ export class ClinicsRegistry {
 
   public getById(clinicId: string): ClinicEntity | undefined {
     return this.clinics.get(clinicId);
+  }
+
+  public findByPhoneNumberId(phoneNumberId: string): ClinicEntity | undefined {
+    for (const clinic of this.clinics.values()) {
+      if (clinic.metaPhoneNumberId === phoneNumberId) {
+        return clinic;
+      }
+    }
+    return undefined;
   }
 
   public getDefault(): ClinicEntity {

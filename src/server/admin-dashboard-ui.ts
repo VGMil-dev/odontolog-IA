@@ -1826,23 +1826,23 @@ export function getAdminDashboardHtml(): string {
             <div class="bento-card" style="grid-column: span 6;">
               <div class="card-header-flex">
                 <div style="display:flex; align-items:center; gap:12px;">
-                  <span style="font-size:24px;">🟢</span>
+                  <span style="font-size:24px;">🛡️</span>
                   <div>
-                    <div class="card-title">Evolution API (WhatsApp v2)</div>
-                    <div class="card-subtitle">Servicio local en http://localhost:8080</div>
+                    <div class="card-title">Meta WhatsApp Cloud API (Oficial)</div>
+                    <div class="card-subtitle">Graph API v21.0 — 0% Riesgo de Baneo</div>
                   </div>
                 </div>
-                <span class="badge-status" id="evolution-api-status">🟢 Conectado</span>
+                <span class="badge-status" style="background:var(--accent-emerald-dim); color:var(--accent-emerald);">🟢 100% Oficial</span>
               </div>
               <p style="font-size:13px; color:var(--text-muted); line-height:1.5; margin-bottom:16px;">
-                Permite conectar WhatsApp en segundos mediante un código QR sin riesgo de baneo ni configuración compleja.
+                Conexión directa con la infraestructura de Meta Business. Admite números móviles y fijos del consultorio, 1,000 conversaciones mensuales gratuitas y protección total contra suspensiones.
               </p>
               <div style="display:flex; gap:12px;">
                 <button class="btn-emerald-cta" onclick="openWhatsappModal('odontocare_cuenca')">
-                  Escanea QR Cuenca
+                  Configurar Meta Cuenca
                 </button>
                 <button class="pill-btn" onclick="openWhatsappModal('dental_plus_quito')">
-                  Escanea QR Quito
+                  Configurar Meta Quito
                 </button>
               </div>
             </div>
@@ -1997,34 +1997,57 @@ export function getAdminDashboardHtml(): string {
 
   <!-- ================= MODALES DE GESTIÓN ================= -->
 
-  <!-- MODAL 1: WHATSAPP QR (BUILDERBOT STYLE) -->
+  <!-- MODAL 1: META WHATSAPP CLOUD API OFICIAL (OPCIÓN A: BRING YOUR OWN WABA) -->
   <div class="modal-backdrop" id="modal-whatsapp-qr">
-    <div class="modal-card" style="max-width: 480px; text-align: center;">
+    <div class="modal-card" style="max-width: 520px; text-align: left;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2 style="font-size: 19px; font-weight: 800; color: #FFFFFF;">Conectar WhatsApp (Código QR)</h2>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 36px; height: 36px; background: rgba(0, 210, 106, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🛡️</div>
+          <div>
+            <h2 style="font-size: 18px; font-weight: 800; color: #FFFFFF;">Meta WhatsApp Cloud API</h2>
+            <div style="font-size: 11px; color: var(--accent-emerald); font-weight: 700;">🟢 Conexión Oficial Meta — 0% Riesgo de Baneo</div>
+          </div>
+        </div>
         <button onclick="closeWhatsAppModal()" style="background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer;">&times;</button>
       </div>
 
-      <p style="font-size: 13px; color: var(--text-muted);" id="wa-modal-subtitle">
-        Escanea el código con la cámara de WhatsApp para vincular este agente.
+      <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;" id="wa-modal-subtitle">
+        Configura los identificadores oficiales de Meta Developers para este consultorio.
       </p>
 
-      <div class="qr-box-inner" id="wa-qr-container">
-        <div style="color: var(--text-muted); font-size: 14px;" id="wa-qr-loader">
-          🔄 Generando código QR seguro desde Evolution API...
+      <form id="form-meta-whatsapp" onsubmit="saveMetaWhatsAppSettings(event)" style="display: flex; flex-direction: column; gap: 14px; margin-top: 10px;">
+        <div class="form-group">
+          <label class="form-label">Phone Number ID (Meta Graph API)</label>
+          <input type="text" id="meta-phone-number-id" class="form-input" placeholder="ej. 109827364512345" required />
+          <span style="font-size: 11px; color: var(--text-dim);">Encuéntralo en developers.facebook.com > WhatsApp > API Setup</span>
         </div>
-      </div>
 
-      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: var(--text-muted); text-align: left; background: var(--bg-card-elevated); padding: 14px; border-radius: 12px;">
-        <div>1. Abre <strong>WhatsApp</strong> en tu teléfono móvil.</div>
-        <div>2. Ve a <strong>Ajustes / Menú</strong> > <strong>Dispositivos vinculados</strong>.</div>
-        <div>3. Toca <strong>Vincular un dispositivo</strong> y apunta al código QR.</div>
-      </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp Business Account ID (WABA ID)</label>
+          <input type="text" id="meta-waba-id" class="form-input" placeholder="ej. 987654321012345" required />
+        </div>
 
-      <div style="display: flex; justify-content: flex-end; gap: 12px;">
-        <button class="pill-btn" onclick="refreshWhatsAppQr()">🔄 Actualizar QR</button>
-        <button class="btn-emerald-cta" onclick="closeWhatsAppModal()">Listo</button>
-      </div>
+        <div class="form-group">
+          <label class="form-label">Token de Acceso Permanente (System User Token)</label>
+          <input type="password" id="meta-access-token" class="form-input" placeholder="EAAG... (Token permanente de Meta Business)" required />
+        </div>
+
+        <div style="background: var(--bg-card-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-size: 12px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px;">
+          <div style="color: #FFFFFF; font-weight: 700;">Webhook URL para Meta Developers:</div>
+          <code style="background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 6px; color: var(--accent-emerald); font-family: var(--font-mono); font-size: 11px;">https://tu-dominio.com/webhooks/whatsapp</code>
+          <div style="font-size: 11px; color: var(--text-dim);">Verify Token configurado en el servidor para suscripción automática.</div>
+        </div>
+
+        <div id="meta-status-message" style="display:none; font-size:12px; padding:8px 12px; border-radius:8px;"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+          <button type="button" class="pill-btn" onclick="testMetaWhatsAppPing()">🔔 Ping de Prueba</button>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="pill-btn" onclick="closeWhatsAppModal()">Cerrar</button>
+            <button type="submit" class="btn-emerald-cta">Guardar Credenciales</button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -2099,8 +2122,8 @@ export function getAdminDashboardHtml(): string {
         </div>
 
         <div class="form-group">
-          <label class="form-label">Instancia WhatsApp (Evolution API)</label>
-          <input type="text" id="new-clinic-whatsapp" class="form-input" placeholder="ej. clinica_manta" required />
+          <label class="form-label">Phone Number ID de Meta WhatsApp (Opcional)</label>
+          <input type="text" id="new-clinic-whatsapp" class="form-input" placeholder="ej. 109827364512345" />
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
@@ -2317,8 +2340,8 @@ export function getAdminDashboardHtml(): string {
                 <span class="detail-val" style="color:var(--accent-blue);">\${c.calendarId || 'primary'}</span>
               </div>
               <div class="detail-row">
-                <span style="color:var(--text-muted);">Instancia WhatsApp:</span>
-                <span class="detail-val" style="color:var(--accent-emerald);">\${waInstance}</span>
+                <span style="color:var(--text-muted);">Meta WhatsApp:</span>
+                <span class="detail-val" style="color:var(--accent-emerald); font-weight:700;">\${c.metaPhoneNumberId ? '🟢 Oficial Conectado' : '🟡 Pendiente Config'}</span>
               </div>
             </div>
 
@@ -2333,7 +2356,7 @@ export function getAdminDashboardHtml(): string {
 
             <div class="card-actions-grid">
               <button class="btn-action-channel wa" onclick="openWhatsappModal('\${c.clinicId}')">
-                📱 Conectar QR
+                🛡️ Meta WhatsApp
               </button>
               <button class="btn-action-channel tg" onclick="openTelegramModal('\${c.clinicId}')">
                 ✈️ Telegram
@@ -2384,7 +2407,8 @@ export function getAdminDashboardHtml(): string {
         phone: document.getElementById('new-clinic-phone').value.trim(),
         emergencyPhone: document.getElementById('new-clinic-phone').value.trim(),
         calendarId: document.getElementById('new-clinic-calendar').value.trim(),
-        whatsappInstance: document.getElementById('new-clinic-whatsapp').value.trim(),
+        metaPhoneNumberId: document.getElementById('new-clinic-whatsapp').value.trim() || undefined,
+        whatsappInstance: document.getElementById('new-clinic-whatsapp').value.trim() || undefined,
         doctors: [
           { id: 'doc_1', name: 'Dr. Principal', specialty: 'odontologia_general', specialtyLabel: 'Odontología General', availableDays: [1,2,3,4,5], hours: { start: '09:00', end: '18:00' } }
         ]
@@ -2410,56 +2434,103 @@ export function getAdminDashboardHtml(): string {
       }
     }
 
-    // ================= MODAL WHATSAPP QR (EVOLUTION API) =================
+    // ================= MODAL WHATSAPP (META CLOUD API OFICIAL) =================
+    let activeMetaClinicId = '';
+
     function openWhatsappModal(clinicId) {
-      const clinic = currentClinics.find(c => c.clinicId === clinicId) || { whatsappInstance: clinicId };
-      activeWaInstance = clinic.whatsappInstance || clinicId;
-      document.getElementById('wa-modal-subtitle').innerText = 'Instancia: ' + activeWaInstance + ' (Evolution API)';
+      activeMetaClinicId = clinicId;
+      const clinic = currentClinics.find(c => c.clinicId === clinicId);
+      document.getElementById('wa-modal-subtitle').innerText = 'Clínica: ' + (clinic ? clinic.name : clinicId);
+      document.getElementById('meta-phone-number-id').value = clinic?.metaPhoneNumberId || '';
+      document.getElementById('meta-waba-id').value = clinic?.metaWabaId || '';
+      document.getElementById('meta-access-token').value = clinic?.metaAccessToken || '';
+      
+      const statusDiv = document.getElementById('meta-status-message');
+      if (statusDiv) statusDiv.style.display = 'none';
+
       document.getElementById('modal-whatsapp-qr').classList.add('open');
-      refreshWhatsAppQr();
     }
 
     function closeWhatsAppModal() {
-      if (waPollInterval) {
-        clearInterval(waPollInterval);
-        waPollInterval = null;
-      }
       document.getElementById('modal-whatsapp-qr').classList.remove('open');
     }
 
-    async function refreshWhatsAppQr() {
-      const container = document.getElementById('wa-qr-container');
-      container.innerHTML = '<div style="color:var(--text-muted); font-size:14px;" id="wa-qr-loader">🔄 Consultando QR con Evolution API...</div>';
+    async function saveMetaWhatsAppSettings(e) {
+      e.preventDefault();
+      const statusDiv = document.getElementById('meta-status-message');
+      if (statusDiv) {
+        statusDiv.style.display = 'block';
+        statusDiv.style.background = 'rgba(0, 210, 106, 0.1)';
+        statusDiv.style.color = 'var(--accent-emerald)';
+        statusDiv.innerText = '💾 Guardando credenciales oficiales de Meta...';
+      }
+
+      const metaPhoneNumberId = document.getElementById('meta-phone-number-id').value.trim();
+      const metaWabaId = document.getElementById('meta-waba-id').value.trim();
+      const metaAccessToken = document.getElementById('meta-access-token').value.trim();
 
       try {
-        const res = await fetch('/api/whatsapp/qr/' + encodeURIComponent(activeWaInstance), {
-          headers: getAuthHeaders()
+        const res = await fetch('/api/clinics/' + encodeURIComponent(activeMetaClinicId) + '/meta-whatsapp', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ metaPhoneNumberId, metaWabaId, metaAccessToken })
         });
         const data = await res.json();
-
-        if (data.ok && data.qrcode) {
-          const qrSrc = data.qrcode.startsWith('data:') ? data.qrcode : 'data:image/png;base64,' + data.qrcode;
-          container.innerHTML = \`
-            <img src="\${qrSrc}" class="qr-img" alt="QR Code WhatsApp" id="wa-qr-image" />
-            <div style="font-size:12px; color:var(--accent-emerald); font-weight:700;">🟢 Código generado. Escanea desde WhatsApp.</div>
-          \`;
-        } else if (data.status === 'open') {
-          container.innerHTML = \`
-            <div style="font-size:36px;">✅</div>
-            <div style="font-size:15px; font-weight:700; color:var(--accent-emerald);">¡WhatsApp Conectado!</div>
-            <div style="font-size:12px; color:var(--text-muted);">Esta instancia está en línea y lista para responder.</div>
-          \`;
+        if (data.ok) {
+          if (statusDiv) statusDiv.innerText = '✅ ¡Credenciales de Meta WhatsApp Cloud guardadas con éxito!';
+          await fetchClinics();
+          setTimeout(() => { closeWhatsAppModal(); }, 1200);
         } else {
-          container.innerHTML = \`
-            <div style="color:var(--accent-coral); font-size:13px;">⚠️ Estado: \${data.status || 'Evolution API inicializando'}.</div>
-            <button class="pill-btn" onclick="refreshWhatsAppQr()" style="margin-top:10px;">Reintentar</button>
-          \`;
+          if (statusDiv) {
+            statusDiv.style.background = 'rgba(255, 107, 74, 0.1)';
+            statusDiv.style.color = 'var(--accent-coral)';
+            statusDiv.innerText = '❌ Error: ' + (data.error || 'No se pudo guardar');
+          }
         }
       } catch (err) {
-        container.innerHTML = \`
-          <div style="color:var(--accent-coral); font-size:13px;">❌ Error conectando con Evolution API.</div>
-          <button class="pill-btn" onclick="refreshWhatsAppQr()" style="margin-top:10px;">Reintentar</button>
-        \`;
+        if (statusDiv) {
+          statusDiv.style.background = 'rgba(255, 107, 74, 0.1)';
+          statusDiv.style.color = 'var(--accent-coral)';
+          statusDiv.innerText = '❌ Error de red al conectar con el servidor';
+        }
+      }
+    }
+
+    async function testMetaWhatsAppPing() {
+      const statusDiv = document.getElementById('meta-status-message');
+      if (statusDiv) {
+        statusDiv.style.display = 'block';
+        statusDiv.style.background = 'rgba(59, 130, 246, 0.1)';
+        statusDiv.style.color = 'var(--accent-blue)';
+        statusDiv.innerText = '📡 Enviando ping de prueba a Meta Graph API...';
+      }
+
+      try {
+        const res = await fetch('/api/clinics/' + encodeURIComponent(activeMetaClinicId) + '/meta-whatsapp/test', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({})
+        });
+        const data = await res.json();
+        if (data.ok) {
+          if (statusDiv) {
+            statusDiv.style.background = 'rgba(0, 210, 106, 0.1)';
+            statusDiv.style.color = 'var(--accent-emerald)';
+            statusDiv.innerText = '✅ Mensaje de prueba enviado con éxito vía Meta Cloud API al ' + data.targetPhone;
+          }
+        } else {
+          if (statusDiv) {
+            statusDiv.style.background = 'rgba(255, 107, 74, 0.1)';
+            statusDiv.style.color = 'var(--accent-coral)';
+            statusDiv.innerText = '⚠️ Modo simulación activo o token pendiente de verificación.';
+          }
+        }
+      } catch (err) {
+        if (statusDiv) {
+          statusDiv.style.background = 'rgba(255, 107, 74, 0.1)';
+          statusDiv.style.color = 'var(--accent-coral)';
+          statusDiv.innerText = '❌ Error de conexión';
+        }
       }
     }
 
