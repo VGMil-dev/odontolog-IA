@@ -205,6 +205,24 @@ export class ClinicsRegistry {
     return true;
   }
 
+  public toggleDoctorStatus(clinicId: string, doctorId: string): { ok: boolean; isActive?: boolean } {
+    const clinic = this.clinics.get(clinicId);
+    if (!clinic || !clinic.doctors) return { ok: false };
+    const doc = clinic.doctors.find(d => d.id === doctorId);
+    if (!doc) return { ok: false };
+    doc.isActive = doc.isActive === false ? true : false;
+    this.save(clinic);
+    return { ok: true, isActive: doc.isActive };
+  }
+
+  public updateInventory(clinicId: string, inventory: any[]): boolean {
+    const clinic = this.clinics.get(clinicId);
+    if (!clinic) return false;
+    clinic.inventoryStatus = inventory;
+    this.save(clinic);
+    return true;
+  }
+
   // --- GESTIÓN DE CATÁLOGO DE SERVICIOS & PRECIOS ---
   public addTreatment(clinicId: string, treatment: Treatment): boolean {
     const clinic = this.clinics.get(clinicId);

@@ -101,6 +101,76 @@ export class OdontoAgentCore {
     this.saveSessions();
   }
 
+  public getRealMetrics() {
+    let telegramCount = 0;
+    let whatsappCount = 0;
+    let webCount = 0;
+    let totalMessages = 0;
+
+    for (const [userId, history] of this.userHistories.entries()) {
+      totalMessages += history.length;
+      if (userId.startsWith('tg_') || userId.startsWith('telegram_')) {
+        telegramCount++;
+      } else if (userId.startsWith('wa_') || userId.startsWith('whatsapp_') || /^\+?\d{9,15}$/.test(userId)) {
+        whatsappCount++;
+      } else {
+        webCount++;
+      }
+    }
+
+    const totalUsers = this.userHistories.size;
+
+    return {
+      totalUsers,
+      totalMessages,
+      channels: {
+        telegram: telegramCount,
+        whatsapp: whatsappCount,
+        web: webCount,
+      },
+    };
+  }
+
+  public getRecentConversationsSummary(clinicId?: string) {
+    const list: Array<{
+      userId: string;
+      messageCount: number;
+      lastUserMessage: string;
+      lastBotReply: string;
+      channel: string;
+    }> = [];
+
+    for (const [userId, history] of this.userHistories.entries()) {
+      if (!history || history.length === 0) continue;
+      
+      let lastUserMsg = '';
+      let lastBotMsg = '';
+      for (let i = history.length - 1; i >= 0; i--) {
+        if (!lastBotMsg && history[i].role === 'assistant') {
+          lastBotMsg = String(history[i].content || '');
+        }
+        if (!lastUserMsg && history[i].role === 'user') {
+          lastUserMsg = String(history[i].content || '');
+        }
+        if (lastUserMsg && lastBotMsg) break;
+      }
+
+      let channel = 'Web / API';
+      if (userId.startsWith('tg_') || userId.startsWith('telegram_')) channel = 'Telegram';
+      else if (userId.startsWith('wa_') || /^\+?\d{9,15}$/.test(userId)) channel = 'WhatsApp';
+
+      list.push({
+        userId,
+        messageCount: history.length,
+        lastUserMessage: lastUserMsg || '(Sin mensaje reciente)',
+        lastBotReply: lastBotMsg || '(Sin respuesta)',
+        channel
+      });
+    }
+
+    return list.slice(-10).reverse();
+  }
+
   /**
    * Procesa el mensaje del usuario utilizando la cascada de modelos con Vercel AI SDK,
    * guardrails pre/post y cumplimiento normativo ISO 42001 / LOPDP.

@@ -109,7 +109,7 @@ ${doctorAssignments}
 DATOS DE LA CLÍNICA:
 - Nombre: ${config.name} (${config.city})
 - Dirección: ${config.address}
-- Horarios de atención: Lunes a Viernes ${config.workingHours.weekdays} | Sábados ${config.workingHours.saturday}
+- Horarios de atención: Lunes a Viernes ${config.workingHours?.weekdays || '09:00 - 18:00'} | Sábados ${config.workingHours?.saturday || '09:00 - 13:00'}
 - Teléfono de Emergencias: ${config.emergencyPhone}
 
 DOCTORES Y HORARIOS:

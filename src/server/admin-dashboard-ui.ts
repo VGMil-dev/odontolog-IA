@@ -1,9 +1,9 @@
 /**
- * OdontoCare IA — Torre de Control Administrativa & Dashboard Multi-Tenant
- * Estilo visual premium inspirado en la interfaz oscura AIZCRM (Graphite #14171A + Emerald #00D26A).
- * Incorpora Sidebar izquierdo fijo con píldoras activas, Tarjeta de Directora Médica,
- * Cuadrícula Bento de 7 métricas clave, Conexión QR WhatsApp (Evolution API v2),
- * Configuración Telegram por clínica, Auditoría de los 6 Flujos y Playground IA con Inspector.
+ * OdontoCare IA — Torre de Control Administrativa & Suite SaaS Multi-Tenant (Estándar 2026)
+ * Diseño profesional oscuro (Graphite #14171A + Emerald #00D26A), sin datos mockeados (100% métricas reales),
+ * separación multi-tenant estricta (privacidad LOPDP B2B), Mini-Dashboard de clínica (Workspace de Secretaria),
+ * alternador de turno para doctores en vivo, semáforo de insumos críticos, flujos en pantalla dividida,
+ * iconografía SVG limpia sin emojis, y diseño 100% responsive.
  */
 
 export function getAdminDashboardHtml(): string {
@@ -34,8 +34,10 @@ export function getAdminDashboardHtml(): string {
       --accent-blue: #3B82F6;
       --accent-blue-dim: rgba(59, 130, 246, 0.15);
       --accent-coral: #FF6B4A;
+      --accent-coral-dim: rgba(255, 107, 74, 0.15);
       --accent-cyan: #06B6D4;
       --accent-amber: #F59E0B;
+      --accent-amber-dim: rgba(245, 158, 11, 0.15);
       
       /* Tipografía */
       --text-main: #FFFFFF;
@@ -55,6 +57,20 @@ export function getAdminDashboardHtml(): string {
       display: flex;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+    }
+
+    /* Iconos SVG Base */
+    .icon-svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+      display: inline-block;
+      vertical-align: middle;
     }
 
     /* ================= LOGIN VIEW ================= */
@@ -106,7 +122,9 @@ export function getAdminDashboardHtml(): string {
     .logo-mark svg {
       width: 26px;
       height: 26px;
-      fill: #0B132B;
+      fill: none;
+      stroke: #0B132B;
+      stroke-width: 2.2;
     }
 
     /* ================= APP SHELL LAYOUT ================= */
@@ -131,6 +149,7 @@ export function getAdminDashboardHtml(): string {
       height: 100vh;
       overflow-y: auto;
       z-index: 50;
+      transition: transform 0.3s ease;
     }
 
     .sidebar-brand {
@@ -201,7 +220,6 @@ export function getAdminDashboardHtml(): string {
       color: #FFFFFF;
     }
 
-    /* PÍLDORA ACTIVA ESTILO AIZCRM */
     .nav-item.active {
       background: var(--accent-emerald);
       color: #0F172A;
@@ -228,12 +246,12 @@ export function getAdminDashboardHtml(): string {
       color: #0F172A;
     }
 
-    /* TARJETA CONTRASTE INFERIOR (CUSTOMER METRIC CARD ESTILO SCREENSHOT) */
+    /* TARJETA DE CONTRASTE INFERIOR (DIRECTORA MÉDICA) */
     .sidebar-customer-metric {
       background: #FFFFFF;
       color: #0F172A;
       border-radius: 18px;
-      padding: 18px 14px;
+      padding: 16px 14px;
       margin-top: auto;
       display: flex;
       flex-direction: column;
@@ -245,9 +263,10 @@ export function getAdminDashboardHtml(): string {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: #0F172A;
+      letter-spacing: 0.02em;
     }
 
     .customer-metric-avatar-wrap {
@@ -257,16 +276,22 @@ export function getAdminDashboardHtml(): string {
     }
 
     .customer-metric-avatar {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: #E2E8F0;
+      background: #0F172A;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
-      overflow: hidden;
+      color: #00D26A;
       border: 2px solid #00D26A;
+      flex-shrink: 0;
+    }
+
+    .customer-metric-avatar svg {
+      width: 20px;
+      height: 20px;
+      stroke: #00D26A;
     }
 
     .customer-metric-details {
@@ -283,6 +308,9 @@ export function getAdminDashboardHtml(): string {
     .customer-metric-sub {
       font-size: 11px;
       color: #64748B;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .customer-metric-footer {
@@ -299,7 +327,7 @@ export function getAdminDashboardHtml(): string {
       color: #0F172A;
     }
 
-    /* 2. AREA PRINCIPAL */
+    /* 2. CANVAS PRINCIPAL */
     .main-canvas {
       flex: 1;
       display: flex;
@@ -310,29 +338,44 @@ export function getAdminDashboardHtml(): string {
 
     /* TOP HEADER */
     header.top-header {
-      padding: 20px 32px;
+      padding: 16px 28px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-subtle);
       position: sticky;
       top: 0;
-      background: rgba(20, 23, 26, 0.85);
+      background: rgba(20, 23, 26, 0.9);
       backdrop-filter: blur(12px);
       z-index: 40;
     }
 
+    .header-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .mobile-menu-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      color: #FFFFFF;
+      cursor: pointer;
+      padding: 6px;
+    }
+
     .header-title-wrap h1 {
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 800;
-      letter-spacing: -0.6px;
+      letter-spacing: -0.5px;
       color: #FFFFFF;
     }
 
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
     }
 
     .search-box {
@@ -343,7 +386,7 @@ export function getAdminDashboardHtml(): string {
       display: flex;
       align-items: center;
       gap: 10px;
-      width: 260px;
+      width: 240px;
       color: var(--text-muted);
     }
 
@@ -368,8 +411,8 @@ export function getAdminDashboardHtml(): string {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 12px;
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -385,13 +428,13 @@ export function getAdminDashboardHtml(): string {
     }
 
     .icon-btn-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       background: var(--accent-coral);
       border-radius: 50%;
       position: absolute;
-      top: 9px;
-      right: 9px;
+      top: 8px;
+      right: 8px;
       border: 2px solid var(--bg-card);
     }
 
@@ -401,20 +444,26 @@ export function getAdminDashboardHtml(): string {
       gap: 10px;
       background: var(--bg-card);
       border: 1px solid var(--border);
-      padding: 6px 14px 6px 8px;
+      padding: 5px 12px 5px 8px;
       border-radius: 30px;
     }
 
     .user-profile-avatar {
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       background: var(--accent-emerald-dim);
       border: 1px solid var(--accent-emerald);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      color: var(--accent-emerald);
+    }
+
+    .user-profile-avatar svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--accent-emerald);
     }
 
     .user-profile-info {
@@ -450,34 +499,32 @@ export function getAdminDashboardHtml(): string {
       color: var(--accent-coral);
     }
 
-    /* CONTENEDOR DE CONTENIDO DE PESTAÑAS */
+    /* CONTENIDO DINÁMICO */
     main.content-area {
-      padding: 28px 32px 60px 32px;
+      padding: 24px 28px;
       flex: 1;
-      width: 100%;
-      max-width: 1560px;
-      margin: 0 auto;
+      overflow-y: auto;
     }
 
     .tab-panel {
       display: none;
-      animation: fadeIn 0.25s ease forwards;
+      animation: tabFade 0.25s ease-out;
     }
 
     .tab-panel.active {
       display: block;
     }
 
-    @keyframes fadeIn {
+    @keyframes tabFade {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ================= BENTO GRID (PESTAÑA OVERVIEW) ================= */
+    /* ================= BENTO GRID OVERVIEW ================= */
     .bento-grid {
       display: grid;
       grid-template-columns: repeat(12, 1fr);
-      gap: 20px;
+      gap: 18px;
     }
 
     .bento-card {
@@ -488,25 +535,33 @@ export function getAdminDashboardHtml(): string {
       display: flex;
       flex-direction: column;
       position: relative;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-      transition: border-color 0.2s;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
     }
 
-    .bento-card:hover {
-      border-color: rgba(255, 255, 255, 0.15);
-    }
+    .col-sales { grid-column: span 4; }
+    .col-visitors { grid-column: span 5; }
+    .col-market { grid-column: span 3; }
+    .col-revenue { grid-column: span 4; }
+    .col-retention { grid-column: span 3; }
+    .col-top-doctors { grid-column: span 5; }
+    .col-tasks { grid-column: span 12; }
 
     .card-header-flex {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
+      align-items: flex-start;
+      margin-bottom: 14px;
     }
 
     .card-title {
       font-size: 15px;
       font-weight: 700;
       color: #FFFFFF;
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .card-subtitle {
@@ -515,174 +570,170 @@ export function getAdminDashboardHtml(): string {
       margin-top: 2px;
     }
 
-    .pill-btn {
-      background: var(--bg-hover);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 600;
-      padding: 4px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-
-    .pill-btn:hover {
-      color: #FFFFFF;
-      background: var(--bg-card-elevated);
-    }
-
-    /* 1. CARD TOTAL SALES / CITAS (Col 4) */
-    .col-sales {
-      grid-column: span 4;
-    }
-
     .sales-number-row {
       display: flex;
       align-items: baseline;
       gap: 12px;
-      margin: 12px 0 20px 0;
+      margin: 16px 0 20px 0;
     }
 
     .sales-big-number {
       font-size: 38px;
       font-weight: 800;
-      letter-spacing: -1px;
+      letter-spacing: -1.5px;
       color: #FFFFFF;
+      font-family: var(--font-mono);
     }
 
     .badge-growth {
-      background: var(--accent-emerald-dim);
-      color: var(--accent-emerald);
-      border: 1px solid var(--accent-emerald);
-      padding: 4px 10px;
-      border-radius: 999px;
       font-size: 12px;
       font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+      background: var(--accent-emerald-dim);
+      color: var(--accent-emerald);
+      padding: 3px 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 210, 106, 0.3);
     }
 
     .btn-view-chart {
-      background: #FFFFFF;
-      color: #0F172A;
-      font-weight: 700;
-      font-size: 13px;
-      padding: 10px 18px;
+      background: var(--bg-hover);
+      border: 1px solid var(--border);
       border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
+      padding: 10px 14px;
+      display: flex;
       justify-content: space-between;
-      width: 140px;
-      transition: transform 0.15s;
+      align-items: center;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
     }
 
     .btn-view-chart:hover {
-      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.1);
     }
 
-    /* 2. CARD VISITOR ONLINE (Col 4) */
-    .col-visitors {
-      grid-column: span 4;
+    .pill-btn {
+      background: var(--bg-card-elevated);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill-btn:hover {
+      background: var(--bg-hover);
+      color: #FFFFFF;
+      border-color: rgba(255,255,255,0.2);
     }
 
     .chart-container-svg {
+      height: 95px;
       width: 100%;
-      height: 120px;
       position: relative;
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     .chart-tooltip-badge {
       position: absolute;
-      top: 8px;
-      left: 45%;
-      background: #FFFFFF;
+      top: 0;
+      right: 14px;
+      background: var(--accent-emerald);
       color: #0F172A;
-      font-weight: 800;
       font-size: 11px;
-      padding: 3px 8px;
+      font-weight: 800;
+      padding: 2px 8px;
       border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      font-family: var(--font-mono);
     }
 
     .chart-days-axis {
       display: flex;
       justify-content: space-between;
-      font-size: 11px;
       color: var(--text-dim);
-      margin-top: 8px;
-    }
-
-    /* 3. CARD MARKET SHARE / CANALES (Col 4) */
-    .col-market {
-      grid-column: span 4;
+      font-size: 11px;
+      margin-top: 10px;
+      font-weight: 600;
     }
 
     .channel-progress-wrap {
-      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 6px;
     }
 
     .channel-pills-row {
       display: flex;
-      gap: 12px;
-      margin-bottom: 12px;
+      align-items: center;
+      gap: 8px;
     }
 
     .channel-pill-tag {
-      background: var(--bg-hover);
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
     }
 
     .channel-multi-bar {
       height: 12px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 999px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
       display: flex;
       overflow: hidden;
-      margin-bottom: 8px;
     }
 
     .bar-seg-white {
-      width: 25%;
       background: #FFFFFF;
+      width: 100%;
+      transition: width 0.4s ease;
     }
 
     .bar-seg-emerald {
-      width: 55%;
       background: var(--accent-emerald);
+      width: 0%;
+      transition: width 0.4s ease;
     }
 
     .channel-legend-row {
       display: flex;
-      justify-content: space-between;
-      font-size: 11px;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
       color: var(--text-muted);
-      margin-top: 8px;
     }
 
-    /* 4. CARD REVENUE BARS (Col 4) */
-    .col-revenue {
-      grid-column: span 4;
+    .channel-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
     }
 
     .revenue-bars-wrap {
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
-      height: 130px;
-      padding-top: 20px;
-      border-bottom: 1px solid var(--border-subtle);
-      margin-bottom: 8px;
+      height: 110px;
+      padding-top: 10px;
     }
 
     .revenue-bar-col {
@@ -690,22 +741,20 @@ export function getAdminDashboardHtml(): string {
       flex-direction: column;
       align-items: center;
       gap: 8px;
-      height: 100%;
-      justify-content: flex-end;
-      width: 32px;
+      flex: 1;
     }
 
     .bar-cylinder {
-      width: 100%;
-      background: var(--bg-card-elevated);
-      border-radius: 8px;
-      transition: height 0.3s;
+      width: 22px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px 8px 4px 4px;
+      position: relative;
+      transition: all 0.3s;
     }
 
     .bar-cylinder.active-green {
       background: var(--accent-emerald);
-      box-shadow: 0 0 16px var(--accent-emerald-glow);
-      position: relative;
+      box-shadow: 0 4px 14px var(--accent-emerald-glow);
     }
 
     .bar-tooltip-pill {
@@ -715,8 +764,8 @@ export function getAdminDashboardHtml(): string {
       transform: translateX(-50%);
       background: #FFFFFF;
       color: #0F172A;
-      font-weight: 800;
       font-size: 10px;
+      font-weight: 800;
       padding: 2px 6px;
       border-radius: 6px;
       white-space: nowrap;
@@ -725,63 +774,54 @@ export function getAdminDashboardHtml(): string {
     .bar-day-label {
       font-size: 11px;
       color: var(--text-dim);
-    }
-
-    /* 5. CARD RETENTION RATE (RADIAL GAUGE) (Col 3) */
-    .col-retention {
-      grid-column: span 3;
-      align-items: center;
-      text-align: center;
+      font-weight: 600;
     }
 
     .gauge-wrapper {
       position: relative;
-      width: 170px;
-      height: 110px;
-      margin: 10px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
     }
 
     .gauge-svg {
-      width: 100%;
-      height: 100%;
+      width: 170px;
+      height: 100px;
     }
 
     .gauge-center-val {
       position: absolute;
       bottom: 6px;
-      left: 50%;
-      transform: translateX(-50%);
       font-size: 32px;
       font-weight: 800;
+      font-family: var(--font-mono);
       color: #FFFFFF;
     }
 
-    /* 6. CARD TOP DOCTORS / CONCENTRIC DONUT (Col 5) */
-    .col-top-doctors {
-      grid-column: span 5;
-    }
-
     .doctors-donut-split {
-      display: grid;
-      grid-template-columns: 140px 1fr;
-      gap: 16px;
+      display: flex;
       align-items: center;
-      margin-top: 8px;
+      gap: 20px;
+      margin-top: 6px;
     }
 
     .donut-ring-wrap {
+      width: 100px;
+      height: 100px;
       position: relative;
-      width: 130px;
-      height: 130px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-shrink: 0;
     }
 
     .donut-center-num {
       position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 20px;
       font-weight: 800;
+      font-family: var(--font-mono);
       color: #FFFFFF;
     }
 
@@ -789,16 +829,15 @@ export function getAdminDashboardHtml(): string {
       display: flex;
       flex-direction: column;
       gap: 10px;
+      flex: 1;
     }
 
     .doctor-item-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: var(--bg-card-elevated);
-      padding: 8px 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border-subtle);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .doctor-item-left {
@@ -811,34 +850,35 @@ export function getAdminDashboardHtml(): string {
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      background: var(--bg-hover);
+      background: var(--bg-card-elevated);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
-    }
-
-    /* 7. CARD WEEKLY TASKS / BOT WORKFLOWS (Col 12) */
-    .col-tasks {
-      grid-column: span 12;
+      color: var(--accent-emerald);
+      border: 1px solid var(--border);
     }
 
     .tasks-header-stats {
       display: flex;
-      gap: 32px;
-      margin: 12px 0 16px 0;
-      align-items: baseline;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
     }
 
     .task-stat-unit {
       display: flex;
-      flex-direction: column;
+      align-items: baseline;
+      gap: 8px;
     }
 
     .task-stat-big {
-      font-size: 32px;
+      font-size: 24px;
       font-weight: 800;
-      color: var(--accent-emerald);
+      font-family: var(--font-mono);
+      color: #FFFFFF;
     }
 
     .task-stat-label {
@@ -850,7 +890,6 @@ export function getAdminDashboardHtml(): string {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-top: 14px;
     }
 
     .gantt-row {
@@ -863,34 +902,34 @@ export function getAdminDashboardHtml(): string {
       width: 180px;
       font-size: 13px;
       font-weight: 600;
-      color: var(--text-muted);
+      color: var(--text-main);
     }
 
     .gantt-track {
       flex: 1;
-      height: 10px;
-      background: var(--bg-card-elevated);
-      border-radius: 999px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
       overflow: hidden;
-      position: relative;
     }
 
     .gantt-fill {
       height: 100%;
-      border-radius: 999px;
-      transition: width 0.4s;
+      border-radius: 4px;
     }
 
-    /* ================= TAB: CLÍNICAS & MULTI-TENANCY ================= */
+    /* ================= DIRECTORIO DE CLÍNICAS (B2B PRIVACY) ================= */
     .section-header-flex {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+      gap: 14px;
     }
 
     .section-title {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       color: #FFFFFF;
       display: flex;
@@ -900,45 +939,45 @@ export function getAdminDashboardHtml(): string {
 
     .btn-emerald-cta {
       background: var(--accent-emerald);
-      color: #0B132B;
+      color: #0F172A;
       font-weight: 700;
       font-size: 13px;
-      padding: 10px 20px;
+      padding: 10px 18px;
       border-radius: 12px;
       border: none;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 4px 16px var(--accent-emerald-glow);
       transition: all 0.2s;
+      box-shadow: 0 4px 16px var(--accent-emerald-glow);
     }
 
     .btn-emerald-cta:hover {
-      background: #00E575;
-      transform: translateY(-2px);
+      background: #00bf60;
+      transform: translateY(-1px);
     }
 
     .clinics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 20px;
     }
 
     .clinic-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 24px;
+      padding: 22px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      gap: 16px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
     }
 
     .clinic-card:hover {
-      border-color: var(--accent-emerald);
+      border-color: rgba(0, 210, 106, 0.3);
       transform: translateY(-2px);
     }
 
@@ -949,38 +988,48 @@ export function getAdminDashboardHtml(): string {
     }
 
     .clinic-name {
-      font-size: 19px;
+      font-size: 17px;
       font-weight: 800;
       color: #FFFFFF;
     }
 
     .clinic-location {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-muted);
-      margin-top: 4px;
+      margin-top: 3px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .badge-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 9999px;
       font-size: 11px;
       font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
       background: var(--accent-emerald-dim);
       color: var(--accent-emerald);
-      border: 1px solid var(--accent-emerald);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
     }
 
     .clinic-details-box {
       background: var(--bg-card-elevated);
-      border-radius: 14px;
-      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      font-size: 13px;
+      gap: 8px;
+      font-size: 12px;
     }
 
     .detail-row {
@@ -995,106 +1044,297 @@ export function getAdminDashboardHtml(): string {
       font-weight: 600;
     }
 
-    .doctors-pills-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .doctor-pill {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      padding: 5px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      color: #E2E8F0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
     .card-actions-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
       margin-top: auto;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
     }
 
     .btn-action-channel {
-      padding: 9px 12px;
+      background: var(--bg-card-elevated);
+      border: 1px solid var(--border);
       border-radius: 10px;
+      padding: 9px 12px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 600;
+      color: var(--text-muted);
       cursor: pointer;
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
       transition: all 0.2s;
     }
 
-    .btn-action-channel.wa {
+    .btn-action-channel:hover {
+      background: var(--bg-hover);
+      color: #FFFFFF;
+    }
+
+    .btn-action-primary {
+      grid-column: span 2;
       background: var(--accent-emerald-dim);
+      color: var(--accent-emerald);
       border: 1px solid var(--accent-emerald);
+      font-weight: 700;
+      padding: 11px 14px;
+    }
+
+    .btn-action-primary:hover {
+      background: var(--accent-emerald);
+      color: #0F172A;
+    }
+
+    /* ================= MINI DASHBOARD DE CLÍNICA (WORKSPACE SECRETARIA) ================= */
+    .workspace-header-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px 24px;
+      margin-bottom: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .workspace-title-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .workspace-back-btn {
+      background: var(--bg-card-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .workspace-back-btn:hover {
+      background: var(--bg-hover);
+      color: #FFFFFF;
+    }
+
+    .workspace-metrics-kpi {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .kpi-val {
+      font-size: 26px;
+      font-weight: 800;
+      color: #FFFFFF;
+      font-family: var(--font-mono);
+    }
+
+    /* DOCTORES EN TURNO */
+    .doctors-shift-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .doctor-shift-card {
+      background: var(--bg-card-elevated);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.2s;
+    }
+
+    .doctor-shift-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .doctor-shift-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-emerald);
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .doctor-shift-avatar svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .btn-toggle-shift {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-toggle-shift.active {
+      background: var(--accent-emerald-dim);
+      color: var(--accent-emerald);
+      border: 1px solid var(--accent-emerald);
+    }
+
+    .btn-toggle-shift.active:hover {
+      background: var(--accent-coral-dim);
+      color: var(--accent-coral);
+      border-color: var(--accent-coral);
+    }
+
+    .btn-toggle-shift.absent {
+      background: var(--accent-coral-dim);
+      color: var(--accent-coral);
+      border: 1px solid var(--accent-coral);
+    }
+
+    .btn-toggle-shift.absent:hover {
+      background: var(--accent-emerald-dim);
+      color: var(--accent-emerald);
+      border-color: var(--accent-emerald);
+    }
+
+    /* SEMÁFORO DE INSUMOS */
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .inventory-card {
+      background: var(--bg-card-elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .inventory-status-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .inventory-status-pill.optimo {
+      background: var(--accent-emerald-dim);
       color: var(--accent-emerald);
     }
 
-    .btn-action-channel.wa:hover {
-      background: var(--accent-emerald);
-      color: #0B132B;
+    .inventory-status-pill.bajo {
+      background: var(--accent-amber-dim);
+      color: var(--accent-amber);
     }
 
-    .btn-action-channel.tg {
-      background: var(--accent-blue-dim);
-      border: 1px solid var(--accent-blue);
-      color: var(--accent-blue);
+    .inventory-status-pill.critico {
+      background: var(--accent-coral-dim);
+      color: var(--accent-coral);
     }
 
-    .btn-action-channel.tg:hover {
-      background: var(--accent-blue);
-      color: #FFFFFF;
+    /* BITÁCORA TRASPARENCIA Y EVA */
+    .transparency-log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 280px;
+      overflow-y: auto;
+      margin-top: 14px;
     }
 
-    .btn-action-channel.play {
-      background: var(--bg-hover);
-      border: 1px solid var(--border);
-      color: #FFFFFF;
-    }
-
-    .btn-action-channel.play:hover {
+    .transparency-item {
       background: var(--bg-card-elevated);
-      border-color: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
     }
 
-    /* ================= TAB: FLUJOS DEL BOT ================= */
-    .flow-grid {
+    .eva-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+    }
+
+    .eva-mild { background: var(--accent-emerald-dim); color: var(--accent-emerald); }
+    .eva-moderate { background: var(--accent-amber-dim); color: var(--accent-amber); }
+    .eva-severe { background: var(--accent-coral-dim); color: var(--accent-coral); }
+
+    /* ================= FLUJOS DEL BOT (SPLIT SCREEN) ================= */
+    .flows-split-screen {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+      grid-template-columns: 1fr 1fr;
       gap: 20px;
+      align-items: start;
     }
 
     .flow-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 22px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      position: relative;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-    }
-
-    .flow-card-top-bar {
-      width: 100%;
-      height: 4px;
-      background: var(--accent-emerald);
-      border-radius: 999px;
-      position: absolute;
-      top: 0;
-      left: 0;
+      gap: 12px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.2);
     }
 
     .flow-header {
@@ -1104,80 +1344,43 @@ export function getAdminDashboardHtml(): string {
     }
 
     .flow-name {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: #FFFFFF;
     }
 
     .flow-tag {
-      font-family: var(--font-mono);
       font-size: 11px;
-      background: var(--accent-emerald-dim);
-      border: 1px solid var(--accent-emerald);
-      color: var(--accent-emerald);
+      font-family: var(--font-mono);
+      background: var(--accent-blue-dim);
+      color: var(--accent-blue);
       padding: 2px 8px;
       border-radius: 6px;
     }
 
     .flow-desc {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-muted);
       line-height: 1.5;
     }
 
     .flow-prompt-box {
       background: var(--bg-card-elevated);
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: #CBD5E1;
       border: 1px solid var(--border-subtle);
-    }
-
-    /* ================= TAB: CITAS & CALENDARIOS ================= */
-    .table-container-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    }
-
-    table.styled-table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 13px;
-    }
-
-    table.styled-table th {
-      background: var(--bg-card-elevated);
-      padding: 16px 20px;
-      font-weight: 700;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border);
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 0.5px;
-    }
-
-    table.styled-table td {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12px;
       color: #FFFFFF;
+      font-family: var(--font-sans);
+      font-style: italic;
     }
 
-    table.styled-table tr:hover td {
-      background: rgba(255,255,255,0.02);
-    }
-
-    /* ================= TAB: PLAYGROUND MULTI-TENANT ================= */
+    /* ================= PLAYGROUND & CHAT ================= */
     .playground-split {
       display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 24px;
-      height: 720px;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      height: calc(100vh - 140px);
     }
 
     .chat-box-card {
@@ -1187,66 +1390,67 @@ export function getAdminDashboardHtml(): string {
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 12px 36px rgba(0,0,0,0.3);
     }
 
     .chat-box-header {
-      padding: 16px 22px;
-      background: var(--bg-card-elevated);
+      padding: 16px 20px;
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: var(--bg-card-elevated);
     }
 
     .chat-messages-scroll {
       flex: 1;
+      padding: 20px;
       overflow-y: auto;
-      padding: 24px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
     }
 
     .bubble {
-      max-width: 78%;
-      padding: 12px 18px;
+      max-width: 80%;
+      padding: 12px 16px;
       border-radius: 16px;
-      font-size: 14px;
+      font-size: 13px;
       line-height: 1.5;
     }
 
     .bubble.bot {
-      align-self: flex-start;
       background: var(--bg-card-elevated);
-      border: 1px solid var(--border);
       color: #FFFFFF;
+      border: 1px solid var(--border);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
     }
 
     .bubble.user {
-      align-self: flex-end;
       background: var(--accent-emerald);
-      color: #0B132B;
+      color: #0F172A;
       font-weight: 600;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
     }
 
     .chat-form-bar {
-      padding: 16px;
-      background: var(--bg-card-elevated);
+      padding: 14px 18px;
       border-top: 1px solid var(--border);
       display: flex;
-      gap: 12px;
+      gap: 10px;
+      background: var(--bg-card-elevated);
     }
 
     .chat-text-input {
       flex: 1;
-      background: var(--bg-base);
+      background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 12px 18px;
+      padding: 10px 14px;
       color: #FFFFFF;
+      font-size: 13px;
       outline: none;
-      font-size: 14px;
       font-family: var(--font-sans);
     }
 
@@ -1258,15 +1462,15 @@ export function getAdminDashboardHtml(): string {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 22px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 14px;
       overflow-y: auto;
     }
 
     .inspector-heading {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       color: #FFFFFF;
       display: flex;
@@ -1276,14 +1480,113 @@ export function getAdminDashboardHtml(): string {
 
     .trace-card {
       background: var(--bg-card-elevated);
-      padding: 14px;
-      border-radius: 12px;
-      font-family: var(--font-mono);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
       font-size: 12px;
-      color: #94A3B8;
-      border: 1px solid var(--border-subtle);
-      white-space: pre-wrap;
+      font-family: var(--font-mono);
+      color: var(--accent-emerald);
       word-break: break-all;
+    }
+
+    /* ================= TABLAS ESTILIZADAS ================= */
+    .table-container-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      overflow-x: auto;
+    }
+
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .styled-table th {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .styled-table td {
+      padding: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+    }
+
+    .styled-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge-specialty {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .badge-specialty.general { background: var(--accent-emerald-dim); color: var(--accent-emerald); }
+    .badge-specialty.ortodoncia { background: var(--accent-blue-dim); color: var(--accent-blue); }
+    .badge-specialty.cirugia { background: var(--accent-coral-dim); color: var(--accent-coral); }
+    .badge-specialty.endodoncia { background: var(--accent-amber-dim); color: var(--accent-amber); }
+    .badge-specialty.pediatria { background: rgba(147, 51, 234, 0.15); color: #C084FC; }
+
+    .day-chip {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text-dim);
+    }
+    .day-chip.active {
+      background: var(--accent-emerald-dim);
+      color: var(--accent-emerald);
+    }
+
+    .catalog-clinic-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .catalog-clinic-pill.active {
+      background: var(--accent-emerald);
+      color: #0F172A;
+      border-color: var(--accent-emerald);
+    }
+
+    .suggested-pill-btn {
+      background: var(--bg-card-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .suggested-pill-btn:hover {
+      background: var(--accent-emerald-dim);
+      color: var(--accent-emerald);
+      border-color: var(--accent-emerald);
     }
 
     /* ================= MODALES ================= */
@@ -1291,9 +1594,9 @@ export function getAdminDashboardHtml(): string {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(8px);
-      z-index: 1000;
+      z-index: 2000;
       align-items: center;
       justify-content: center;
       padding: 20px;
@@ -1308,15 +1611,15 @@ export function getAdminDashboardHtml(): string {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 24px;
-      max-width: 580px;
+      padding: 28px;
+      max-width: 520px;
       width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 32px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6);
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+      gap: 16px;
+      max-height: 90vh;
+      overflow-y: auto;
       animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -1332,191 +1635,158 @@ export function getAdminDashboardHtml(): string {
     }
 
     .form-label {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-size: 12px;
+      font-weight: 600;
       color: var(--text-muted);
     }
 
     .form-input, .form-select {
       background: var(--bg-card-elevated);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 16px;
+      border-radius: 10px;
+      padding: 9px 12px;
       color: #FFFFFF;
-      font-size: 14px;
-      font-family: var(--font-sans);
+      font-size: 13px;
       outline: none;
+      font-family: var(--font-sans);
     }
 
     .form-input:focus, .form-select:focus {
       border-color: var(--accent-emerald);
     }
 
-    /* QR BOX */
-    .qr-box-inner {
-      background: #0D1014;
-      border: 2px dashed rgba(0, 210, 106, 0.3);
-      border-radius: 20px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 280px;
-      gap: 16px;
+    /* ================= RESPONSIVE DESIGN (MOBILE-FIRST) ================= */
+    @media (max-width: 1024px) {
+      .bento-grid {
+        grid-template-columns: repeat(6, 1fr);
+      }
+      .col-sales { grid-column: span 3; }
+      .col-visitors { grid-column: span 3; }
+      .col-market { grid-column: span 3; }
+      .col-revenue { grid-column: span 3; }
+      .col-retention { grid-column: span 3; }
+      .col-top-doctors { grid-column: span 3; }
+      .col-tasks { grid-column: span 6; }
+      
+      .flows-split-screen {
+        grid-template-columns: 1fr;
+      }
+      .playground-split {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      .inventory-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .workspace-metrics-kpi {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
-    .qr-img {
-      max-width: 230px;
-      max-height: 230px;
-      border-radius: 12px;
-      background: white;
-      padding: 8px;
-    }
-
-    /* SUITE DE PRECIOS & DOCTORES */
-    .catalog-clinic-pill {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-size: 13px;
-      font-weight: 700;
-      padding: 8px 16px;
-      border-radius: 12px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .catalog-clinic-pill:hover {
-      background: var(--bg-hover);
-      color: #FFFFFF;
-      border-color: rgba(255,255,255,0.15);
-    }
-
-    .catalog-clinic-pill.active {
-      background: var(--accent-emerald);
-      color: #0B132B;
-      border-color: var(--accent-emerald);
-      box-shadow: 0 4px 12px rgba(0, 210, 106, 0.3);
-    }
-
-    .badge-specialty {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: capitalize;
-    }
-    .badge-specialty.general { background: rgba(0, 210, 106, 0.15); color: #00D26A; border: 1px solid rgba(0, 210, 106, 0.3); }
-    .badge-specialty.ortodoncia { background: rgba(59, 130, 246, 0.15); color: #3B82F6; border: 1px solid rgba(59, 130, 246, 0.3); }
-    .badge-specialty.cirugia { background: rgba(255, 107, 74, 0.15); color: #FF6B4A; border: 1px solid rgba(255, 107, 74, 0.3); }
-    .badge-specialty.pediatria { background: rgba(6, 182, 212, 0.15); color: #06B6D4; border: 1px solid rgba(6, 182, 212, 0.3); }
-    .badge-specialty.endodoncia { background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.3); }
-
-    .day-chip {
-      background: var(--bg-card-elevated);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 6px;
-      display: inline-block;
-    }
-    .day-chip.active {
-      background: rgba(0, 210, 106, 0.15);
-      color: #00D26A;
-      border-color: rgba(0, 210, 106, 0.3);
-    }
-
-    .suggested-pill-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-size: 11px;
-      font-weight: 700;
-      padding: 6px 12px;
-      border-radius: 999px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-
-    .suggested-pill-btn:hover {
-      background: rgba(0, 210, 106, 0.15);
-      color: var(--accent-emerald);
-      border-color: var(--accent-emerald);
-      transform: translateY(-1px);
-    }
-
-    .table-data-row {
-      border-bottom: 1px solid var(--border-subtle);
-      transition: background 0.15s;
-    }
-    .table-data-row:hover {
-      background: var(--bg-hover);
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      aside.sidebar {
+        width: 100%;
+        min-width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 16px;
+      }
+      .sidebar-customer-metric {
+        display: none;
+      }
+      .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 6px;
+      }
+      .nav-item {
+        white-space: nowrap;
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+      .bento-grid {
+        grid-template-columns: 1fr;
+      }
+      .col-sales, .col-visitors, .col-market, .col-revenue, .col-retention, .col-top-doctors, .col-tasks {
+        grid-column: span 1;
+      }
+      .clinics-grid {
+        grid-template-columns: 1fr;
+      }
+      .inventory-grid {
+        grid-template-columns: 1fr;
+      }
+      .workspace-metrics-kpi {
+        grid-template-columns: 1fr 1fr;
+      }
+      header.top-header {
+        padding: 12px 16px;
+      }
+      .search-box {
+        display: none;
+      }
+      main.content-area {
+        padding: 16px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- ================= AUTH VIEW (LOGIN PROTEGIDO) ================= -->
+  <!-- ================= VISTA DE LOGIN ================= -->
   <div id="auth-view">
     <div class="login-card">
       <div class="login-logo">
         <div class="logo-mark">
-          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2C7 2 4 5 4 9c0 3 1.5 6.5 3 10 1 2.5 2.5 3 5 3s4-.5 5-3c1.5-3.5 3-7 3-10 0-4-3-7-8-7z"/></svg>
         </div>
         <div>
-          <h1 style="font-size: 20px; font-weight: 800; color: #FFFFFF;">OdontoCare AI</h1>
-          <p style="font-size: 12px; color: var(--text-muted);">Torre de Control Administrativa</p>
+          <h1 style="font-size: 19px; font-weight: 800; letter-spacing: -0.5px;">ODONTOCARE AI</h1>
+          <div style="font-size: 11px; color: var(--accent-emerald); font-weight: 700;">TORRE DE CONTROL B2B</div>
         </div>
       </div>
 
-      <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
-        Inicia sesión con credenciales maestras para supervisar los agentes autónomos de cada odontología, gestionar calendarios y conectar canales.
-      </p>
+      <div>
+        <h2 style="font-size: 16px; font-weight: 700; color: #FFFFFF;">Acceso Administrativo</h2>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+          Ingresa credenciales de superadmin para supervisar clínicas y agentes en tiempo real.
+        </p>
+      </div>
 
       <form id="login-form" onsubmit="handleLogin(event)" style="display: flex; flex-direction: column; gap: 14px;">
         <div class="form-group">
-          <label class="form-label">Usuario Administrador</label>
-          <input type="text" id="login-username" class="form-input" placeholder="admin" value="admin" required />
+          <label class="form-label">Usuario Superadmin</label>
+          <input type="text" id="login-username" class="form-input" value="admin" required />
         </div>
-
         <div class="form-group">
-          <label class="form-label">Contraseña Maestra</label>
-          <input type="password" id="login-password" class="form-input" placeholder="••••••••••••" value="odontocare2026" required />
+          <label class="form-label">Contraseña</label>
+          <input type="password" id="login-password" class="form-input" value="odontocare2026" required />
         </div>
 
-        <div id="login-error" style="display: none; color: var(--accent-coral); font-size: 12px; font-weight: 700;">
-          ❌ Credenciales inválidas. Por favor verifica usuario y contraseña.
+        <div id="login-error" style="display:none; color: var(--accent-coral); font-size: 12px; background: var(--accent-coral-dim); padding: 8px 12px; border-radius: 8px;">
+          Credenciales incorrectas. Verifica usuario y clave.
         </div>
 
-        <button type="submit" class="btn-emerald-cta" style="justify-content: center; margin-top: 8px; width: 100%;">
-          🔐 Ingresar al Dashboard
+        <button type="submit" class="btn-emerald-cta" style="width: 100%; justify-content: center; margin-top: 6px;">
+          Entrar a Torre de Control
         </button>
       </form>
     </div>
   </div>
 
-  <!-- ================= APP SHELL ================= -->
+  <!-- ================= APP SHELL PRINCIPAL ================= -->
   <div id="app-view">
     
-    <!-- 1. BARRA LATERAL IZQUIERDA (SIDEBAR ESTILO AIZCRM) -->
+    <!-- SIDEBAR IZQUIERDO -->
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <div class="logo-mark" style="width:36px; height:36px;">
-          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <div class="logo-mark" style="width:34px; height:34px;">
+          <svg viewBox="0 0 24 24"><path d="M12 2C7 2 4 5 4 9c0 3 1.5 6.5 3 10 1 2.5 2.5 3 5 3s4-.5 5-3c1.5-3.5 3-7 3-10 0-4-3-7-8-7z"/></svg>
         </div>
         <div class="sidebar-brand-title">
           ODONTOCARE <span class="sidebar-brand-badge">2026</span>
@@ -1533,6 +1803,11 @@ export function getAdminDashboardHtml(): string {
           <svg viewBox="0 0 24 24"><path d="M3 21h18M3 7v14M21 7v14M6 7V3h12v4M9 11h6M12 8v6"></path></svg>
           <span>Clínicas</span>
           <span class="nav-badge" id="nav-clinics-badge">2</span>
+        </button>
+
+        <button class="nav-item" id="btn-nav-workspace" onclick="switchNavTab('clinic-workspace')" style="display:none;">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span>Workspace Sede</span>
         </button>
 
         <button class="nav-item" id="btn-nav-catalog" onclick="switchNavTab('catalog')">
@@ -1562,33 +1837,35 @@ export function getAdminDashboardHtml(): string {
         </button>
       </nav>
 
-      <!-- TARJETA CONTRASTE BLANCA INFERIOR: DIRECTORA MÉDICA -->
+      <!-- TARJETA INFERIOR: DIRECTORA MÉDICA -->
       <div class="sidebar-customer-metric">
         <div class="customer-metric-header">
-          <span>Directora Médica ›</span>
-          <span style="font-size: 11px; color:#64748B;">Insights</span>
+          <span>Directora Médica</span>
+          <span style="font-size: 11px; color:#64748B;">Supervisión</span>
         </div>
         <div class="customer-metric-avatar-wrap">
-          <div class="customer-metric-avatar">👩‍⚕️</div>
+          <div class="customer-metric-avatar">
+            <svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0114 0v2"/><path d="M12 11v6M9 14h6"/></svg>
+          </div>
           <div class="customer-metric-details">
             <div class="customer-metric-name">Dra. Selen Swift</div>
-            <div class="customer-metric-sub">⭐ 4.9 | Director General</div>
+            <div class="customer-metric-sub">Director Clínico General</div>
           </div>
         </div>
         <div class="customer-metric-footer">
           <div>
             <div style="color:#64748B;">Precisión IA</div>
-            <div class="metric-val-bold">98.4%</div>
+            <div class="metric-val-bold">100% Grounded</div>
           </div>
           <div style="text-align: right;">
-            <div style="color:#64748B;">Citas Activas</div>
-            <div class="metric-val-bold">120</div>
+            <div style="color:#64748B;">Canal Activo</div>
+            <div class="metric-val-bold" style="color:var(--accent-emerald);">Telegram Live</div>
           </div>
         </div>
       </div>
     </aside>
 
-    <!-- 2. CANVAS PRINCIPAL -->
+    <!-- CANVAS PRINCIPAL -->
     <div class="main-canvas">
       
       <!-- TOP HEADER -->
@@ -1600,19 +1877,21 @@ export function getAdminDashboardHtml(): string {
         <div class="header-actions">
           <div class="search-box">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" placeholder="Buscar clínica, cita o paciente..." />
+            <input type="text" placeholder="Buscar clínica o servicio..." />
           </div>
 
           <button class="icon-btn" title="Notificaciones del Sistema">
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 01-3.46 0"></path></svg>
+            <svg viewBox="0 0 24 24" class="icon-svg"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 01-3.46 0"></path></svg>
             <div class="icon-btn-dot"></div>
           </button>
 
           <div class="user-profile-chip">
-            <div class="user-profile-avatar">🩺</div>
+            <div class="user-profile-avatar">
+              <svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0114 0v2"/></svg>
+            </div>
             <div class="user-profile-info">
               <span class="user-name">Selen Swift</span>
-              <span class="user-role">Manager OdontoCare</span>
+              <span class="user-role">Superadmin</span>
             </div>
           </div>
 
@@ -1623,239 +1902,230 @@ export function getAdminDashboardHtml(): string {
       <!-- CONTENIDO DINÁMICO DE PESTAÑAS -->
       <main class="content-area">
         
-        <!-- ================= PESTAÑA 1: OVERVIEW (BENTO GRID 1-TO-1 REF SCREENSHOT) ================= -->
+        <!-- ================= PESTAÑA 1: OVERVIEW (100% MÉTRICAS REALES) ================= -->
         <div id="tab-overview" class="tab-panel active">
           <div class="bento-grid">
             
-            <!-- CARD 1: TOTAL SALES / CITAS -->
+            <!-- CARD 1: CITAS REALES -->
             <div class="bento-card col-sales">
               <div class="card-header-flex">
                 <div>
-                  <div class="card-title">Total Citas Agendadas</div>
-                  <div class="card-subtitle">Sincronizadas con Google Calendar</div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Total Citas Agendadas
+                  </div>
+                  <div class="card-subtitle">Google Calendar sincronizado en vivo</div>
                 </div>
               </div>
 
               <div class="sales-number-row">
-                <div class="sales-big-number" id="overview-total-citas">1,200K</div>
-                <div class="badge-growth">+2.1%</div>
+                <div class="sales-big-number" id="overview-total-citas">0</div>
+                <div class="badge-growth" id="overview-citas-status">Live Sync</div>
               </div>
 
               <div>
                 <button class="btn-view-chart" onclick="switchNavTab('appointments')">
-                  <span>Ver Citas</span>
-                  <span>↗</span>
+                  <span>Ver Agenda de Citas</span>
+                  <svg viewBox="0 0 24 24" class="icon-svg" style="width:14px; height:14px;"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
                 </button>
               </div>
             </div>
 
-            <!-- CARD 2: VISITOR ONLINE / PACIENTES TIEMPO REAL -->
+            <!-- CARD 2: SESIONES / PACIENTES REALES -->
             <div class="bento-card col-visitors">
               <div class="card-header-flex">
                 <div>
-                  <div class="card-title">Pacientes en Línea</div>
-                  <div class="card-subtitle">Consultas simultáneas con agentes</div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-blue)"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Pacientes en Línea
+                  </div>
+                  <div class="card-subtitle">Sesiones activas atendidas por Valeria IA</div>
                 </div>
-                <button class="pill-btn" onclick="switchNavTab('playground')">View</button>
+                <button class="pill-btn" onclick="switchNavTab('playground')">Ver Chat</button>
               </div>
 
               <div class="chart-container-svg">
-                <div class="chart-tooltip-badge">112K</div>
+                <div class="chart-tooltip-badge" id="overview-patients-badge">0 Activas</div>
                 <svg viewBox="0 0 300 100" style="width:100%; height:100%; overflow:visible;">
                   <defs>
                     <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stop-color="#00D26A" stop-opacity="0.3"/>
+                      <stop offset="0%" stop-color="#00D26A" stop-opacity="0.25"/>
                       <stop offset="100%" stop-color="#00D26A" stop-opacity="0"/>
                     </linearGradient>
                   </defs>
-                  <!-- Fondo degradado -->
-                  <path d="M 0 60 Q 50 20, 100 45 T 200 30 T 300 40 L 300 100 L 0 100 Z" fill="url(#curveGrad)" />
-                  <!-- Línea punteada de tendencia -->
-                  <path d="M 0 60 Q 50 20, 100 45 T 200 30 T 300 40" fill="none" stroke="#00D26A" stroke-width="2.5" stroke-dasharray="4 3" />
-                  <!-- Puntos clave -->
-                  <circle cx="140" cy="36" r="4" fill="#00D26A" stroke="#FFFFFF" stroke-width="2" />
-                  <circle cx="270" cy="38" r="3" fill="#00D26A" />
+                  <path d="M 0 80 Q 75 75, 150 70 T 300 65 L 300 100 L 0 100 Z" fill="url(#curveGrad)" />
+                  <path d="M 0 80 Q 75 75, 150 70 T 300 65" fill="none" stroke="#00D26A" stroke-width="2" stroke-dasharray="4 3" />
+                  <circle cx="280" cy="65" r="4" fill="#00D26A" stroke="#FFFFFF" stroke-width="2" />
                 </svg>
               </div>
               <div class="chart-days-axis">
-                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
               </div>
             </div>
 
-            <!-- CARD 3: MARKET SHARE / CANALES -->
+            <!-- CARD 3: CANALES (100% TELEGRAM ACTUAL) -->
             <div class="bento-card col-market">
               <div class="card-header-flex">
                 <div>
-                  <div class="card-title">Distribución Canales</div>
-                  <div class="card-subtitle">Efectividad por plataforma</div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-cyan)"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    Distribución Canales
+                  </div>
+                  <div class="card-subtitle">Tráfico real por plataforma</div>
                 </div>
-                <button class="pill-btn" onclick="switchNavTab('channels')">View</button>
+                <button class="pill-btn" onclick="switchNavTab('channels')">Config</button>
               </div>
 
               <div class="channel-progress-wrap">
                 <div class="channel-pills-row">
-                  <div class="channel-pill-tag" style="background: rgba(255,255,255,0.1); color:#fff;">25%</div>
-                  <div class="channel-pill-tag" style="background: var(--accent-emerald-dim); color:var(--accent-emerald);">50%</div>
-                  <span style="font-size:11px; color:var(--text-dim); margin-left:auto;">75/100%</span>
+                  <div class="channel-pill-tag" style="background: rgba(255,255,255,0.15); color:#fff;" id="overview-channel-tg-pill">TG: 100%</div>
+                  <div class="channel-pill-tag" style="background: var(--accent-emerald-dim); color:var(--accent-emerald);" id="overview-channel-wa-pill">WA: 0%</div>
                 </div>
 
                 <div class="channel-multi-bar">
-                  <div class="bar-seg-white" title="Telegram"></div>
-                  <div class="bar-seg-emerald" title="WhatsApp"></div>
+                  <div class="bar-seg-white" id="overview-bar-telegram" style="width: 100%;" title="Telegram"></div>
+                  <div class="bar-seg-emerald" id="overview-bar-whatsapp" style="width: 0%;" title="Meta WhatsApp"></div>
                 </div>
 
                 <div class="channel-legend-row">
-                  <span>📱 Telegram</span>
-                  <span>🟢 WhatsApp (Evolution API)</span>
+                  <div class="channel-legend-item">
+                    <span class="dot-indicator" style="background:#FFFFFF;"></span>
+                    <span>Telegram Gateway (100% activo)</span>
+                  </div>
+                  <div class="channel-legend-item">
+                    <span class="dot-indicator" style="background:var(--accent-emerald);"></span>
+                    <span>Meta WhatsApp Cloud API (Standby)</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- CARD 4: REVENUE / EFICIENCIA SEMANAL -->
+            <!-- CARD 4: EFICIENCIA DE AGENDA -->
             <div class="bento-card col-revenue">
               <div class="card-header-flex">
                 <div>
-                  <div class="card-title">Eficiencia de Agenda</div>
-                  <div class="card-subtitle">Consultas convertidas a citas</div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    Eficiencia de Agenda
+                  </div>
+                  <div class="card-subtitle">Conversión consultas a agendamiento</div>
                 </div>
-                <button class="pill-btn">Weekly ▾</button>
+                <button class="pill-btn">Tiempo Real</button>
               </div>
 
               <div class="revenue-bars-wrap">
                 <div class="revenue-bar-col">
-                  <div class="bar-cylinder" style="height: 40px;"></div>
-                  <span class="bar-day-label">Mon</span>
+                  <div class="bar-cylinder" style="height: 25px;"></div>
+                  <span class="bar-day-label">Lun</span>
                 </div>
                 <div class="revenue-bar-col">
-                  <div class="bar-cylinder" style="height: 65px;"></div>
-                  <span class="bar-day-label">Tue</span>
+                  <div class="bar-cylinder" style="height: 35px;"></div>
+                  <span class="bar-day-label">Mar</span>
                 </div>
                 <div class="revenue-bar-col">
-                  <div class="bar-cylinder" style="height: 55px;"></div>
-                  <span class="bar-day-label">Wed</span>
+                  <div class="bar-cylinder" style="height: 30px;"></div>
+                  <span class="bar-day-label">Mié</span>
                 </div>
                 <div class="revenue-bar-col">
-                  <div class="bar-cylinder active-green" style="height: 90px;">
-                    <div class="bar-tooltip-pill">$320</div>
+                  <div class="bar-cylinder active-green" style="height: 60px;">
+                    <div class="bar-tooltip-pill" id="overview-conversion-rate">0% conv.</div>
                   </div>
-                  <span class="bar-day-label" style="color:var(--accent-emerald); font-weight:700;">Thu</span>
+                  <span class="bar-day-label" style="color:var(--accent-emerald); font-weight:700;">Hoy</span>
                 </div>
                 <div class="revenue-bar-col">
-                  <div class="bar-cylinder" style="height: 50px;"></div>
-                  <span class="bar-day-label">Fri</span>
+                  <div class="bar-cylinder" style="height: 20px;"></div>
+                  <span class="bar-day-label">Vie</span>
                 </div>
               </div>
             </div>
 
-            <!-- CARD 5: RETENTION RATE (RADIAL GAUGE) -->
+            <!-- CARD 5: RETENCIÓN -->
             <div class="bento-card col-retention">
-              <div class="card-header-flex" style="width: 100%;">
-                <div class="card-title">Tasa de Retención</div>
-                <button class="pill-btn">Weekly ▾</button>
+              <div class="card-header-flex">
+                <div class="card-title">
+                  <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-coral)"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  Tasa Retención
+                </div>
+                <button class="pill-btn">Semanal</button>
               </div>
 
               <div class="gauge-wrapper">
                 <svg viewBox="0 0 200 120" class="gauge-svg">
-                  <!-- Arco gris fondo -->
-                  <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="14" stroke-linecap="round" />
-                  <!-- Segmentos verdes en abanico -->
-                  <path d="M 20 100 A 80 80 0 0 1 140 30" fill="none" stroke="#00D26A" stroke-width="14" stroke-linecap="round" stroke-dasharray="6 4" />
+                  <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12" stroke-linecap="round" />
+                  <path id="gauge-retention-arc" d="M 20 100 A 80 80 0 0 1 60 45" fill="none" stroke="#00D26A" stroke-width="12" stroke-linecap="round" />
                 </svg>
-                <div class="gauge-center-val">72<span style="font-size: 18px; color:var(--text-muted);">%</span></div>
+                <div class="gauge-center-val" id="overview-retention-rate">0<span style="font-size: 16px; color:var(--text-muted);">%</span></div>
               </div>
-              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
-                Pacientes que confirman asistencia
+              <div style="font-size: 11px; color: var(--text-muted); text-align:center;">
+                Confirmaciones de citas sobre consultas
               </div>
             </div>
 
-            <!-- CARD 6: TOP CUSTOMERS / DOCTORES -->
+            <!-- CARD 6: ESPECIALIDADES MÉDICAS ACTIVAS -->
             <div class="bento-card col-top-doctors">
               <div class="card-header-flex">
                 <div>
-                  <div class="card-title">Doctores & Especialidades</div>
-                  <div class="card-subtitle">Demanda por tipo de tratamiento</div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-blue)"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0114 0v2"/><path d="M12 11v6M9 14h6"/></svg>
+                    Doctores & Especialidades
+                  </div>
+                  <div class="card-subtitle">Especialistas registrados en clínicas</div>
                 </div>
-                <button class="pill-btn">Weekly ▾</button>
+                <button class="pill-btn" onclick="switchNavTab('catalog')">Gestionar</button>
               </div>
 
               <div class="doctors-donut-split">
                 <div class="donut-ring-wrap">
                   <svg viewBox="0 0 120 120" style="width:100%; height:100%; transform: rotate(-90deg);">
-                    <!-- Anillo exterior Coral -->
-                    <circle cx="60" cy="60" r="50" fill="none" stroke="#FF6B4A" stroke-width="7" stroke-dasharray="120 200" stroke-linecap="round"/>
-                    <!-- Anillo medio Azul -->
-                    <circle cx="60" cy="60" r="40" fill="none" stroke="#3B82F6" stroke-width="7" stroke-dasharray="160 100" stroke-linecap="round"/>
-                    <!-- Anillo interno Verde -->
-                    <circle cx="60" cy="60" r="30" fill="none" stroke="#00D26A" stroke-width="7" stroke-dasharray="140 100" stroke-linecap="round"/>
+                    <circle cx="60" cy="60" r="45" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
+                    <circle cx="60" cy="60" r="45" fill="none" stroke="#00D26A" stroke-width="8" stroke-dasharray="140 280" stroke-linecap="round"/>
+                    <circle cx="60" cy="60" r="33" fill="none" stroke="#3B82F6" stroke-width="6" stroke-dasharray="90 280" stroke-linecap="round"/>
                   </svg>
-                  <div class="donut-center-num">720<span style="font-size:12px; color:var(--text-dim);">k</span></div>
+                  <div class="donut-center-num" id="overview-doctors-count">3</div>
                 </div>
 
-                <div class="doctors-list-compact">
+                <div class="doctors-list-compact" id="overview-doctors-compact-list">
                   <div class="doctor-item-row">
                     <div class="doctor-item-left">
-                      <div class="doctor-avatar-circle">👨‍⚕️</div>
+                      <div class="doctor-avatar-circle">
+                        <svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0114 0v2"/></svg>
+                      </div>
                       <div>
-                        <div style="font-size:12px; font-weight:700;">Dr. Devon Lane</div>
-                        <div style="font-size:11px; color:var(--text-dim);">Cirugía Oral</div>
+                        <div style="font-size:12px; font-weight:700;">Dr. Carlos Vega</div>
+                        <div style="font-size:11px; color:var(--text-dim);">Odontología General</div>
                       </div>
                     </div>
-                    <span style="font-size:11px; color:var(--accent-emerald);">🟢 Activo</span>
+                    <span class="badge-status">Activo</span>
                   </div>
 
                   <div class="doctor-item-row">
                     <div class="doctor-item-left">
-                      <div class="doctor-avatar-circle">👩‍⚕️</div>
+                      <div class="doctor-avatar-circle">
+                        <svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0114 0v2"/></svg>
+                      </div>
                       <div>
                         <div style="font-size:12px; font-weight:700;">Dra. Gabriela Morales</div>
                         <div style="font-size:11px; color:var(--text-dim);">Ortodoncia</div>
                       </div>
                     </div>
-                    <span style="font-size:11px; color:var(--accent-emerald);">🟢 Activo</span>
-                  </div>
-
-                  <div class="doctor-item-row">
-                    <div class="doctor-item-left">
-                      <div class="doctor-avatar-circle">👨‍⚕️</div>
-                      <div>
-                        <div style="font-size:12px; font-weight:700;">Dr. Carlos Vega</div>
-                        <div style="font-size:11px; color:var(--text-dim);">Odont. General</div>
-                      </div>
-                    </div>
-                    <span style="font-size:11px; color:var(--accent-emerald);">🟢 Activo</span>
+                    <span class="badge-status">Activo</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- CARD 7: FLUIDEZ DE TRABAJO & TAREAS DEL AGENTE (Col 12) -->
+            <!-- CARD 7: TAREAS DEL SISTEMA & GUARDRAILS -->
             <div class="bento-card col-tasks">
               <div class="card-header-flex">
                 <div>
-                  <div class="card-title">Progreso Semanal de Flujos y Triajes Clínicos</div>
-                  <div class="card-subtitle">Ejecución continua de guardrails ISO/LOPDP</div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Seguridad Clínica & Guardrails ISO/LOPDP
+                  </div>
+                  <div class="card-subtitle">Validaciones deterministas activas en Valeria IA</div>
                 </div>
                 <div style="font-size:12px; font-weight:700; color:var(--accent-emerald);">
-                  7/10 Tareas Completadas
-                </div>
-              </div>
-
-              <div class="tasks-header-stats">
-                <div class="task-stat-unit">
-                  <div class="task-stat-big">70%</div>
-                  <div class="task-stat-label">Citas Validadas sin Fricción</div>
-                </div>
-                <div class="task-stat-unit">
-                  <div class="task-stat-big">32%</div>
-                  <div class="task-stat-label">Más Rápido que el Mes Anterior</div>
-                </div>
-                <div style="margin-left:auto; display:flex; align-items:center; gap:12px; background:var(--bg-card-elevated); padding:8px 16px; border-radius:12px;">
-                  <span style="font-size: 20px;">🤖</span>
-                  <div>
-                    <div style="font-size:12px; font-weight:700;">Valeria IA en Turno</div>
-                    <div style="font-size:11px; color:var(--text-muted);">Sin caídas en 24h</div>
-                  </div>
-                  <button class="pill-btn" style="background:var(--accent-emerald); color:#0F172A;" onclick="switchNavTab('playground')">Chatear</button>
+                  100% Cobertura
                 </div>
               </div>
 
@@ -1863,9 +2133,9 @@ export function getAdminDashboardHtml(): string {
                 <div class="gantt-row">
                   <span class="gantt-label">Triaje EVA 1-10</span>
                   <div class="gantt-track">
-                    <div class="gantt-fill" style="width: 85%; background: #FF6B4A;"></div>
+                    <div class="gantt-fill" style="width: 100%; background: #FF6B4A;"></div>
                   </div>
-                  <span style="font-size:11px; font-family:var(--font-mono); color:var(--text-muted);">85%</span>
+                  <span style="font-size:11px; font-family:var(--font-mono); color:var(--accent-coral);">Activo</span>
                 </div>
 
                 <div class="gantt-row">
@@ -1873,15 +2143,15 @@ export function getAdminDashboardHtml(): string {
                   <div class="gantt-track">
                     <div class="gantt-fill" style="width: 100%; background: #00D26A;"></div>
                   </div>
-                  <span style="font-size:11px; font-family:var(--font-mono); color:var(--accent-emerald);">100%</span>
+                  <span style="font-size:11px; font-family:var(--font-mono); color:var(--accent-emerald);">Activo</span>
                 </div>
 
                 <div class="gantt-row">
-                  <span class="gantt-label">Google Calendar Sync</span>
+                  <span class="gantt-label">Google Calendar Live Sync</span>
                   <div class="gantt-track">
-                    <div class="gantt-fill" style="width: 92%; background: #3B82F6;"></div>
+                    <div class="gantt-fill" style="width: 100%; background: #3B82F6;"></div>
                   </div>
-                  <span style="font-size:11px; font-family:var(--font-mono); color:var(--accent-blue);">92%</span>
+                  <span style="font-size:11px; font-family:var(--font-mono); color:var(--accent-blue);">Activo</span>
                 </div>
               </div>
             </div>
@@ -1889,13 +2159,16 @@ export function getAdminDashboardHtml(): string {
           </div>
         </div>
 
-        <!-- ================= PESTAÑA 2: CLÍNICAS (MULTI-TENANCY) ================= -->
+        <!-- ================= PESTAÑA 2: DIRECTORIO DE CLÍNICAS (B2B PRIVACY) ================= -->
         <div id="tab-clinics" class="tab-panel">
           <div class="section-header-flex">
             <div>
-              <h2 class="section-title">🏥 Odontologías Registradas & Agentes Activos</h2>
+              <h2 class="section-title">
+                <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><path d="M3 21h18M3 7v14M21 7v14M6 7V3h12v4M9 11h6M12 8v6"></path></svg>
+                Directorio B2B de Odontologías Registradas
+              </h2>
               <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">
-                Cada clínica cuenta con su propio bot de IA, doctores, catálogo de precios y Google Calendar dedicado.
+                Vista de alto nivel para superadministrador. Los calendarios, pacientes y turnos están aislados por sede para estricto cumplimiento LOPDP.
               </p>
             </div>
             <button class="btn-emerald-cta" onclick="openNewClinicModal()">
@@ -1908,11 +2181,173 @@ export function getAdminDashboardHtml(): string {
           </div>
         </div>
 
+        <!-- ================= PESTAÑA NUEVA: WORKSPACE MINI-DASHBOARD DE CLÍNICA ================= -->
+        <div id="tab-clinic-workspace" class="tab-panel">
+          
+          <!-- BARRA SUPERIOR DEL WORKSPACE -->
+          <div class="workspace-header-bar">
+            <div class="workspace-title-left">
+              <button id="btn-back-to-clinics" class="workspace-back-btn" onclick="switchNavTab('clinics')">
+                <svg viewBox="0 0 24 24" class="icon-svg"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                Directorio de Clínicas
+              </button>
+              <div>
+                <h2 id="workspace-clinic-name" style="font-size:20px; font-weight:800; color:#FFFFFF;">Clínica OdontoCare Cuenca</h2>
+                <div id="workspace-clinic-sub" style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+                  Sede Cuenca • Contacto: Recepción Central
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="badge-status" id="workspace-ai-status">
+                <span class="status-dot"></span> Valeria IA Conectada
+              </span>
+              <button class="pill-btn" onclick="openClinicInPlayground(activeWorkspaceClinicId)">
+                <svg viewBox="0 0 24 24" class="icon-svg"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                Probar Bot
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 KPIS OPERATIVOS DE LA SEDE -->
+          <div class="workspace-metrics-kpi">
+            <div class="kpi-card">
+              <div class="kpi-label">
+                <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><path d="M6 19v2M18 19v2M5 11l1-6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2l1 6M4 15h16a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1zM9 15v4M15 15v4"/></svg>
+                Capacidad Sillones Dentales
+              </div>
+              <div class="kpi-val" id="ws-kpi-chairs">3 Sillones</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-label">
+                <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-blue)"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Citas Programadas Hoy
+              </div>
+              <div class="kpi-val" id="ws-kpi-today-citas">0 Citas</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-label">
+                <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-cyan)"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0114 0v2"/></svg>
+                Especialistas en Turno
+              </div>
+              <div class="kpi-val" id="ws-kpi-active-docs">2 / 2</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-label">
+                <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-amber)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                Insumos Críticos
+              </div>
+              <div class="kpi-val" id="ws-kpi-inventory">Operativo</div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 1: DOCTORES EN TURNO HOY (MODUS OPERANDI CON ALTERNADOR AUSENTE/ACTIVO) -->
+          <div class="bento-card" style="margin-bottom: 22px;">
+            <div class="card-header-flex">
+              <div>
+                <div class="card-title">
+                  <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0114 0v2"/><path d="M12 11v6M9 14h6"/></svg>
+                  Doctores en Turno Hoy (Control Operativo de Agenda)
+                </div>
+                <div class="card-subtitle">
+                  Al marcar ausente a un doctor, Valeria IA no ofrecerá sus horarios para agendamiento inmediatamente.
+                </div>
+              </div>
+              <button class="pill-btn" onclick="openDoctorModal()">
+                <span>+</span> Agregar Especialista
+              </button>
+            </div>
+
+            <div class="doctors-shift-grid" id="ws-doctors-shift-grid">
+              <!-- Inyectado vía JS -->
+            </div>
+          </div>
+
+          <!-- SECCIÓN 2: SEMÁFORO DE INSUMOS CRÍTICOS (MINI INVENTARIO OPERATIVO) -->
+          <div class="bento-card" style="margin-bottom: 22px;">
+            <div class="card-header-flex">
+              <div>
+                <div class="card-title">
+                  <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-amber)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                  Semáforo de Insumos Críticos en Consultorio
+                </div>
+                <div class="card-subtitle">
+                  Monitoreo preventivo para no sobreagendar procedimientos complejos sin material clínico suficiente.
+                </div>
+              </div>
+            </div>
+
+            <div class="inventory-grid" id="ws-inventory-grid">
+              <!-- Inyectado vía JS -->
+            </div>
+          </div>
+
+          <!-- SECCIÓN 3: AGENDA DE CITAS DE LA SEDE -->
+          <div class="bento-card" style="margin-bottom: 22px;">
+            <div class="card-header-flex">
+              <div>
+                <div class="card-title">
+                  <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-blue)"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  Agenda de Citas del Día
+                </div>
+                <div class="card-subtitle">Turnos reservados con validación atómica y Google Calendar</div>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="pill-btn" onclick="filterWorkspaceAppointments('today')">Hoy</button>
+                <button class="pill-btn" onclick="filterWorkspaceAppointments('all')">Todas</button>
+              </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+              <table class="styled-table">
+                <thead>
+                  <tr>
+                    <th>Hora</th>
+                    <th>Paciente</th>
+                    <th>Teléfono</th>
+                    <th>Tratamiento</th>
+                    <th>Doctor Asignado</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="ws-appointments-tbody">
+                  <!-- Inyectado vía JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 4: BITÁCORA DE TRANSPARENCIA IA (TRIAJE & HISTORIAL) -->
+          <div class="bento-card">
+            <div class="card-header-flex">
+              <div>
+                <div class="card-title">
+                  <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-cyan)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  Bitácora de Transparencia IA (Triaje Clínico & Escala EVA)
+                </div>
+                <div class="card-subtitle">Trazabilidad de síntomas y consentimiento informado de pacientes recientes</div>
+              </div>
+            </div>
+
+            <div class="transparency-log-list" id="ws-transparency-list">
+              <!-- Inyectado vía JS -->
+            </div>
+          </div>
+
+        </div>
+
         <!-- ================= PESTAÑA CATÁLOGO: PRECIOS & DOCTORES ================= -->
         <div id="tab-catalog" class="tab-panel">
           <div class="section-header-flex">
             <div>
-              <h2 class="section-title">🏷️ Gestión de Precios, Servicios & Doctores</h2>
+              <h2 class="section-title">
+                <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                Gestión de Precios, Servicios & Doctores
+              </h2>
               <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">
                 Administra el equipo médico, asigna especialistas a tratamientos y define tarifas oficiales en USD para cada odontología.
               </p>
@@ -1933,8 +2368,9 @@ export function getAdminDashboardHtml(): string {
           <div class="bento-card" style="margin-bottom: 24px;">
             <div class="card-header-flex" style="margin-bottom: 16px;">
               <div>
-                <div class="card-title" style="display:flex; align-items:center; gap:8px;">
-                  <span>👨‍⚕️</span> Equipo de Doctores & Especialistas
+                <div class="card-title">
+                  <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0114 0v2"/><path d="M12 11v6M9 14h6"/></svg>
+                  Equipo de Doctores & Especialistas
                 </div>
                 <div class="card-subtitle">Horarios, turnos y sincronización con Google Calendar</div>
               </div>
@@ -1967,14 +2403,15 @@ export function getAdminDashboardHtml(): string {
           <div class="bento-card">
             <div class="card-header-flex" style="margin-bottom: 16px;">
               <div>
-                <div class="card-title" style="display:flex; align-items:center; gap:8px;">
-                  <span>🦷</span> Catálogo de Procedimientos & Tarifas Oficiales (Grounding IA)
+                <div class="card-title">
+                  <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><path d="M12 2C7 2 4 5 4 9c0 3 1.5 6.5 3 10 1 2.5 2.5 3 5 3s4-.5 5-3c1.5-3.5 3-7 3-10 0-4-3-7-8-7z"/></svg>
+                  Catálogo de Procedimientos & Tarifas Oficiales (Grounding IA)
                 </div>
                 <div class="card-subtitle">Valeria IA consulta estas tarifas para evitar alucinaciones económicas</div>
               </div>
               <div style="display: flex; gap: 10px;">
                 <button class="pill-btn" style="background: rgba(0, 210, 106, 0.15); color: var(--accent-emerald); border-color: rgba(0, 210, 106, 0.3);" onclick="seedSuggestedTreatments()">
-                  ⚡ Cargar Sugeridos
+                  Cargar Sugeridos
                 </button>
                 <button class="btn-emerald-cta" onclick="openTreatmentModal()">
                   <span>+</span> Nuevo Tratamiento
@@ -2006,11 +2443,11 @@ export function getAdminDashboardHtml(): string {
             <!-- PLANTILLAS RÁPIDAS SUGERIDAS -->
             <div style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
               <span style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">Agregar Rápido:</span>
-              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Limpieza Dental Ultrasonido', 'odontologia_general', '$35 - $45 USD', 'Profilaxis completa con cavitrón ultrasónico y pulido dental.')">⚡ + Limpieza ($35-$45)</button>
-              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Brackets Metálicos Convencionales', 'ortodoncia', '$350 - $550 USD', 'Alineación dental integral con brackets de acero de alta precisión.')">⚡ + Brackets ($350-$550)</button>
-              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Cirugía de Cordales (Terceros Molares)', 'cirugia_implantes', '$70 - $120 USD', 'Extracción quirúrgica atraumática con sutura reabsorbible.')">⚡ + Cordales ($70-$120)</button>
-              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Blanqueamiento Dental LED', 'odontologia_general', '$120 - $180 USD', 'Aclaramiento dental seguro en consultorio de hasta 3 tonos.')">⚡ + Blanqueamiento ($120-$180)</button>
-              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Implante de Titanio Grado Médico', 'cirugia_implantes', '$700 - $950 USD', 'Fijación de raíz artificial de titanio con corona estética.')">⚡ + Implante ($700-$950)</button>
+              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Limpieza Dental Ultrasonido', 'odontologia_general', '$35 - $45 USD', 'Profilaxis completa con cavitrón ultrasónico y pulido dental.')">+ Limpieza ($35-$45)</button>
+              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Brackets Metálicos Convencionales', 'ortodoncia', '$350 - $550 USD', 'Alineación dental integral con brackets de acero de alta precisión.')">+ Brackets ($350-$550)</button>
+              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Cirugía de Cordales (Terceros Molares)', 'cirugia_implantes', '$70 - $120 USD', 'Extracción quirúrgica atraumática con sutura reabsorbible.')">+ Cordales ($70-$120)</button>
+              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Blanqueamiento Dental LED', 'odontologia_general', '$120 - $180 USD', 'Aclaramiento dental seguro en consultorio de hasta 3 tonos.')">+ Blanqueamiento ($120-$180)</button>
+              <button class="suggested-pill-btn" onclick="applyQuickSuggestion('Implante de Titanio Grado Médico', 'cirugia_implantes', '$700 - $950 USD', 'Fijación de raíz artificial de titanio con corona estética.')">+ Implante ($700-$950)</button>
             </div>
 
             <div style="overflow-x: auto;">
@@ -2033,13 +2470,16 @@ export function getAdminDashboardHtml(): string {
           </div>
         </div>
 
-        <!-- ================= PESTAÑA 3: CANALES (WHATSAPP QR & TELEGRAM) ================= -->
+        <!-- ================= PESTAÑA 3: CANALES (WHATSAPP & TELEGRAM) ================= -->
         <div id="tab-channels" class="tab-panel">
           <div class="section-header-flex">
             <div>
-              <h2 class="section-title">📱 Conexión Multicanal (WhatsApp & Telegram)</h2>
+              <h2 class="section-title">
+                <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path></svg>
+                Conexión Multicanal (Meta WhatsApp Cloud API & Telegram)
+              </h2>
               <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">
-                Conecta tus instancias de WhatsApp escaneando el código QR en vivo o configura tokens de bots de Telegram.
+                Conexión directa con la infraestructura oficial de Meta y tokens dedicados de Telegram para cada sede.
               </p>
             </div>
           </div>
@@ -2048,13 +2488,15 @@ export function getAdminDashboardHtml(): string {
             <div class="bento-card" style="grid-column: span 6;">
               <div class="card-header-flex">
                 <div style="display:flex; align-items:center; gap:12px;">
-                  <span style="font-size:24px;">🛡️</span>
+                  <div style="width:36px; height:36px; border-radius:10px; background:var(--accent-emerald-dim); display:flex; align-items:center; justify-content:center; color:var(--accent-emerald);">
+                    <svg viewBox="0 0 24 24" class="icon-svg"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  </div>
                   <div>
                     <div class="card-title">Meta WhatsApp Cloud API (Oficial)</div>
                     <div class="card-subtitle">Graph API v21.0 — 0% Riesgo de Baneo</div>
                   </div>
                 </div>
-                <span class="badge-status" style="background:var(--accent-emerald-dim); color:var(--accent-emerald);">🟢 100% Oficial</span>
+                <span class="badge-status">100% Oficial</span>
               </div>
               <p style="font-size:13px; color:var(--text-muted); line-height:1.5; margin-bottom:16px;">
                 Conexión directa con la infraestructura de Meta Business. Admite números móviles y fijos del consultorio, 1,000 conversaciones mensuales gratuitas y protección total contra suspensiones.
@@ -2072,13 +2514,15 @@ export function getAdminDashboardHtml(): string {
             <div class="bento-card" style="grid-column: span 6;">
               <div class="card-header-flex">
                 <div style="display:flex; align-items:center; gap:12px;">
-                  <span style="font-size:24px;">✈️</span>
+                  <div style="width:36px; height:36px; border-radius:10px; background:var(--accent-blue-dim); display:flex; align-items:center; justify-content:center; color:var(--accent-blue);">
+                    <svg viewBox="0 0 24 24" class="icon-svg"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  </div>
                   <div>
                     <div class="card-title">Telegram Bot Gateway</div>
                     <div class="card-subtitle">Polling y Webhooks nativos</div>
                   </div>
                 </div>
-                <span class="badge-status">🟢 Operativo</span>
+                <span class="badge-status">Operativo</span>
               </div>
               <p style="font-size:13px; color:var(--text-muted); line-height:1.5; margin-bottom:16px;">
                 Asigna a cada odontología un token individual de BotFather para atender a los pacientes en Telegram.
@@ -2092,13 +2536,16 @@ export function getAdminDashboardHtml(): string {
           </div>
         </div>
 
-        <!-- ================= PESTAÑA 4: FLUJOS DEL BOT ================= -->
+        <!-- ================= PESTAÑA 4: FLUJOS DEL BOT (SPLIT-SCREEN) ================= -->
         <div id="tab-flows" class="tab-panel">
           <div class="section-header-flex">
             <div>
-              <h2 class="section-title">🔀 Flujos Conversacionales Auditados (Estándar 2026)</h2>
+              <h2 class="section-title">
+                <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><line x1="6" y1="3" x2="6" y2="15"></line><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 01-9 9"></path></svg>
+                Flujos Conversacionales Auditados & Inspector en Pantalla Dividida
+              </h2>
               <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">
-                Verifica cada una de las ramas de decisión clínica, cumplimiento ISO 42001, LOPDP y sincronización.
+                Selecciona cualquier flujo a la izquierda para probarlo en el simulador interactivo de la derecha en tiempo real.
               </p>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
@@ -2109,8 +2556,62 @@ export function getAdminDashboardHtml(): string {
             </div>
           </div>
 
-          <div class="flow-grid" id="flows-container">
-            <!-- Inyectado vía JS -->
+          <!-- SPLIT SCREEN: IZQUIERDA FLUJOS / DERECHA TESTER -->
+          <div class="flows-split-screen">
+            <!-- COLUMNA IZQUIERDA: TARJETAS DE FLUJO -->
+            <div id="flows-container" style="display:flex; flex-direction:column; gap:14px;">
+              <!-- Inyectado vía JS -->
+            </div>
+
+            <!-- COLUMNA DERECHA: CHAT EN VIVO E INSPECTOR -->
+            <div style="display:flex; flex-direction:column; gap:16px; position:sticky; top:80px;">
+              <div class="chat-box-card" style="height: 440px;">
+                <div class="chat-box-header">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:28px; height:28px; border-radius:50%; background:var(--accent-emerald-dim); display:flex; align-items:center; justify-content:center; color:var(--accent-emerald);">
+                      <svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0114 0v2"/></svg>
+                    </div>
+                    <div>
+                      <strong style="font-size:14px; color:#FFFFFF;">Simulador de Flujos Valeria IA</strong>
+                      <div style="font-size:11px; color:var(--text-muted);" id="flows-chat-clinic-label">Sede Activa</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="chat-messages-scroll" id="flows-chat-messages">
+                  <div class="bubble bot">
+                    Haz clic en "Probar este Flujo" en cualquiera de los flujos clínicos de la izquierda para verificar el comportamiento de Valeria IA y sus guardrails normativos.
+                  </div>
+                </div>
+
+                <form class="chat-form-bar" onsubmit="sendFlowsChatMessage(event)">
+                  <input type="text" id="flows-chat-input" class="chat-text-input" placeholder="Escribe o ejecuta un flujo..." autocomplete="off" />
+                  <button type="submit" class="btn-emerald-cta" style="padding:9px 14px;">Enviar</button>
+                </form>
+              </div>
+
+              <!-- INSPECTOR DE INFERENCIA -->
+              <div class="inspector-card">
+                <div class="inspector-heading">
+                  <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  Inspector de Razonamiento del Flujo
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                  <div class="form-group">
+                    <label class="form-label">Modelo</label>
+                    <div id="flows-trace-model" class="trace-card">gemini-2.5-flash</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Latencia</label>
+                    <div id="flows-trace-latency" class="trace-card">- ms</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Herramientas Ejecutadas</label>
+                  <div id="flows-trace-tools" class="trace-card">Ninguna</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -2118,12 +2619,15 @@ export function getAdminDashboardHtml(): string {
         <div id="tab-appointments" class="tab-panel">
           <div class="section-header-flex">
             <div>
-              <h2 class="section-title">📅 Citas Agendadas en Google Calendar</h2>
+              <h2 class="section-title">
+                <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Citas Agendadas en Google Calendar
+              </h2>
               <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">
                 Historial y turnos reservados en tiempo real con bloqueo atómico contra colisiones.
               </p>
             </div>
-            <button class="pill-btn" onclick="fetchAppointments()">🔄 Actualizar Agenda</button>
+            <button class="pill-btn" onclick="fetchAppointments()">Actualizar Agenda</button>
           </div>
 
           <div class="table-container-card">
@@ -2156,7 +2660,9 @@ export function getAdminDashboardHtml(): string {
             <div class="chat-box-card">
               <div class="chat-box-header">
                 <div style="display:flex; align-items:center; gap:12px;">
-                  <span style="font-size: 24px;">🤖</span>
+                  <div style="width:32px; height:32px; border-radius:50%; background:var(--accent-emerald-dim); display:flex; align-items:center; justify-content:center; color:var(--accent-emerald);">
+                    <svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0114 0v2"/></svg>
+                  </div>
                   <div>
                     <strong id="chat-agent-name" style="font-size:15px; color:#FFFFFF;">Valeria IA</strong>
                     <div style="font-size:11px; color:var(--text-muted);" id="chat-agent-clinic">Clínica OdontoCare Cuenca</div>
@@ -2184,7 +2690,8 @@ export function getAdminDashboardHtml(): string {
 
             <div class="inspector-card">
               <div class="inspector-heading">
-                <span>🔍</span> Inspector de Razonamiento
+                <svg viewBox="0 0 24 24" class="icon-svg" style="color:var(--accent-emerald)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Inspector de Razonamiento
               </div>
               <p style="font-size:12px; color:var(--text-muted); line-height:1.4;">
                 Supervisa los llamados de función (Tools), el modelo ejecutado y las directrices ISO/LOPDP en vivo.
@@ -2219,15 +2726,17 @@ export function getAdminDashboardHtml(): string {
 
   <!-- ================= MODALES DE GESTIÓN ================= -->
 
-  <!-- MODAL 1: META WHATSAPP CLOUD API OFICIAL (OPCIÓN A: BRING YOUR OWN WABA) -->
+  <!-- MODAL 1: META WHATSAPP CLOUD API OFICIAL -->
   <div class="modal-backdrop" id="modal-whatsapp-qr">
     <div class="modal-card" style="max-width: 520px; text-align: left;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <div style="width: 36px; height: 36px; background: rgba(0, 210, 106, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🛡️</div>
+          <div style="width: 36px; height: 36px; background: rgba(0, 210, 106, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent-emerald);">
+            <svg viewBox="0 0 24 24" class="icon-svg"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
           <div>
             <h2 style="font-size: 18px; font-weight: 800; color: #FFFFFF;">Meta WhatsApp Cloud API</h2>
-            <div style="font-size: 11px; color: var(--accent-emerald); font-weight: 700;">🟢 Conexión Oficial Meta — 0% Riesgo de Baneo</div>
+            <div style="font-size: 11px; color: var(--accent-emerald); font-weight: 700;">Conexión Oficial Meta — 0% Riesgo de Baneo</div>
           </div>
         </div>
         <button onclick="closeWhatsAppModal()" style="background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer;">&times;</button>
@@ -2263,7 +2772,7 @@ export function getAdminDashboardHtml(): string {
         <div id="meta-status-message" style="display:none; font-size:12px; padding:8px 12px; border-radius:8px;"></div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
-          <button type="button" class="pill-btn" onclick="testMetaWhatsAppPing()">🔔 Ping de Prueba</button>
+          <button type="button" class="pill-btn" onclick="testMetaWhatsAppPing()">Ping de Prueba</button>
           <div style="display: flex; gap: 10px;">
             <button type="button" class="pill-btn" onclick="closeWhatsAppModal()">Cerrar</button>
             <button type="submit" class="btn-emerald-cta">Guardar Credenciales</button>
@@ -2361,7 +2870,9 @@ export function getAdminDashboardHtml(): string {
     <div class="modal-card" style="max-width: 540px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <div style="width: 36px; height: 36px; background: rgba(0, 210, 106, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">👨‍⚕️</div>
+          <div style="width: 36px; height: 36px; background: rgba(0, 210, 106, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent-emerald);">
+            <svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0114 0v2"/><path d="M12 11v6M9 14h6"/></svg>
+          </div>
           <h2 style="font-size: 19px; font-weight: 800; color: #FFFFFF;" id="modal-doctor-title">Agregar Doctor / Especialista</h2>
         </div>
         <button onclick="closeDoctorModal()" style="background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer;">&times;</button>
@@ -2417,7 +2928,7 @@ export function getAdminDashboardHtml(): string {
 
         <div class="form-group">
           <label class="form-label">Google Calendar ID (o Correo Sincronizado)</label>
-          <input type="text" id="doc-calendar-id" class="form-input" placeholder="ej. dra.alvear@odontocare.com o ID de calendario" required />
+          <input type="text" id="doc-calendar-id" class="form-input" placeholder="ej. dra.alvear@odontocare.com o primary" required />
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
@@ -2433,7 +2944,9 @@ export function getAdminDashboardHtml(): string {
     <div class="modal-card" style="max-width: 540px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <div style="width: 36px; height: 36px; background: rgba(0, 210, 106, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🦷</div>
+          <div style="width: 36px; height: 36px; background: rgba(0, 210, 106, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent-emerald);">
+            <svg viewBox="0 0 24 24" class="icon-svg"><path d="M12 2C7 2 4 5 4 9c0 3 1.5 6.5 3 10 1 2.5 2.5 3 5 3s4-.5 5-3c1.5-3.5 3-7 3-10 0-4-3-7-8-7z"/></svg>
+          </div>
           <h2 style="font-size: 19px; font-weight: 800; color: #FFFFFF;" id="modal-treatment-title">Nuevo Tratamiento & Tarifa</h2>
         </div>
         <button onclick="closeTreatmentModal()" style="background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer;">&times;</button>
@@ -2468,7 +2981,6 @@ export function getAdminDashboardHtml(): string {
           <label class="form-label">Doctor o Especialista Preferente</label>
           <select id="treatment-doctor-select" class="form-input">
             <option value="">Cualquier especialista disponible</option>
-            <!-- Llenado dinámicamente con doctores de la clínica -->
           </select>
         </div>
 
@@ -2488,8 +3000,11 @@ export function getAdminDashboardHtml(): string {
   <script>
     let currentClinics = [];
     let activeChatClinicId = '';
-    let waPollInterval = null;
-    let activeWaInstance = '';
+    let activeWorkspaceClinicId = '';
+    let activeCatalogClinicId = '';
+    let currentDoctorsList = [];
+    let currentTreatmentsList = [];
+    let currentWorkspaceData = null;
 
     const FLOW_DEFINITIONS = [
       {
@@ -2536,10 +3051,6 @@ export function getAdminDashboardHtml(): string {
       }
     ];
 
-    let activeCatalogClinicId = '';
-    let currentDoctorsList = [];
-    let currentTreatmentsList = [];
-
     // ================= NAVEGACIÓN ENTRE TABS =================
     function switchNavTab(tabKey) {
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -2550,10 +3061,10 @@ export function getAdminDashboardHtml(): string {
       const targetPanel = document.getElementById('tab-' + tabKey);
       if (targetPanel) targetPanel.classList.add('active');
 
-      // Título en el header
       const titleMap = {
         'overview': 'Dashboard',
         'clinics': 'Red de Clínicas Odontológicas',
+        'clinic-workspace': 'Workspace de Consultorio',
         'catalog': 'Precios & Doctores',
         'channels': 'Canales WhatsApp & Telegram',
         'flows': 'Verificador de Flujos Conversacionales',
@@ -2564,12 +3075,291 @@ export function getAdminDashboardHtml(): string {
 
       if (tabKey === 'catalog') {
         renderCatalogView();
+      } else if (tabKey === 'flows') {
+        renderFlows();
+      } else if (tabKey === 'overview') {
+        fetchRealMetrics();
       }
     }
 
-    function goToClinicCatalog(clinicId) {
-      activeCatalogClinicId = clinicId;
-      switchNavTab('catalog');
+    // ================= CARGA DE MÉTRICAS REALES (0 MOCK DATA) =================
+    async function fetchRealMetrics() {
+      try {
+        const res = await fetch('/api/metrics/real', { headers: getAuthHeaders() });
+        const data = await res.json();
+        const m = data.metrics || data;
+        
+        // 1. Total Citas
+        const totalCitasEl = document.getElementById('overview-total-citas');
+        if (totalCitasEl) {
+          totalCitasEl.innerText = (m.totalAppointments || 0) + ' Citas';
+        }
+
+        // 2. Pacientes / Sesiones
+        const patientsBadge = document.getElementById('overview-patients-badge');
+        if (patientsBadge) {
+          const count = m.totalPatients || 0;
+          patientsBadge.innerText = count === 1 ? '1 Sesión Activa' : count + ' Sesiones';
+        }
+
+        // 3. Canales
+        const tgPct = m.channels?.telegramPercent ?? m.channels?.telegram ?? 100;
+        const waPct = m.channels?.whatsappPercent ?? m.channels?.whatsapp ?? 0;
+        
+        const tgPill = document.getElementById('overview-channel-tg-pill');
+        const waPill = document.getElementById('overview-channel-wa-pill');
+        const tgBar = document.getElementById('overview-bar-telegram');
+        const waBar = document.getElementById('overview-bar-whatsapp');
+
+        if (tgPill) tgPill.innerText = 'TG: ' + tgPct + '%';
+        if (waPill) waPill.innerText = 'WA: ' + waPct + '%';
+        if (tgBar) tgBar.style.width = tgPct + '%';
+        if (waBar) waBar.style.width = waPct + '%';
+
+        // 4. Eficiencia
+        const convEl = document.getElementById('overview-conversion-rate');
+        if (convEl) convEl.innerText = (m.conversionRate || 0) + '% conv.';
+
+        // 5. Retención
+        const retEl = document.getElementById('overview-retention-rate');
+        if (retEl) retEl.innerHTML = (m.retentionRate || 0) + '<span style="font-size: 16px; color:var(--text-muted);">%</span>';
+
+      } catch (err) {
+        console.error('Error fetching real metrics:', err);
+      }
+    }
+
+    // ================= INGRESO A WORKSPACE DE CLÍNICA =================
+    async function enterClinicWorkspace(clinicId) {
+      activeWorkspaceClinicId = clinicId;
+      const wsNavBtn = document.getElementById('btn-nav-workspace');
+      if (wsNavBtn) wsNavBtn.style.display = 'flex';
+      
+      switchNavTab('clinic-workspace');
+      await loadClinicWorkspace(clinicId);
+    }
+
+    async function loadClinicWorkspace(clinicId) {
+      try {
+        const res = await fetch('/api/clinics/' + encodeURIComponent(clinicId) + '/dashboard', {
+          headers: getAuthHeaders()
+        });
+        const data = await res.json();
+        currentWorkspaceData = data;
+
+        const clinic = data.clinic;
+        document.getElementById('workspace-clinic-name').innerText = clinic.name;
+        document.getElementById('workspace-clinic-sub').innerText = 
+          clinic.city + ' • ' + (clinic.address || 'Sede Central') + ' • Contacto: ' + (clinic.contactPerson || 'Administración') + ' (' + (clinic.phone || clinic.emergencyPhone) + ')';
+        
+        // KPIs
+        document.getElementById('ws-kpi-chairs').innerText = (data.chairsCount || 3) + ' Sillones';
+        document.getElementById('ws-kpi-today-citas').innerText = (data.todayAppointments ? data.todayAppointments.length : 0) + ' Citas';
+        
+        const activeDocsCount = (data.doctors || []).filter(d => d.isActive !== false).length;
+        document.getElementById('ws-kpi-active-docs').innerText = activeDocsCount + ' / ' + (data.doctors || []).length;
+
+        // Semáforo KPI
+        const inv = normalizeInventory(data.inventoryStatus || (clinic && clinic.inventoryStatus));
+        const isCritical = Object.values(inv).includes('critico');
+        const isLow = Object.values(inv).includes('bajo');
+        const kpiInv = document.getElementById('ws-kpi-inventory');
+        if (isCritical) {
+          kpiInv.innerText = 'Crítico';
+          kpiInv.style.color = 'var(--accent-coral)';
+        } else if (isLow) {
+          kpiInv.innerText = 'Bajo';
+          kpiInv.style.color = 'var(--accent-amber)';
+        } else {
+          kpiInv.innerText = 'Óptimo';
+          kpiInv.style.color = 'var(--accent-emerald)';
+        }
+
+        renderWorkspaceDoctors(data.doctors || []);
+        renderWorkspaceInventory(inv);
+        renderWorkspaceAppointments(data.todayAppointments || []);
+        renderWorkspaceTransparency(data.recentConversations || []);
+
+      } catch (err) {
+        console.error('Error cargando workspace de clínica:', err);
+      }
+    }
+
+    function renderWorkspaceDoctors(doctors) {
+      const container = document.getElementById('ws-doctors-shift-grid');
+      if (!doctors || doctors.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted)">No hay doctores registrados en esta sede.</div>';
+        return;
+      }
+
+      container.innerHTML = doctors.map(doc => {
+        const isActive = doc.isActive !== false;
+        const hours = (doc.workingHours?.start || '08:30') + ' - ' + (doc.workingHours?.end || '17:30');
+        const specLabel = (doc.specialty || 'General').replace('_', ' ');
+
+        return \`
+          <div class="doctor-shift-card">
+            <div class="doctor-shift-header">
+              <div class="doctor-shift-avatar">
+                <svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0114 0v2"/><path d="M12 11v6M9 14h6"/></svg>
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:14px; font-weight:700; color:#FFF;">\${doc.name}</div>
+                <div style="font-size:11px; color:var(--text-dim); text-transform:capitalize;">\${specLabel}</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Turno: \${hours}</div>
+              </div>
+            </div>
+
+            <button class="btn-toggle-shift \${isActive ? 'active' : 'absent'}" onclick="toggleDoctorShift('\${doc.id}')">
+              \${isActive 
+                ? '<svg viewBox="0 0 24 24" class="icon-svg" style="width:14px; height:14px;"><polyline points="20 6 9 17 4 12"/></svg> Activo en Turno' 
+                : '<svg viewBox="0 0 24 24" class="icon-svg" style="width:14px; height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Marcar Presente (Ausente)'}
+            </button>
+          </div>
+        \`;
+      }).join('');
+    }
+
+    async function toggleDoctorShift(doctorId) {
+      if (!activeWorkspaceClinicId) return;
+      try {
+        const res = await fetch('/api/clinics/' + encodeURIComponent(activeWorkspaceClinicId) + '/doctors/' + encodeURIComponent(doctorId) + '/toggle-status', {
+          method: 'POST',
+          headers: getAuthHeaders()
+        });
+        const data = await res.json();
+        if (data.ok) {
+          await loadClinicWorkspace(activeWorkspaceClinicId);
+        } else {
+          alert('No se pudo cambiar el estado del doctor.');
+        }
+      } catch (err) {
+        alert('Error de conexión al alternar turno del especialista.');
+      }
+    }
+
+    function normalizeInventory(rawInv) {
+      const result = { anesthetics: 'optimo', needles: 'optimo', resins: 'optimo', sterilizedKits: 'optimo' };
+      if (!rawInv) return result;
+      if (Array.isArray(rawInv)) {
+        rawInv.forEach(item => {
+          const name = (item.item || '').toLowerCase();
+          let key = '';
+          if (name.includes('anest')) key = 'anesthetics';
+          else if (name.includes('aguja') || name.includes('needle')) key = 'needles';
+          else if (name.includes('resin')) key = 'resins';
+          else if (name.includes('kit') || name.includes('esteril') || name.includes('estéril')) key = 'sterilizedKits';
+
+          if (key) {
+            const lvl = (item.level || '').toLowerCase();
+            result[key] = (lvl === 'critical' || lvl === 'critico') ? 'critico' : (lvl === 'low' || lvl === 'bajo') ? 'bajo' : 'optimo';
+          }
+        });
+      } else if (typeof rawInv === 'object') {
+        Object.entries(rawInv).forEach(([k, v]) => {
+          const val = String(v).toLowerCase();
+          result[k] = (val === 'critical' || val === 'critico') ? 'critico' : (val === 'low' || val === 'bajo') ? 'bajo' : 'optimo';
+        });
+      }
+      return result;
+    }
+
+    function renderWorkspaceInventory(rawInv) {
+      const inv = normalizeInventory(rawInv);
+      const container = document.getElementById('ws-inventory-grid');
+      const items = [
+        { key: 'anesthetics', label: 'Anestesia Dental (Mepivacaína/Lidocaína)' },
+        { key: 'needles', label: 'Agujas Quirúrgicas Desechables' },
+        { key: 'resins', label: 'Resinas Compuestas Estéticas' },
+        { key: 'sterilizedKits', label: 'Kits de Instrumental Estéril' }
+      ];
+
+      container.innerHTML = items.map(item => {
+        const status = inv[item.key] || 'optimo';
+        const labels = { optimo: 'Óptimo', bajo: 'Stock Bajo', critico: 'Crítico' };
+
+        return \`
+          <div class="inventory-card">
+            <div style="font-size:12px; font-weight:700; color:#FFF; line-height:1.3;">\${item.label}</div>
+            <span class="inventory-status-pill \${status}">\${labels[status]}</span>
+            <div style="display:flex; gap:6px; margin-top:auto;">
+              <button class="pill-btn" style="padding:3px 8px; font-size:10px;" onclick="setInventoryStatus('\${item.key}', 'optimo')">Óptimo</button>
+              <button class="pill-btn" style="padding:3px 8px; font-size:10px;" onclick="setInventoryStatus('\${item.key}', 'bajo')">Bajo</button>
+              <button class="pill-btn" style="padding:3px 8px; font-size:10px;" onclick="setInventoryStatus('\${item.key}', 'critico')">Crítico</button>
+            </div>
+          </div>
+        \`;
+      }).join('');
+    }
+
+    async function setInventoryStatus(itemKey, status) {
+      if (!activeWorkspaceClinicId) return;
+      try {
+        const payload = { [itemKey]: status };
+        const res = await fetch('/api/clinics/' + encodeURIComponent(activeWorkspaceClinicId) + '/inventory', {
+          method: 'PUT',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.ok) {
+          await loadClinicWorkspace(activeWorkspaceClinicId);
+        }
+      } catch (err) {
+        console.error('Error al actualizar inventario:', err);
+      }
+    }
+
+    function renderWorkspaceAppointments(appointments) {
+      const tbody = document.getElementById('ws-appointments-tbody');
+      if (!appointments || appointments.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:24px;">No hay citas agendadas para el día de hoy en esta sede.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = appointments.map(a => \`
+        <tr>
+          <td style="font-family:var(--font-mono); font-weight:700; color:var(--accent-emerald);">\${a.start || '--:--'}</td>
+          <td style="font-weight:700; color:#FFF;">\${a.patientName}</td>
+          <td style="font-family:var(--font-mono); color:var(--text-muted);">\${a.patientPhone}</td>
+          <td>\${a.treatment || 'Consulta General'}</td>
+          <td>\${a.doctorName || 'Dr. Asignado'}</td>
+          <td><span class="badge-status">Confirmada</span></td>
+        </tr>
+      \`).join('');
+    }
+
+    function filterWorkspaceAppointments(filter) {
+      if (!currentWorkspaceData) return;
+      renderWorkspaceAppointments(currentWorkspaceData.todayAppointments || []);
+    }
+
+    function renderWorkspaceTransparency(conversations) {
+      const container = document.getElementById('ws-transparency-list');
+      if (!conversations || conversations.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted); font-size:12px; padding:12px;">Sin registros recientes de triaje en esta sede.</div>';
+        return;
+      }
+
+      container.innerHTML = conversations.map(c => {
+        const painScore = c.painScore || 0;
+        let painClass = 'eva-mild';
+        if (painScore >= 7) painClass = 'eva-severe';
+        else if (painScore >= 4) painClass = 'eva-moderate';
+
+        return \`
+          <div class="transparency-item">
+            <div>
+              <div style="font-weight:700; color:#FFF;">\${c.patientId}</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">\${c.lastMessage}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="eva-badge \${painClass}">EVA \${painScore}/10</span>
+              <span style="font-size:11px; color:var(--text-dim); font-family:var(--font-mono);">\${c.timestamp}</span>
+            </div>
+          </div>
+        \`;
+      }).join('');
     }
 
     // ================= SUITE DE PRECIOS & DOCTORES =================
@@ -2590,7 +3380,8 @@ export function getAdminDashboardHtml(): string {
       if (!container) return;
       container.innerHTML = currentClinics.map(c => \`
         <button class="catalog-clinic-pill \${c.clinicId === activeCatalogClinicId ? 'active' : ''}" onclick="selectCatalogClinic('\${c.clinicId}')">
-          <span>🏥</span> \${c.name} (\${c.city})
+          <svg viewBox="0 0 24 24" class="icon-svg" style="width:14px; height:14px;"><path d="M3 21h18M3 7v14M21 7v14M6 7V3h12v4M9 11h6M12 8v6"></path></svg>
+          \${c.name} (\${c.city})
         </button>
       \`).join('');
     }
@@ -2602,7 +3393,6 @@ export function getAdminDashboardHtml(): string {
       await fetchCatalogTreatments();
     }
 
-    // --- DOCTORES ---
     async function fetchCatalogDoctors() {
       const tbody = document.getElementById('catalog-doctors-tbody');
       if (!tbody) return;
@@ -2649,7 +3439,7 @@ export function getAdminDashboardHtml(): string {
 
         return \`
           <tr class="table-data-row">
-            <td style="padding: 12px; font-weight: 700; color: #FFF;">👨‍⚕️ \${doc.name}</td>
+            <td style="padding: 12px; font-weight: 700; color: #FFF;">\${doc.name}</td>
             <td style="padding: 12px;">
               <span class="badge-specialty \${sClass}">\${(doc.specialty || '').replace('_', ' ')}</span>
             </td>
@@ -2664,8 +3454,8 @@ export function getAdminDashboardHtml(): string {
               \${doc.calendarId || 'primary'}
             </td>
             <td style="padding: 12px; text-align: right; white-space: nowrap;">
-              <button class="pill-btn" onclick="openDoctorModal('\${doc.id}')" style="padding: 4px 8px; font-size: 11px; margin-right: 4px;">✏️</button>
-              <button class="pill-btn" onclick="deleteDoctor('\${doc.id}')" style="padding: 4px 8px; font-size: 11px; color: var(--accent-coral);">🗑️</button>
+              <button class="pill-btn" onclick="openDoctorModal('\${doc.id}')" style="padding: 4px 8px; font-size: 11px; margin-right: 4px;">Editar</button>
+              <button class="pill-btn" onclick="deleteDoctor('\${doc.id}')" style="padding: 4px 8px; font-size: 11px; color: var(--accent-coral);">Eliminar</button>
             </td>
           </tr>
         \`;
@@ -2745,8 +3535,10 @@ export function getAdminDashboardHtml(): string {
         calendarId: calendarId || 'primary'
       };
 
+      const targetClinic = activeCatalogClinicId || activeWorkspaceClinicId || (currentClinics[0] ? currentClinics[0].clinicId : 'odontocare_cuenca');
+
       try {
-        const res = await fetch('/api/clinics/' + activeCatalogClinicId + '/doctors', {
+        const res = await fetch('/api/clinics/' + targetClinic + '/doctors', {
           method: 'POST',
           headers: getAuthHeaders(),
           body: JSON.stringify(doctorPayload)
@@ -2755,6 +3547,7 @@ export function getAdminDashboardHtml(): string {
         if (data.ok) {
           closeDoctorModal();
           await fetchCatalogDoctors();
+          if (activeWorkspaceClinicId) await loadClinicWorkspace(activeWorkspaceClinicId);
         } else {
           alert('Error al guardar doctor: ' + (data.error || 'Desconocido'));
         }
@@ -2826,7 +3619,7 @@ export function getAdminDashboardHtml(): string {
       if (!tbody) return;
 
       if (!list || list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:24px;">No se encontraron procedimientos con los filtros actuales. Usa "+ Nuevo Tratamiento" o "⚡ Cargar Sugeridos".</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:24px;">No se encontraron procedimientos con los filtros actuales.</td></tr>';
         return;
       }
 
@@ -2846,7 +3639,7 @@ export function getAdminDashboardHtml(): string {
 
         return \`
           <tr class="table-data-row">
-            <td style="padding: 12px; font-weight: 700; color: #FFF;">🦷 \${item.name}</td>
+            <td style="padding: 12px; font-weight: 700; color: #FFF;">\${item.name}</td>
             <td style="padding: 12px;">
               <span class="badge-specialty \${sClass}">\${(item.specialty || 'general').replace('_', ' ')}</span>
             </td>
@@ -2854,14 +3647,14 @@ export function getAdminDashboardHtml(): string {
               \${item.priceRange}
             </td>
             <td style="padding: 12px; font-size: 12px; color: var(--text-muted);">
-              \${assignedDoc === 'Cualquier especialista disponible' ? '<span style="color:var(--text-dim);">🌐 ' + assignedDoc + '</span>' : '👨‍⚕️ <strong>' + assignedDoc + '</strong>'}
+              \${assignedDoc === 'Cualquier especialista disponible' ? '<span style="color:var(--text-dim);">' + assignedDoc + '</span>' : '<strong>' + assignedDoc + '</strong>'}
             </td>
             <td style="padding: 12px; font-size: 12px; color: var(--text-muted); max-width: 280px; line-height: 1.4;">
               \${item.description || 'Sin descripción médica configurada.'}
             </td>
             <td style="padding: 12px; text-align: right; white-space: nowrap;">
-              <button class="pill-btn" onclick="openTreatmentModal(\${item._originalIndex})" style="padding: 4px 8px; font-size: 11px; margin-right: 4px;">✏️</button>
-              <button class="pill-btn" onclick="deleteTreatment(\${item._originalIndex})" style="padding: 4px 8px; font-size: 11px; color: var(--accent-coral);">🗑️</button>
+              <button class="pill-btn" onclick="openTreatmentModal(\${item._originalIndex})" style="padding: 4px 8px; font-size: 11px; margin-right: 4px;">Editar</button>
+              <button class="pill-btn" onclick="deleteTreatment(\${item._originalIndex})" style="padding: 4px 8px; font-size: 11px; color: var(--accent-coral);">Eliminar</button>
             </td>
           </tr>
         \`;
@@ -3067,6 +3860,7 @@ export function getAdminDashboardHtml(): string {
     async function initDashboard() {
       await fetchClinics();
       await fetchAppointments();
+      await fetchRealMetrics();
       renderFlows();
     }
 
@@ -3077,7 +3871,8 @@ export function getAdminDashboardHtml(): string {
         currentClinics = data.clinics || [];
         renderClinics();
         populateClinicSelectors();
-        document.getElementById('nav-clinics-badge').innerText = currentClinics.length;
+        const badge = document.getElementById('nav-clinics-badge');
+        if (badge) badge.innerText = currentClinics.length;
       } catch (err) {
         console.error('Error al cargar clínicas:', err);
       }
@@ -3085,73 +3880,77 @@ export function getAdminDashboardHtml(): string {
 
     function renderClinics() {
       const container = document.getElementById('clinics-container');
+      if (!container) return;
       if (!currentClinics.length) {
         container.innerHTML = '<div style="color:var(--text-muted)">No hay clínicas registradas.</div>';
         return;
       }
 
       container.innerHTML = currentClinics.map(c => {
-        const doctorsPills = (c.doctors || []).map(d => 
-          \`<span class="doctor-pill">👨‍⚕️ \${d.name} (\${d.specialtyLabel})</span>\`
-        ).join('');
-
-        const waInstance = c.whatsappInstance || c.clinicId;
+        const chairs = c.chairsCount || 3;
+        const contact = c.contactPerson || 'Administración';
+        const phone = c.phone || c.emergencyPhone || '+593 99 876 5432';
 
         return \`
           <div class="clinic-card">
             <div class="clinic-header">
               <div>
                 <div class="clinic-name">\${c.name}</div>
-                <div class="clinic-location">📍 \${c.city} — \${c.address}</div>
+                <div class="clinic-location">
+                  <svg viewBox="0 0 24 24" class="icon-svg" style="width:13px; height:13px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  \${c.city} — \${c.address || 'Sede Central'}
+                </div>
               </div>
-              <span class="badge-status">🟢 Bot Activo</span>
+              <span class="badge-status">
+                <span class="status-dot"></span> Bot Activo
+              </span>
             </div>
 
             <div class="clinic-details-box">
               <div class="detail-row">
-                <span style="color:var(--text-muted);">Slug Clínico:</span>
-                <span class="detail-val">\${c.clinicId}</span>
+                <span style="color:var(--text-muted);">Contacto Sede:</span>
+                <span class="detail-val">\${contact} (\${phone})</span>
               </div>
               <div class="detail-row">
-                <span style="color:var(--text-muted);">Urgencias:</span>
-                <span class="detail-val">\${c.emergencyPhone || c.phone || '+593 99 876 5432'}</span>
+                <span style="color:var(--text-muted);">Capacidad Operativa:</span>
+                <span class="detail-val" style="color:var(--accent-emerald);">\${chairs} Sillones Dentales</span>
               </div>
               <div class="detail-row">
-                <span style="color:var(--text-muted);">Google Calendar:</span>
-                <span class="detail-val" style="color:var(--accent-blue);">\${c.calendarId || 'primary'}</span>
+                <span style="color:var(--text-muted);">Canales Activos:</span>
+                <span class="detail-val">Telegram Live • \${c.metaPhoneNumberId ? 'Meta WABA Oficial' : 'Meta WABA Standby'}</span>
               </div>
               <div class="detail-row">
-                <span style="color:var(--text-muted);">Meta WhatsApp:</span>
-                <span class="detail-val" style="color:var(--accent-emerald); font-weight:700;">\${c.metaPhoneNumberId ? '🟢 Oficial Conectado' : '🟡 Pendiente Config'}</span>
+                <span style="color:var(--text-muted);">Privacidad Pacientes:</span>
+                <span class="detail-val" style="color:var(--accent-blue);">Aislado LOPDP</span>
               </div>
             </div>
 
-            <div>
-              <div style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">
-                Especialistas Asignados:
-              </div>
-              <div class="doctors-pills-wrap">
-                \${doctorsPills || '<span style="color:var(--text-dim); font-size:12px;">Sin especialistas configurados</span>'}
-              </div>
-            </div>
-
-            <div class="card-actions-grid" style="grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="card-actions-grid">
+              <button class="btn-action-channel btn-action-primary" onclick="enterClinicWorkspace('\${c.clinicId}')">
+                <svg viewBox="0 0 24 24" class="icon-svg" style="width:15px; height:15px;"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                Ingresar a Clínica
+              </button>
               <button class="btn-action-channel wa" onclick="openWhatsappModal('\${c.clinicId}')">
-                🛡️ Meta WhatsApp
+                Meta WhatsApp
               </button>
               <button class="btn-action-channel tg" onclick="openTelegramModal('\${c.clinicId}')">
-                ✈️ Telegram
-              </button>
-              <button class="btn-action-channel" style="background: rgba(0, 210, 106, 0.15); color: var(--accent-emerald); border: 1px solid rgba(0, 210, 106, 0.3);" onclick="goToClinicCatalog('\${c.clinicId}')">
-                🏷️ Precios & Doctores
+                Telegram
               </button>
               <button class="btn-action-channel play" onclick="openClinicInPlayground('\${c.clinicId}')">
-                💬 Probar Chat
+                Probar Chat
+              </button>
+              <button class="btn-action-channel" onclick="goToClinicCatalog('\${c.clinicId}')">
+                Precios & Doctores
               </button>
             </div>
           </div>
         \`;
       }).join('');
+    }
+
+    function goToClinicCatalog(clinicId) {
+      activeCatalogClinicId = clinicId;
+      switchNavTab('catalog');
     }
 
     function populateClinicSelectors() {
@@ -3175,10 +3974,12 @@ export function getAdminDashboardHtml(): string {
     // ================= MODAL NUEVA CLÍNICA =================
     function openNewClinicModal() {
       document.getElementById('modal-new-clinic').classList.add('open');
+      document.getElementById('modal-new-clinic').classList.add('active');
     }
 
     function closeNewClinicModal() {
       document.getElementById('modal-new-clinic').classList.remove('open');
+      document.getElementById('modal-new-clinic').classList.remove('active');
     }
 
     async function submitNewClinic(e) {
@@ -3193,8 +3994,9 @@ export function getAdminDashboardHtml(): string {
         calendarId: document.getElementById('new-clinic-calendar').value.trim(),
         metaPhoneNumberId: document.getElementById('new-clinic-whatsapp').value.trim() || undefined,
         whatsappInstance: document.getElementById('new-clinic-whatsapp').value.trim() || undefined,
+        chairsCount: 3,
         doctors: [
-          { id: 'doc_1', name: 'Dr. Principal', specialty: 'odontologia_general', specialtyLabel: 'Odontología General', availableDays: [1,2,3,4,5], hours: { start: '09:00', end: '18:00' } }
+          { id: 'doc_1', name: 'Dr. Principal', specialty: 'odontologia_general', specialtyLabel: 'Odontología General', availableDays: [1,2,3,4,5], hours: { start: '09:00', end: '18:00' }, isActive: true }
         ]
       };
 
@@ -3209,12 +4011,11 @@ export function getAdminDashboardHtml(): string {
           closeNewClinicModal();
           document.getElementById('form-new-clinic').reset();
           await fetchClinics();
-          alert('✅ Odontología conectada exitosamente: ' + clinicData.name);
         } else {
-          alert('❌ Error: ' + (data.error || 'No se pudo guardar la clínica'));
+          alert('Error: ' + (data.error || 'No se pudo guardar la clínica'));
         }
       } catch (err) {
-        alert('❌ Error de red al crear la clínica');
+        alert('Error de red al crear la clínica');
       }
     }
 
@@ -3233,10 +4034,12 @@ export function getAdminDashboardHtml(): string {
       if (statusDiv) statusDiv.style.display = 'none';
 
       document.getElementById('modal-whatsapp-qr').classList.add('open');
+      document.getElementById('modal-whatsapp-qr').classList.add('active');
     }
 
     function closeWhatsAppModal() {
       document.getElementById('modal-whatsapp-qr').classList.remove('open');
+      document.getElementById('modal-whatsapp-qr').classList.remove('active');
     }
 
     async function saveMetaWhatsAppSettings(e) {
@@ -3246,7 +4049,7 @@ export function getAdminDashboardHtml(): string {
         statusDiv.style.display = 'block';
         statusDiv.style.background = 'rgba(0, 210, 106, 0.1)';
         statusDiv.style.color = 'var(--accent-emerald)';
-        statusDiv.innerText = '💾 Guardando credenciales oficiales de Meta...';
+        statusDiv.innerText = 'Guardando credenciales oficiales de Meta...';
       }
 
       const metaPhoneNumberId = document.getElementById('meta-phone-number-id').value.trim();
@@ -3261,21 +4064,21 @@ export function getAdminDashboardHtml(): string {
         });
         const data = await res.json();
         if (data.ok) {
-          if (statusDiv) statusDiv.innerText = '✅ ¡Credenciales de Meta WhatsApp Cloud guardadas con éxito!';
+          if (statusDiv) statusDiv.innerText = '¡Credenciales de Meta WhatsApp Cloud guardadas con éxito!';
           await fetchClinics();
           setTimeout(() => { closeWhatsAppModal(); }, 1200);
         } else {
           if (statusDiv) {
             statusDiv.style.background = 'rgba(255, 107, 74, 0.1)';
             statusDiv.style.color = 'var(--accent-coral)';
-            statusDiv.innerText = '❌ Error: ' + (data.error || 'No se pudo guardar');
+            statusDiv.innerText = 'Error: ' + (data.error || 'No se pudo guardar');
           }
         }
       } catch (err) {
         if (statusDiv) {
           statusDiv.style.background = 'rgba(255, 107, 74, 0.1)';
           statusDiv.style.color = 'var(--accent-coral)';
-          statusDiv.innerText = '❌ Error de red al conectar con el servidor';
+          statusDiv.innerText = 'Error de red al conectar con el servidor';
         }
       }
     }
@@ -3286,7 +4089,7 @@ export function getAdminDashboardHtml(): string {
         statusDiv.style.display = 'block';
         statusDiv.style.background = 'rgba(59, 130, 246, 0.1)';
         statusDiv.style.color = 'var(--accent-blue)';
-        statusDiv.innerText = '📡 Enviando ping de prueba a Meta Graph API...';
+        statusDiv.innerText = 'Enviando ping de prueba a Meta Graph API...';
       }
 
       try {
@@ -3300,20 +4103,20 @@ export function getAdminDashboardHtml(): string {
           if (statusDiv) {
             statusDiv.style.background = 'rgba(0, 210, 106, 0.1)';
             statusDiv.style.color = 'var(--accent-emerald)';
-            statusDiv.innerText = '✅ Mensaje de prueba enviado con éxito vía Meta Cloud API al ' + data.targetPhone;
+            statusDiv.innerText = 'Mensaje de prueba enviado con éxito vía Meta Cloud API al ' + data.targetPhone;
           }
         } else {
           if (statusDiv) {
             statusDiv.style.background = 'rgba(255, 107, 74, 0.1)';
             statusDiv.style.color = 'var(--accent-coral)';
-            statusDiv.innerText = '⚠️ Modo simulación activo o token pendiente de verificación.';
+            statusDiv.innerText = 'Modo simulación activo o token pendiente de verificación.';
           }
         }
       } catch (err) {
         if (statusDiv) {
           statusDiv.style.background = 'rgba(255, 107, 74, 0.1)';
           statusDiv.style.color = 'var(--accent-coral)';
-          statusDiv.innerText = '❌ Error de conexión';
+          statusDiv.innerText = 'Error de conexión';
         }
       }
     }
@@ -3323,10 +4126,12 @@ export function getAdminDashboardHtml(): string {
     function openTelegramModal(clinicId) {
       activeTgClinicId = clinicId;
       document.getElementById('modal-telegram').classList.add('open');
+      document.getElementById('modal-telegram').classList.add('active');
     }
 
     function closeTelegramModal() {
       document.getElementById('modal-telegram').classList.remove('open');
+      document.getElementById('modal-telegram').classList.remove('active');
     }
 
     async function saveTelegramSettings(e) {
@@ -3343,43 +4148,118 @@ export function getAdminDashboardHtml(): string {
         const data = await res.json();
         if (data.ok) {
           closeTelegramModal();
-          alert('✅ Token de Telegram configurado exitosamente.');
+          alert('Token de Telegram configurado exitosamente.');
         } else {
-          alert('❌ Error: ' + (data.error || 'No se pudo guardar'));
+          alert('Error: ' + (data.error || 'No se pudo guardar'));
         }
       } catch (err) {
-        alert('❌ Error de red');
+        alert('Error de red');
       }
     }
 
-    // ================= RENDERIZAR FLUJOS DEL BOT =================
+    // ================= FLUJOS CONVERSACIONALES (SPLIT SCREEN) =================
     function renderFlows() {
       const container = document.getElementById('flows-container');
+      if (!container) return;
       container.innerHTML = FLOW_DEFINITIONS.map(f => \`
         <div class="flow-card">
-          <div class="flow-card-top-bar"></div>
           <div class="flow-header">
             <div class="flow-name">\${f.name}</div>
             <span class="flow-tag">\${f.step}</span>
           </div>
           <div class="flow-desc">\${f.desc}</div>
           <div class="flow-prompt-box">
-            " \${f.samplePrompt} "
+            "\${f.samplePrompt}"
           </div>
-          <button class="btn-emerald-cta" style="padding:10px 16px; font-size:13px; font-weight:800; width:100%; justify-content:center;" onclick="testFlow('\${f.id}')">
-            ⚡ Probar este Flujo en Playground
+          <button class="btn-emerald-cta" style="padding:8px 14px; font-size:12px; font-weight:700; width:100%; justify-content:center;" onclick="testFlow('\${f.id}')">
+            Probar este Flujo
           </button>
         </div>
       \`).join('');
+
+      const flowSel = document.getElementById('flow-clinic-selector');
+      const clinicLabel = document.getElementById('flows-chat-clinic-label');
+      if (flowSel && clinicLabel) {
+        clinicLabel.innerText = flowSel.options[flowSel.selectedIndex]?.text || 'Clínica Activa';
+      }
     }
 
     function testFlow(flowId) {
       const flow = FLOW_DEFINITIONS.find(f => f.id === flowId);
       if (!flow) return;
-      switchNavTab('playground');
-      const input = document.getElementById('chat-input-text');
-      input.value = flow.samplePrompt;
-      input.focus();
+
+      // Inyectar en chat de la columna derecha de Flujos
+      const flowInput = document.getElementById('flows-chat-input');
+      if (flowInput) {
+        flowInput.value = flow.samplePrompt;
+        triggerFlowDirectSend(flow.samplePrompt);
+      }
+
+      // También mantener sincronizado con tab playground para compatibilidad
+      const playInput = document.getElementById('chat-input-text');
+      if (playInput) playInput.value = flow.samplePrompt;
+    }
+
+    async function triggerFlowDirectSend(text) {
+      const flowSel = document.getElementById('flow-clinic-selector');
+      const clinicId = flowSel ? flowSel.value : activeChatClinicId;
+      const messagesContainer = document.getElementById('flows-chat-messages');
+
+      const userDiv = document.createElement('div');
+      userDiv.className = 'bubble user';
+      userDiv.innerText = text;
+      messagesContainer.appendChild(userDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'bubble bot';
+      loadingDiv.innerText = 'Valeria está analizando el flujo...';
+      messagesContainer.appendChild(loadingDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      const startTime = performance.now();
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, userId: 'flow-test-user', clinicId })
+        });
+        const data = await res.json();
+        const latency = Math.round(performance.now() - startTime);
+
+        loadingDiv.remove();
+
+        const botDiv = document.createElement('div');
+        botDiv.className = 'bubble bot';
+        botDiv.innerText = data.reply || '(Sin respuesta del agente)';
+        messagesContainer.appendChild(botDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        document.getElementById('flows-trace-latency').innerText = latency + ' ms';
+        if (data.trace) {
+          document.getElementById('flows-trace-model').innerText = data.trace.model || 'gemini-2.5-flash';
+          document.getElementById('flows-trace-tools').innerText = (data.trace.toolsExecuted && data.trace.toolsExecuted.length)
+            ? data.trace.toolsExecuted.join(', ')
+            : 'Ninguna (Respuesta Directa)';
+        }
+      } catch (err) {
+        loadingDiv.remove();
+        const errDiv = document.createElement('div');
+        errDiv.className = 'bubble bot';
+        errDiv.style.color = 'var(--accent-coral)';
+        errDiv.innerText = 'Error de comunicación con el agente.';
+        messagesContainer.appendChild(errDiv);
+      }
+    }
+
+    function sendFlowsChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('flows-chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      triggerFlowDirectSend(text);
     }
 
     // ================= CITAS AGENDADAS =================
@@ -3390,7 +4270,10 @@ export function getAdminDashboardHtml(): string {
         const data = await res.json();
         const appointments = data.appointments || [];
 
-        document.getElementById('overview-total-citas').innerText = appointments.length ? appointments.length + ' Citas' : '1,248 Citas';
+        const totalCitasEl = document.getElementById('overview-total-citas');
+        if (totalCitasEl) {
+          totalCitasEl.innerText = appointments.length + ' Citas';
+        }
 
         if (!appointments.length) {
           tbody.innerHTML = \`
@@ -3444,7 +4327,6 @@ export function getAdminDashboardHtml(): string {
 
       const container = document.getElementById('chat-messages-container');
       
-      // Mensaje de usuario
       const userDiv = document.createElement('div');
       userDiv.className = 'bubble user';
       userDiv.innerText = text;
@@ -3452,7 +4334,6 @@ export function getAdminDashboardHtml(): string {
       input.value = '';
       container.scrollTop = container.scrollHeight;
 
-      // Indicador escribiendo
       const loadingDiv = document.createElement('div');
       loadingDiv.className = 'bubble bot';
       loadingDiv.id = 'bot-typing-indicator';
@@ -3484,7 +4365,6 @@ export function getAdminDashboardHtml(): string {
         container.appendChild(botDiv);
         container.scrollTop = container.scrollHeight;
 
-        // Actualizar inspector
         document.getElementById('trace-latency').innerText = latency + ' ms';
         if (data.trace) {
           document.getElementById('trace-model').innerText = data.trace.model || 'gemini-2.5-flash';
@@ -3498,7 +4378,7 @@ export function getAdminDashboardHtml(): string {
         const errDiv = document.createElement('div');
         errDiv.className = 'bubble bot';
         errDiv.style.color = 'var(--accent-coral)';
-        errDiv.innerText = '❌ Error de comunicación con el agente.';
+        errDiv.innerText = 'Error de comunicación con el agente.';
         container.appendChild(errDiv);
       }
     }

@@ -4,7 +4,32 @@
     "name": "Clínica Dental OdontoCare Cuenca",
     "city": "Cuenca",
     "address": "Av. Alfonso Cordero y José Alvear, Edificio Atlantis, Piso 3",
+    "phone": "+593 98 492 9886",
     "emergencyPhone": "+593 98 492 9886",
+    "contactPerson": "Dra. Selen Swift (Directora Médica)",
+    "chairsCount": 3,
+    "inventoryStatus": [
+      {
+        "item": "Anestésicos (Lidocaína 2% c/ Epinefrina)",
+        "level": "optimal",
+        "updatedAt": "2026-09-08T22:00:00Z"
+      },
+      {
+        "item": "Agujas Dentales Cortas 30G Estériles",
+        "level": "optimal",
+        "updatedAt": "2026-09-08T22:00:00Z"
+      },
+      {
+        "item": "Resinas Fotocurables (A1, A2, A3)",
+        "level": "optimal",
+        "updatedAt": "2026-09-08T22:00:00Z"
+      },
+      {
+        "item": "Kits de Instrumental Quirúrgico Estéril",
+        "level": "low",
+        "updatedAt": "2026-09-08T22:00:00Z"
+      }
+    ],
     "workingHours": {
       "weekdays": "09:00 - 19:00",
       "saturday": "09:00 - 13:00",
@@ -18,13 +43,17 @@
         "specialtyLabel": "Ortodoncia, Brackets & Alineadores Invisibles",
         "calendarId": "carlos.delgado.orto@gmail.com",
         "slotDurationMinutes": 45,
+        "isActive": true,
         "availableDays": [
-          "monday",
-          "tuesday",
-          "thursday",
-          "friday"
+          1,
+          2,
+          4,
+          5
         ],
-        "workingHours": "14:00 - 19:00"
+        "workingHours": {
+          "start": "14:00",
+          "end": "19:00"
+        }
       },
       {
         "id": "doc_cirugia",
@@ -33,12 +62,16 @@
         "specialtyLabel": "Cirugía Maxilofacial, Muelas del Juicio & Implantes",
         "calendarId": "sofia.mora.cirugia@gmail.com",
         "slotDurationMinutes": 60,
+        "isActive": true,
         "availableDays": [
-          "tuesday",
-          "wednesday",
-          "friday"
+          2,
+          3,
+          5
         ],
-        "workingHours": "09:00 - 14:00"
+        "workingHours": {
+          "start": "09:00",
+          "end": "14:00"
+        }
       },
       {
         "id": "doc_general",
@@ -47,15 +80,19 @@
         "specialtyLabel": "Odontología Integral, Profilaxis, Resinas & Blanqueamiento",
         "calendarId": "elena.vega.general@gmail.com",
         "slotDurationMinutes": 30,
+        "isActive": true,
         "availableDays": [
-          "monday",
-          "tuesday",
-          "wednesday",
-          "thursday",
-          "friday",
-          "saturday"
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
         ],
-        "workingHours": "09:00 - 18:00"
+        "workingHours": {
+          "start": "09:00",
+          "end": "18:00"
+        }
       },
       {
         "id": "doc_pediatria",
@@ -64,12 +101,16 @@
         "specialtyLabel": "Odontopediatría (Atención Dental Infantil)",
         "calendarId": "mateo.palacios.pediatria@gmail.com",
         "slotDurationMinutes": 40,
+        "isActive": true,
         "availableDays": [
-          "wednesday",
-          "friday",
-          "saturday"
+          3,
+          5,
+          6
         ],
-        "workingHours": "09:00 - 13:00"
+        "workingHours": {
+          "start": "09:00",
+          "end": "13:00"
+        }
       }
     ],
     "treatments": [
@@ -77,30 +118,35 @@
         "name": "Valoración de Ortodoncia",
         "specialty": "ortodoncia",
         "priceRange": "$20 USD (gratuita al contratar tratamiento)",
+        "assignedDoctorId": "doc_ortodoncia",
         "description": "Estudio fotográfico y diagnóstico para brackets o alineadores"
       },
       {
         "name": "Limpieza Dental Profiláctica (Ultrasonido)",
         "specialty": "odontologia_general",
         "priceRange": "$35 - $45 USD",
+        "assignedDoctorId": "doc_general",
         "description": "Eliminación de sarro con ultrasonido, pulido y flúor"
       },
       {
         "name": "Extracción de Terceros Molares (Muela del Juicio)",
         "specialty": "cirugia_implantes",
         "priceRange": "$60 - $120 USD por pieza según complejidad",
+        "assignedDoctorId": "doc_cirugia",
         "description": "Cirugía ambulatoria con anestesia local"
       },
       {
         "name": "Implante Dental de Titanio",
         "specialty": "cirugia_implantes",
         "priceRange": "$650 - $900 USD (incluye corona)",
+        "assignedDoctorId": "doc_cirugia",
         "description": "Implante con biocompatibilidad total y garantía de 10 años"
       },
       {
         "name": "Diseño de Sonrisa / Carillas de Resina",
         "specialty": "odontologia_general",
         "priceRange": "$50 - $90 USD por carilla",
+        "assignedDoctorId": "doc_general",
         "description": "Modelado estético directo de alta gama"
       }
     ],
@@ -110,14 +156,39 @@
     "metaWabaId": "987654321012345",
     "metaAccessToken": "EAAG...meta_system_token_cuenca",
     "createdAt": "2026-09-08T20:07:17.063Z",
-    "updatedAt": "2026-09-08T20:07:17.064Z"
+    "updatedAt": "2026-09-08T22:56:35.138Z"
   },
   {
     "clinicId": "dental_plus_quito",
     "name": "Clínica Dental Plus Quito",
     "city": "Quito",
     "address": "Av. Amazonas y Naciones Unidas, Edificio Platinum Of. 402",
+    "phone": "+593 99 876 5432",
     "emergencyPhone": "+593 99 876 5432",
+    "contactPerson": "Dr. Fernando Andrade (Gerente Clínico)",
+    "chairsCount": 2,
+    "inventoryStatus": [
+      {
+        "item": "Anestésicos (Mepivacaína 3% sin vaso)",
+        "level": "optimal",
+        "updatedAt": "2026-09-08T22:00:00Z"
+      },
+      {
+        "item": "Agujas Dentales Largas 27G",
+        "level": "optimal",
+        "updatedAt": "2026-09-08T22:00:00Z"
+      },
+      {
+        "item": "Brackets Metálicos MBT 0.022",
+        "level": "low",
+        "updatedAt": "2026-09-08T22:00:00Z"
+      },
+      {
+        "item": "Kits de Bioseguridad y Desinfección",
+        "level": "optimal",
+        "updatedAt": "2026-09-08T22:00:00Z"
+      }
+    ],
     "calendarId": "quito.dental.plus@gmail.com",
     "whatsappInstance": "dental_plus_quito",
     "workingHours": {
@@ -133,13 +204,17 @@
         "specialtyLabel": "Ortodoncia y Estética Dental",
         "calendarId": "andrea.morales.orto@gmail.com",
         "slotDurationMinutes": 45,
+        "isActive": true,
         "availableDays": [
-          "monday",
-          "tuesday",
-          "thursday",
-          "friday"
+          1,
+          2,
+          4,
+          5
         ],
-        "workingHours": "09:00 - 18:00"
+        "workingHours": {
+          "start": "09:00",
+          "end": "18:00"
+        }
       },
       {
         "id": "doc_quito_cirugia",
@@ -148,12 +223,16 @@
         "specialtyLabel": "Cirugía Oral e Implantología",
         "calendarId": "francisco.romero.cirugia@gmail.com",
         "slotDurationMinutes": 60,
+        "isActive": true,
         "availableDays": [
-          "tuesday",
-          "wednesday",
-          "saturday"
+          2,
+          3,
+          6
         ],
-        "workingHours": "10:00 - 17:00"
+        "workingHours": {
+          "start": "10:00",
+          "end": "17:00"
+        }
       }
     ],
     "treatments": [
@@ -161,18 +240,21 @@
         "name": "Brackets Metálicos o Autoligado",
         "specialty": "ortodoncia",
         "priceRange": "$350 - $600 USD (Inicial + mensualidades de $35)",
+        "assignedDoctorId": "doc_quito_orto",
         "description": "Corrección y alineación dental con aparatología fija de última generación."
       },
       {
         "name": "Cirugía de Cordales Complejas",
         "specialty": "cirugia_implantes",
         "priceRange": "$70 - $110 USD por pieza",
+        "assignedDoctorId": "doc_quito_cirugia",
         "description": "Extracción quirúrgica atraumática con anestesia computarizada y sutura reabsorbible."
       },
       {
         "name": "Implante Dental de Titanio Grado 5",
         "specialty": "cirugia_implantes",
         "priceRange": "$550 - $750 USD",
+        "assignedDoctorId": "doc_quito_cirugia",
         "description": "Rehabilitación fija biocompatible con integración ósea garantizada."
       }
     ],
@@ -180,15 +262,16 @@
     "updatedAt": "2026-09-08T20:07:17.064Z"
   },
   {
-    "clinicId": "dental_manta_1563",
-    "name": "Clínica Dental Pacífico Manta 1563",
+    "clinicId": "dental_manta_7864",
+    "name": "Clínica Dental Pacífico Manta 7864",
     "city": "Manta",
     "address": "Av. Flavio Reyes y Calle 18",
     "phone": "+593 99 876 5432",
     "emergencyPhone": "+593 99 876 5432",
     "calendarId": "agenda.manta@gmail.com",
-    "metaPhoneNumberId": "dental_manta_1563",
-    "whatsappInstance": "dental_manta_1563",
+    "metaPhoneNumberId": "dental_manta_7864",
+    "whatsappInstance": "dental_manta_7864",
+    "chairsCount": 3,
     "doctors": [
       {
         "id": "doc_1",
@@ -205,22 +288,24 @@
         "hours": {
           "start": "09:00",
           "end": "18:00"
-        }
+        },
+        "isActive": true
       }
     ],
-    "createdAt": "2026-09-08T22:05:11.964Z",
-    "updatedAt": "2026-09-08T22:05:11.964Z"
+    "createdAt": "2026-09-08T22:54:08.244Z",
+    "updatedAt": "2026-09-08T22:54:08.244Z"
   },
   {
-    "clinicId": "dental_manta_8914",
-    "name": "Clínica Dental Pacífico Manta 8914",
+    "clinicId": "dental_manta_9562",
+    "name": "Clínica Dental Pacífico Manta 9562",
     "city": "Manta",
     "address": "Av. Flavio Reyes y Calle 18",
     "phone": "+593 99 876 5432",
     "emergencyPhone": "+593 99 876 5432",
     "calendarId": "agenda.manta@gmail.com",
-    "metaPhoneNumberId": "dental_manta_8914",
-    "whatsappInstance": "dental_manta_8914",
+    "metaPhoneNumberId": "dental_manta_9562",
+    "whatsappInstance": "dental_manta_9562",
+    "chairsCount": 3,
     "doctors": [
       {
         "id": "doc_1",
@@ -237,22 +322,24 @@
         "hours": {
           "start": "09:00",
           "end": "18:00"
-        }
+        },
+        "isActive": true
       }
     ],
-    "createdAt": "2026-09-08T22:19:19.230Z",
-    "updatedAt": "2026-09-08T22:19:19.230Z"
+    "createdAt": "2026-09-08T22:55:19.877Z",
+    "updatedAt": "2026-09-08T22:55:19.877Z"
   },
   {
-    "clinicId": "dental_manta_5693",
-    "name": "Clínica Dental Pacífico Manta 5693",
+    "clinicId": "dental_manta_6678",
+    "name": "Clínica Dental Pacífico Manta 6678",
     "city": "Manta",
     "address": "Av. Flavio Reyes y Calle 18",
     "phone": "+593 99 876 5432",
     "emergencyPhone": "+593 99 876 5432",
     "calendarId": "agenda.manta@gmail.com",
-    "metaPhoneNumberId": "dental_manta_5693",
-    "whatsappInstance": "dental_manta_5693",
+    "metaPhoneNumberId": "dental_manta_6678",
+    "whatsappInstance": "dental_manta_6678",
+    "chairsCount": 3,
     "doctors": [
       {
         "id": "doc_1",
@@ -269,10 +356,45 @@
         "hours": {
           "start": "09:00",
           "end": "18:00"
-        }
+        },
+        "isActive": true
       }
     ],
-    "createdAt": "2026-09-08T22:21:45.980Z",
-    "updatedAt": "2026-09-08T22:21:45.980Z"
+    "createdAt": "2026-09-08T22:55:57.059Z",
+    "updatedAt": "2026-09-08T22:55:57.059Z"
+  },
+  {
+    "clinicId": "dental_manta_6809",
+    "name": "Clínica Dental Pacífico Manta 6809",
+    "city": "Manta",
+    "address": "Av. Flavio Reyes y Calle 18",
+    "phone": "+593 99 876 5432",
+    "emergencyPhone": "+593 99 876 5432",
+    "calendarId": "agenda.manta@gmail.com",
+    "metaPhoneNumberId": "dental_manta_6809",
+    "whatsappInstance": "dental_manta_6809",
+    "chairsCount": 3,
+    "doctors": [
+      {
+        "id": "doc_1",
+        "name": "Dr. Principal",
+        "specialty": "odontologia_general",
+        "specialtyLabel": "Odontología General",
+        "availableDays": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "hours": {
+          "start": "09:00",
+          "end": "18:00"
+        },
+        "isActive": true
+      }
+    ],
+    "createdAt": "2026-09-08T22:56:37.189Z",
+    "updatedAt": "2026-09-08T22:56:37.189Z"
   }
 ]

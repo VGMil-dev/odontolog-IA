@@ -100,6 +100,28 @@ export class CalendarService {
     return this.appointments;
   }
 
+  public getAppointmentsMetrics(clinicId?: string) {
+    const list = clinicId ? this.appointments.filter(a => a.clinicId === clinicId) : this.appointments;
+    const total = list.length;
+    const confirmed = list.filter(a => (a as any).status !== 'cancelled').length;
+    const cancelled = list.filter(a => (a as any).status === 'cancelled').length;
+    
+    // Identificar citas de hoy en Guayaquil (YYYY-MM-DD)
+    const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Guayaquil' });
+    const todayAppointments = list.filter(a => a.dateTime && a.dateTime.startsWith(todayStr));
+
+    const retentionRate = total > 0 ? Math.round((confirmed / total) * 100) : 100;
+
+    return {
+      total,
+      confirmed,
+      cancelled,
+      todayCount: todayAppointments.length,
+      todayAppointments,
+      retentionRate
+    };
+  }
+
   /**
    * Obtiene los horarios disponibles para una especialidad en una clínica y fecha dada.
    */
@@ -110,18 +132,24 @@ export class CalendarService {
   ): Promise<{ doctor: Doctor; slots: TimeSlot[]; clinic: ClinicConfig }> {
     const clinic: ClinicEntity = (clinicId ? clinicsRegistry.getById(clinicId) : null) || clinicsRegistry.getDefault();
     
-    // Buscar doctor por especialidad dentro de la clínica
-    let doctor = clinic.doctors.find(d => 
+    // Filtrar únicamente doctores activos (no marcados como ausentes por la secretaria)
+    const activeDoctors = (clinic.doctors || []).filter(d => d.isActive !== false);
+    if (activeDoctors.length === 0) {
+      throw new Error(`En este momento los especialistas de ${clinic.name} se encuentran fuera de turno o ausentes.`);
+    }
+
+    // Buscar doctor por especialidad dentro de los activos
+    let doctor = activeDoctors.find(d => 
       d.specialty.toLowerCase() === specialty.toLowerCase() ||
       d.specialty.includes(specialty.toLowerCase())
     );
 
     if (!doctor) {
-      doctor = clinic.doctors.find(d => d.specialty.toLowerCase().includes('general')) || clinic.doctors[0];
+      doctor = activeDoctors.find(d => d.specialty.toLowerCase().includes('general')) || activeDoctors[0];
     }
 
     if (!doctor) {
-      throw new Error(`La clínica ${clinic.name} no tiene doctores configurados.`);
+      throw new Error(`La clínica ${clinic.name} no tiene doctores activos para esta especialidad.`);
     }
 
     const slots = await this.generateSlotsForDoctor(doctor, clinic, targetDate);
@@ -164,10 +192,15 @@ export class CalendarService {
 
     let startHour = 9;
     let endHour = 18;
-    const match = doctor.workingHours.match(/(\d{2}):\d{2}\s*-\s*(\d{2}):\d{2}/);
-    if (match) {
-      startHour = parseInt(match[1], 10);
-      endHour = parseInt(match[2], 10);
+    if (typeof doctor.workingHours === 'string') {
+      const match = doctor.workingHours.match(/(\d{2}):\d{2}\s*-\s*(\d{2}):\d{2}/);
+      if (match) {
+        startHour = parseInt(match[1], 10);
+        endHour = parseInt(match[2], 10);
+      }
+    } else if (doctor.workingHours && typeof doctor.workingHours === 'object') {
+      if ((doctor.workingHours as any).start) startHour = parseInt((doctor.workingHours as any).start.split(':')[0], 10);
+      if ((doctor.workingHours as any).end) endHour = parseInt((doctor.workingHours as any).end.split(':')[0], 10);
     }
 
     const slots: TimeSlot[] = [];
@@ -175,9 +208,14 @@ export class CalendarService {
 
     // Buscar slots: si hoy no hay horas o no atiende, avanzar hasta encontrar un día con horas
     while (slots.length === 0 && searchAttempts < 14) {
-      const currentDayName = dayNames[target.getDay()];
+      const currentDayIndex = target.getDay();
+      const currentDayName = dayNames[currentDayIndex];
+      const isAvailable = Array.isArray(doctor.availableDays) && (doctor.availableDays as Array<string | number>).some(d =>
+        d === currentDayIndex ||
+        (typeof d === 'string' && d.toLowerCase() === currentDayName.toLowerCase())
+      );
 
-      if (doctor.availableDays.includes(currentDayName)) {
+      if (isAvailable) {
         for (let hour = startHour; hour < endHour; hour++) {
           const slotStart = new Date(target);
           slotStart.setHours(hour, 0, 0, 0);

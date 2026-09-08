@@ -242,6 +242,129 @@ export function createServer() {
     return res.status(200).json({ ok: true, appointments });
   });
 
+  // 9. API de Métricas Reales (Zero Mock Data)
+  app.get('/api/metrics/real', (_req: Request, res: Response) => {
+    const calendarMetrics = calendarService.getAppointmentsMetrics();
+    const agentMetrics = agentCore.getRealMetrics();
+
+    let tgPct = 100;
+    let waPct = 0;
+    const totalChannelMsgs = agentMetrics.channels.telegram + agentMetrics.channels.whatsapp;
+    if (totalChannelMsgs > 0 && agentMetrics.channels.whatsapp > 0) {
+      waPct = Math.round((agentMetrics.channels.whatsapp / totalChannelMsgs) * 100);
+      tgPct = 100 - waPct;
+    }
+
+    const conversionRate = agentMetrics.totalUsers > 0
+      ? Math.round((calendarMetrics.total / agentMetrics.totalUsers) * 100)
+      : 0;
+
+    return res.status(200).json({
+      ok: true,
+      metrics: {
+        totalAppointments: calendarMetrics.total,
+        todayAppointments: calendarMetrics.todayCount,
+        confirmedAppointments: calendarMetrics.confirmed,
+        retentionRate: calendarMetrics.retentionRate,
+        totalPatients: agentMetrics.totalUsers,
+        totalMessages: agentMetrics.totalMessages,
+        conversionRate,
+        channels: {
+          telegramPercent: tgPct,
+          whatsappPercent: waPct,
+          telegramCount: agentMetrics.channels.telegram,
+          whatsappCount: agentMetrics.channels.whatsapp,
+        },
+        activeClinics: clinicsRegistry.getAll().length,
+      }
+    });
+  });
+
+  // 10. API Multi-Tenant: Mini Dashboard Operativo de Clínica (Secretaria)
+  app.get('/api/clinics/:id/dashboard', (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const clinic = clinicsRegistry.getById(clinicId);
+    if (!clinic) return res.status(404).json({ ok: false, error: 'Clínica no encontrada' });
+
+    const calendarMetrics = calendarService.getAppointmentsMetrics(clinicId);
+    const conversations = agentCore.getRecentConversationsSummary(clinicId);
+
+    return res.status(200).json({
+      ok: true,
+      clinic,
+      doctors: clinic.doctors || [],
+      treatments: clinic.treatments || [],
+      chairsCount: clinic.chairsCount || 2,
+      inventoryStatus: clinic.inventoryStatus || [],
+      todayAppointments: calendarMetrics.todayAppointments || [],
+      allAppointments: calendarService.getAllAppointments(clinicId),
+      metrics: {
+        totalAppointments: calendarMetrics.total,
+        todayCount: calendarMetrics.todayCount,
+        retentionRate: calendarMetrics.retentionRate,
+      },
+      conversations,
+    });
+  });
+
+  // 11. Toggle de Disponibilidad de Doctor (Marcar Ausente / Activo)
+  app.post('/api/clinics/:id/doctors/:doctorId/toggle-status', authService.requireAdminAuth, (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const doctorId = Array.isArray(req.params.doctorId) ? req.params.doctorId[0] : req.params.doctorId;
+    const result = clinicsRegistry.toggleDoctorStatus(clinicId, doctorId);
+    return res.status(200).json(result);
+  });
+
+  // 12. Actualización de Semáforo de Insumos Críticos
+  app.put('/api/clinics/:id/inventory', authService.requireAdminAuth, (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const { inventory, itemKey, status } = req.body;
+
+    if (Array.isArray(inventory)) {
+      const success = clinicsRegistry.updateInventory(clinicId, inventory);
+      return res.status(200).json({ ok: success });
+    }
+
+    const clinic = clinicsRegistry.getById(clinicId);
+    if (!clinic) {
+      return res.status(404).json({ ok: false, error: 'Clínica no encontrada' });
+    }
+
+    let currentInv = Array.isArray(clinic.inventoryStatus) ? [...clinic.inventoryStatus] : [
+      { item: 'Anestésicos (Lidocaína 2% c/ Epinefrina)', level: 'optimal', updatedAt: new Date().toISOString() },
+      { item: 'Agujas Dentales Cortas 30G Estériles', level: 'optimal', updatedAt: new Date().toISOString() },
+      { item: 'Resinas Fotocurables (A1, A2, A3)', level: 'optimal', updatedAt: new Date().toISOString() },
+      { item: 'Kits de Instrumental Quirúrgico Estéril', level: 'optimal', updatedAt: new Date().toISOString() },
+    ];
+
+    const keyMap: Record<string, string> = {
+      anesthetics: 'Anestésicos (Lidocaína 2% c/ Epinefrina)',
+      needles: 'Agujas Dentales Cortas 30G Estériles',
+      resins: 'Resinas Fotocurables (A1, A2, A3)',
+      sterilizedKits: 'Kits de Instrumental Quirúrgico Estéril',
+    };
+
+    const targetKey = itemKey || Object.keys(req.body).find(k => keyMap[k]);
+    const targetStatus = status || (targetKey ? req.body[targetKey] : undefined);
+
+    if (targetKey && targetStatus) {
+      const canonicalName = keyMap[targetKey] || targetKey;
+      const normalizedStatus = (targetStatus === 'optimo' || targetStatus === 'optimal') ? 'optimal' : (targetStatus === 'bajo' || targetStatus === 'low') ? 'low' : 'critical';
+      
+      const foundIdx = currentInv.findIndex((i: any) => i.item.toLowerCase().includes(targetKey.toLowerCase()) || i.item === canonicalName);
+      if (foundIdx >= 0) {
+        currentInv[foundIdx] = { ...currentInv[foundIdx], level: normalizedStatus, updatedAt: new Date().toISOString() };
+      } else {
+        currentInv.push({ item: canonicalName, level: normalizedStatus, updatedAt: new Date().toISOString() });
+      }
+
+      const success = clinicsRegistry.updateInventory(clinicId, currentInv);
+      return res.status(200).json({ ok: success, inventory: currentInv });
+    }
+
+    return res.status(400).json({ ok: false, error: 'Formato de inventario no válido' });
+  });
+
   // 6. Direct Chat API Endpoint (Testing / REST Integration Multi-Agente)
   app.post('/api/chat', async (req: Request, res: Response) => {
     try {

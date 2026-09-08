@@ -5,11 +5,14 @@ export interface Doctor {
   id: string;
   name: string;
   specialty: string;
-  specialtyLabel: string;
+  specialtyLabel?: string;
   calendarId: string;
-  slotDurationMinutes: number;
-  availableDays: string[];
-  workingHours: string;
+  slotDurationMinutes?: number;
+  appointmentDurationMinutes?: number;
+  availableDays: string[] | number[];
+  workingHours: string | { start: string; end: string };
+  isActive?: boolean;
+  photoUrl?: string;
 }
 
 export interface Treatment {
@@ -20,19 +23,34 @@ export interface Treatment {
   assignedDoctorId?: string;
 }
 
+export interface InventoryItem {
+  item: string;
+  level: 'optimal' | 'low' | 'critical';
+  updatedAt: string;
+}
+
 export interface ClinicConfig {
   clinicId: string;
   name: string;
   city: string;
   address: string;
+  phone?: string;
   emergencyPhone: string;
-  workingHours: {
+  contactPerson?: string;
+  chairsCount?: number;
+  inventoryStatus?: InventoryItem[];
+  workingHours?: {
     weekdays: string;
     saturday: string;
     sunday: string;
   };
   doctors: Doctor[];
   treatments: Treatment[];
+  calendarId?: string;
+  whatsappInstance?: string;
+  metaPhoneNumberId?: string;
+  metaWabaId?: string;
+  metaAccessToken?: string;
 }
 
 class ClinicManager {
