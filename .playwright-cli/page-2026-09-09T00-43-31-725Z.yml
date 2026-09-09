@@ -1,0 +1,10 @@
+- generic [ref=e3]:
+  - heading "OdontoCare IA" [level=2] [ref=e4]
+  - paragraph [ref=e5]: Ingreso al Portal Administrativo
+  - generic [ref=e6]:
+    - generic [ref=e7]: Rol de Prueba
+    - combobox [ref=e8]:
+      - option "Súper Admin (SaaS Global)" [selected]
+      - option "Admin de Clínica (Tenant)"
+      - option "Doctor"
+  - button "Ingresar" [ref=e9] [cursor=pointer]

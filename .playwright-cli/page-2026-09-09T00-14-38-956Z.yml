@@ -1,0 +1,15 @@
+- generic [ref=e3]:
+  - generic [ref=e8]:
+    - heading "ODONTOCARE AI" [level=1] [ref=e9]
+    - generic [ref=e10]: TORRE DE CONTROL B2B
+  - generic [ref=e11]:
+    - heading "Acceso Administrativo" [level=2] [ref=e12]
+    - paragraph [ref=e13]: Ingresa credenciales de superadmin para supervisar clínicas y agentes en tiempo real.
+  - generic [ref=e14]:
+    - generic [ref=e15]:
+      - generic [ref=e16]: Usuario Superadmin
+      - textbox [ref=e17]: admin
+    - generic [ref=e18]:
+      - generic [ref=e19]: Contraseña
+      - textbox [ref=e20]: odontocare2026
+    - button "Entrar a Torre de Control" [ref=e21] [cursor=pointer]

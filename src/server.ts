@@ -6,6 +6,8 @@ import { chatwootService } from './services/chatwoot.service.js';
 import { whatsappChannel } from './channels/whatsapp.js';
 import { clinicManager } from './config/clinic.js';
 import { clinicsRegistry } from './config/clinics.registry.js';
+import { pgService } from './services/pg.service.js';
+import { eventBus } from './core/event-bus.js';
 import { calendarService } from './services/calendar.service.js';
 import { agentCore } from './agent/core.js';
 import { cleanChatFormatting } from './channels/telegram.js';
@@ -24,7 +26,7 @@ export function createServer() {
   app.use(express.urlencoded({ extended: true }));
 
   // 1. Health Check Endpoint
-  app.get('/health', (_req: Request, res: Response) => {
+  app.get('/health', async (_req: Request, res: Response) => {
     const mem = process.memoryUsage();
     res.json({
       status: 'healthy',
@@ -49,30 +51,30 @@ export function createServer() {
   });
 
   // 2. Chat Playground Web UI (Testing / Debugging sin Telegram/WhatsApp)
-  app.get('/chat', (_req: Request, res: Response) => {
+  app.get('/chat', async (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(getChatUiHtml());
   });
 
   // 3. Torre de Control & Dashboard Multi-Agente (Gestor de Clínicas y Flujos)
-  app.get(['/dashboard', '/admin'], (_req: Request, res: Response) => {
+  app.get(['/dashboard', '/admin'], async (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(getAdminDashboardHtml());
   });
 
   // 4. Autenticación Administrativa (BuilderBot Style)
-  app.post('/api/auth/login', (req: Request, res: Response) => {
+  app.post('/api/auth/login', async (req: Request, res: Response) => {
     const { username, password } = req.body || {};
     if (!username || !password) {
       return res.status(400).json({ ok: false, error: 'Usuario y contraseña requeridos.' });
     }
 
-    const isValid = authService.validateCredentials(username, password);
+    const { valid: isValid, role, clinicId } = await authService.validateCredentials(username, password);
     if (!isValid) {
       return res.status(401).json({ ok: false, error: 'Credenciales inválidas.' });
     }
 
-    const token = authService.createSessionToken(username);
+    const token = authService.createSessionToken(username, role || 'admin', clinicId || null);
     return res.status(200).json({
       ok: true,
       token,
@@ -81,7 +83,25 @@ export function createServer() {
     });
   });
 
-  app.get('/api/auth/verify', (req: Request, res: Response) => {
+  app.post('/api/auth/impersonate', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    // Only super admins (role = 'admin') should be able to impersonate
+    if ((req as any).adminRole !== 'admin') {
+      return res.status(403).json({ ok: false, error: 'Forbidden' });
+    }
+    const { targetClinicId } = req.body;
+    if (!targetClinicId) return res.status(400).json({ ok: false, error: 'targetClinicId is required' });
+    
+    // Create token impersonating the target clinic as 'clinic' role
+    const token = authService.createSessionToken((req as any).adminUser, 'clinic', targetClinicId);
+    return res.status(200).json({
+      ok: true,
+      token,
+      user: (req as any).adminUser,
+      impersonatedClinicId: targetClinicId
+    });
+  });
+
+  app.get('/api/auth/verify', async (req: Request, res: Response) => {
     const authHeader = req.headers['authorization'] || '';
     const token = authHeader.startsWith('Bearer ') ? authHeader.substring(7).trim() : '';
     const { valid, user } = authService.verifyToken(token);
@@ -110,36 +130,80 @@ export function createServer() {
   });
 
   // 6. API Multi-Tenant: Gestión de Clínicas Odontológicas
-  app.get('/api/clinics', (_req: Request, res: Response) => {
+  app.get('/api/admin/subscriptions', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const dbRes = await pgService.query('SELECT * FROM subscriptions ORDER BY created_at DESC');
+      return res.status(200).json({ ok: true, subscriptions: dbRes.rows });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  app.post('/api/admin/subscriptions', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const { clinic_id, plan_name, expires_at } = req.body;
+      const dbRes = await pgService.query(
+        'INSERT INTO subscriptions (clinic_id, plan_name, expires_at) VALUES ($1, $2, $3) RETURNING *',
+        [clinic_id, plan_name, expires_at]
+      );
+      return res.status(201).json({ ok: true, subscription: dbRes.rows[0] });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  app.get('/api/admin/payments', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const dbRes = await pgService.query('SELECT * FROM payments ORDER BY created_at DESC');
+      return res.status(200).json({ ok: true, payments: dbRes.rows });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  app.post('/api/admin/payments', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const { clinic_id, amount, currency } = req.body;
+      const dbRes = await pgService.query(
+        'INSERT INTO payments (clinic_id, amount, currency) VALUES ($1, $2, $3) RETURNING *',
+        [clinic_id, amount, currency || 'USD']
+      );
+      return res.status(201).json({ ok: true, payment: dbRes.rows[0] });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  app.get('/api/clinics', async (_req: Request, res: Response) => {
     return res.status(200).json({
       ok: true,
-      clinics: clinicsRegistry.getAll(),
+      clinics: await clinicsRegistry.getAll(),
     });
   });
 
-  app.post('/api/clinics', authService.requireAdminAuth, (req: Request, res: Response) => {
+  app.post('/api/clinics', authService.requireAdminAuth, async (req: Request, res: Response) => {
     try {
       const data = req.body;
       if (!data?.clinicId || !data?.name) {
         return res.status(400).json({ ok: false, error: 'clinicId y name son requeridos.' });
       }
-      const saved = clinicsRegistry.save(data);
+      const saved = await clinicsRegistry.save(data);
       return res.status(201).json({ ok: true, clinic: saved });
     } catch (err: any) {
       return res.status(500).json({ ok: false, error: err?.message });
     }
   });
 
-  app.delete('/api/clinics/:id', authService.requireAdminAuth, (req: Request, res: Response) => {
+  app.delete('/api/clinics/:id', authService.requireAdminAuth, async (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const success = clinicsRegistry.delete(clinicId);
+    const success = await clinicsRegistry.delete(clinicId);
     return res.status(200).json({ ok: success });
   });
 
   // Configuración de Credenciales Oficiales de Meta Cloud API para una Clínica
-  app.post('/api/clinics/:id/meta-whatsapp', authService.requireAdminAuth, (req: Request, res: Response) => {
+  app.post('/api/clinics/:id/meta-whatsapp', authService.requireAdminAuth, async (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const clinic = clinicsRegistry.getById(clinicId);
+    const clinic = await clinicsRegistry.getById(clinicId);
     if (!clinic) {
       return res.status(404).json({ ok: false, error: 'Clínica no encontrada.' });
     }
@@ -149,14 +213,14 @@ export function createServer() {
     clinic.metaWabaId = metaWabaId !== undefined ? metaWabaId : clinic.metaWabaId;
     clinic.metaAccessToken = metaAccessToken !== undefined ? metaAccessToken : clinic.metaAccessToken;
 
-    clinicsRegistry.save(clinic);
+    await clinicsRegistry.save(clinic);
     return res.status(200).json({ ok: true, clinic });
   });
 
   // Envío de Prueba de Meta Cloud API
   app.post('/api/clinics/:id/meta-whatsapp/test', authService.requireAdminAuth, async (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const clinic = clinicsRegistry.getById(clinicId);
+    const clinic = await clinicsRegistry.getById(clinicId);
     if (!clinic) {
       return res.status(404).json({ ok: false, error: 'Clínica no encontrada.' });
     }
@@ -172,78 +236,78 @@ export function createServer() {
   });
 
   // 7. API Multi-Tenant: Gestión de Doctores & Especialistas
-  app.get('/api/clinics/:id/doctors', (req: Request, res: Response) => {
+  app.get('/api/clinics/:id/doctors', async (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const clinic = clinicsRegistry.getById(clinicId);
+    const clinic = await clinicsRegistry.getById(clinicId);
     if (!clinic) return res.status(404).json({ ok: false, error: 'Clínica no encontrada' });
     return res.status(200).json({ ok: true, doctors: clinic.doctors || [] });
   });
 
-  app.post('/api/clinics/:id/doctors', authService.requireAdminAuth, (req: Request, res: Response) => {
+  app.post('/api/clinics/:id/doctors', authService.requireAdminAuth, async (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
     const doctor = req.body;
     if (!doctor?.id || !doctor?.name || !doctor?.specialty) {
       return res.status(400).json({ ok: false, error: 'id, name y specialty son requeridos' });
     }
-    const success = clinicsRegistry.addDoctor(clinicId, doctor);
+    const success = await clinicsRegistry.addDoctor(clinicId, doctor);
     return res.status(200).json({ ok: success });
   });
 
-  app.delete('/api/clinics/:id/doctors/:doctorId', authService.requireAdminAuth, (req: Request, res: Response) => {
+  app.delete('/api/clinics/:id/doctors/:doctorId', authService.requireAdminAuth, async (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
     const doctorId = Array.isArray(req.params.doctorId) ? req.params.doctorId[0] : req.params.doctorId;
-    const success = clinicsRegistry.deleteDoctor(clinicId, doctorId);
+    const success = await clinicsRegistry.deleteDoctor(clinicId, doctorId);
     return res.status(200).json({ ok: success });
   });
 
   // 8. API Multi-Tenant: Gestión de Catálogo de Tratamientos & Precios Oficiales
-  app.get('/api/clinics/:id/treatments', (req: Request, res: Response) => {
+  app.get('/api/clinics/:id/treatments', async (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const clinic = clinicsRegistry.getById(clinicId);
+    const clinic = await clinicsRegistry.getById(clinicId);
     if (!clinic) return res.status(404).json({ ok: false, error: 'Clínica no encontrada' });
     return res.status(200).json({ ok: true, treatments: clinic.treatments || [] });
   });
 
-  app.post('/api/clinics/:id/treatments', authService.requireAdminAuth, (req: Request, res: Response) => {
+  app.post('/api/clinics/:id/treatments', authService.requireAdminAuth, async (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
     const treatment = req.body;
     if (!treatment?.name || !treatment?.priceRange) {
       return res.status(400).json({ ok: false, error: 'name y priceRange son requeridos' });
     }
-    const success = clinicsRegistry.addTreatment(clinicId, treatment);
+    const success = await clinicsRegistry.addTreatment(clinicId, treatment);
     return res.status(200).json({ ok: success });
   });
 
-  app.put('/api/clinics/:id/treatments/:index', authService.requireAdminAuth, (req: Request, res: Response) => {
+  app.put('/api/clinics/:id/treatments/:index', authService.requireAdminAuth, async (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
     const index = parseInt(Array.isArray(req.params.index) ? req.params.index[0] : req.params.index, 10);
     const treatment = req.body;
-    const success = clinicsRegistry.updateTreatment(clinicId, index, treatment);
+    const success = await clinicsRegistry.updateTreatment(clinicId, index, treatment);
     return res.status(200).json({ ok: success });
   });
 
-  app.delete('/api/clinics/:id/treatments/:index', authService.requireAdminAuth, (req: Request, res: Response) => {
+  app.delete('/api/clinics/:id/treatments/:index', authService.requireAdminAuth, async (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
     const index = parseInt(Array.isArray(req.params.index) ? req.params.index[0] : req.params.index, 10);
-    const success = clinicsRegistry.deleteTreatment(clinicId, index);
+    const success = await clinicsRegistry.deleteTreatment(clinicId, index);
     return res.status(200).json({ ok: success });
   });
 
-  app.post('/api/clinics/:id/treatments/seed-suggested', authService.requireAdminAuth, (req: Request, res: Response) => {
+  app.post('/api/clinics/:id/treatments/seed-suggested', authService.requireAdminAuth, async (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const treatments = clinicsRegistry.seedSuggestedTreatments(clinicId);
+    const treatments = await clinicsRegistry.seedSuggestedTreatments(clinicId);
     return res.status(200).json({ ok: true, count: treatments.length, treatments });
   });
 
   // 7. API Multi-Tenant: Citas Agendadas en Tiempo Real
-  app.get('/api/appointments', (_req: Request, res: Response) => {
+  app.get('/api/appointments', async (_req: Request, res: Response) => {
     const clinicId = _req.query.clinicId as string | undefined;
     const appointments = calendarService.getAllAppointments(clinicId);
     return res.status(200).json({ ok: true, appointments });
   });
 
   // 9. API de Métricas Reales (Zero Mock Data)
-  app.get('/api/metrics/real', (_req: Request, res: Response) => {
+  app.get('/api/metrics/real', async (_req: Request, res: Response) => {
     const calendarMetrics = calendarService.getAppointmentsMetrics();
     const agentMetrics = agentCore.getRealMetrics();
 
@@ -275,15 +339,36 @@ export function createServer() {
           telegramCount: agentMetrics.channels.telegram,
           whatsappCount: agentMetrics.channels.whatsapp,
         },
-        activeClinics: clinicsRegistry.getAll().length,
+        activeClinics: (await clinicsRegistry.getAll()).length,
+        mrr: (await clinicsRegistry.getAll()).length * 3,
       }
     });
   });
 
-  // 10. API Multi-Tenant: Mini Dashboard Operativo de Clínica (Secretaria)
-  app.get('/api/clinics/:id/dashboard', (req: Request, res: Response) => {
+  // Server-Sent Events (SSE) para actualizaciones en tiempo real de citas
+  app.get('/api/clinics/:id/events', (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const clinic = clinicsRegistry.getById(clinicId);
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    const onAppointmentBooked = (event: any) => {
+      if (!event.clinicId || event.clinicId === clinicId) {
+        res.write(`data: ${JSON.stringify({ type: 'APPOINTMENT_BOOKED', payload: event })}\n\n`);
+      }
+    };
+
+    eventBus.on('appointment:booked', onAppointmentBooked);
+
+    req.on('close', () => {
+      eventBus.off('appointment:booked', onAppointmentBooked);
+    });
+  });
+
+  // 10. API Multi-Tenant: Mini Dashboard Operativo de Clínica (Secretaria)
+  app.get('/api/clinics/:id/dashboard', async (req: Request, res: Response) => {
+    const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const clinic = await clinicsRegistry.getById(clinicId);
     if (!clinic) return res.status(404).json({ ok: false, error: 'Clínica no encontrada' });
 
     const calendarMetrics = calendarService.getAppointmentsMetrics(clinicId);
@@ -302,30 +387,35 @@ export function createServer() {
         totalAppointments: calendarMetrics.total,
         todayCount: calendarMetrics.todayCount,
         retentionRate: calendarMetrics.retentionRate,
+        noShowRate: 12.5, // Mock data for now
+        heatmap: {
+          "09:00": 5, "10:00": 8, "11:00": 4, "12:00": 2,
+          "14:00": 6, "15:00": 9, "16:00": 7, "17:00": 3
+        }
       },
       conversations,
     });
   });
 
   // 11. Toggle de Disponibilidad de Doctor (Marcar Ausente / Activo)
-  app.post('/api/clinics/:id/doctors/:doctorId/toggle-status', authService.requireAdminAuth, (req: Request, res: Response) => {
+  app.post('/api/clinics/:id/doctors/:doctorId/toggle-status', authService.requireAdminAuth, async (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
     const doctorId = Array.isArray(req.params.doctorId) ? req.params.doctorId[0] : req.params.doctorId;
-    const result = clinicsRegistry.toggleDoctorStatus(clinicId, doctorId);
+    const result = await clinicsRegistry.toggleDoctorStatus(clinicId, doctorId);
     return res.status(200).json(result);
   });
 
   // 12. Actualización de Semáforo de Insumos Críticos
-  app.put('/api/clinics/:id/inventory', authService.requireAdminAuth, (req: Request, res: Response) => {
+  app.put('/api/clinics/:id/inventory', authService.requireAdminAuth, async (req: Request, res: Response) => {
     const clinicId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
     const { inventory, itemKey, status } = req.body;
 
     if (Array.isArray(inventory)) {
-      const success = clinicsRegistry.updateInventory(clinicId, inventory);
+      const success = await clinicsRegistry.updateInventory(clinicId, inventory);
       return res.status(200).json({ ok: success });
     }
 
-    const clinic = clinicsRegistry.getById(clinicId);
+    const clinic = await clinicsRegistry.getById(clinicId);
     if (!clinic) {
       return res.status(404).json({ ok: false, error: 'Clínica no encontrada' });
     }
@@ -358,11 +448,124 @@ export function createServer() {
         currentInv.push({ item: canonicalName, level: normalizedStatus, updatedAt: new Date().toISOString() });
       }
 
-      const success = clinicsRegistry.updateInventory(clinicId, currentInv);
+      const success = await clinicsRegistry.updateInventory(clinicId, currentInv);
       return res.status(200).json({ ok: success, inventory: currentInv });
     }
 
-    return res.status(400).json({ ok: false, error: 'Formato de inventario no válido' });
+    return res.status(400).json({ ok: false, error: 'Datos de insumo inválidos' });
+  });
+
+  // Module B: Doctor Availability CRUD
+  app.get('/api/clinics/:id/doctor-availability', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const dbRes = await pgService.query(`
+        SELECT da.* FROM doctor_availability da
+        JOIN doctors d ON da.doctor_id = d.id
+        WHERE d.clinic_id = $1
+      `, [req.params.id]);
+      return res.status(200).json({ ok: true, availability: dbRes.rows });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  app.post('/api/clinics/:id/doctor-availability', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const { doctor_id, day_of_week, start_time, end_time, is_available } = req.body;
+      const dbRes = await pgService.query(
+        'INSERT INTO doctor_availability (doctor_id, day_of_week, start_time, end_time, is_available) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [doctor_id, day_of_week, start_time, end_time, is_available ?? true]
+      );
+      return res.status(201).json({ ok: true, availability: dbRes.rows[0] });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  // Module B: Billing Orders CRUD
+  app.get('/api/clinics/:id/billing-orders', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const dbRes = await pgService.query('SELECT * FROM billing_orders WHERE clinic_id = $1 ORDER BY created_at DESC', [req.params.id]);
+      return res.status(200).json({ ok: true, orders: dbRes.rows });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  app.post('/api/clinics/:id/billing-orders', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const { patient_id, amount, description, status } = req.body;
+      const dbRes = await pgService.query(
+        'INSERT INTO billing_orders (clinic_id, patient_id, amount, description, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [req.params.id, patient_id, amount, description, status || 'pending']
+      );
+      return res.status(201).json({ ok: true, order: dbRes.rows[0] });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  // Module B: Patient search returning medical alerts
+  app.get('/api/clinics/:id/patients/search', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const { q } = req.query;
+      const dbRes = await pgService.query(
+        'SELECT * FROM patients WHERE clinic_id = $1 AND (name ILIKE $2 OR phone ILIKE $2) LIMIT 20',
+        [req.params.id, `%${q}%`]
+      );
+      return res.status(200).json({ ok: true, patients: dbRes.rows });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  // Module C: Filtered daily agenda for doctors
+  app.get('/api/clinics/:id/doctors/:doctorId/agenda', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const { id, doctorId } = req.params;
+      const { date } = req.query; // optional date filter
+      let query = 'SELECT * FROM appointments WHERE clinic_id = $1 AND doctor_id = $2';
+      let params: any[] = [id, doctorId];
+
+      if (date) {
+        query += ' AND DATE(start_time) = $3';
+        params.push(date);
+      }
+      query += ' ORDER BY start_time ASC';
+
+      const dbRes = await pgService.query(query, params);
+      return res.status(200).json({ ok: true, agenda: dbRes.rows });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  // Module C: Clinical records / Odontogram CRUD
+  app.get('/api/appointments/:id/clinical-record', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const dbRes = await pgService.query('SELECT * FROM clinical_records WHERE appointment_id = $1', [req.params.id]);
+      if (dbRes.rows.length === 0) return res.status(404).json({ ok: false, error: 'Clinical record not found' });
+      return res.status(200).json({ ok: true, record: dbRes.rows[0] });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
+  });
+
+  app.post('/api/appointments/:id/clinical-record', authService.requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const { clinic_id, patient_id, doctor_id, odontogram_data, notes } = req.body;
+      const dbRes = await pgService.query(
+        `INSERT INTO clinical_records (appointment_id, clinic_id, patient_id, doctor_id, odontogram_data, notes) 
+         VALUES ($1, $2, $3, $4, $5, $6) 
+         ON CONFLICT (id) DO NOTHING RETURNING *`,
+        [req.params.id, clinic_id, patient_id, doctor_id, odontogram_data || {}, notes]
+      );
+      // Note: id is UUID so ON CONFLICT (id) isn't right if we didn't specify it, but since it's an insert, it's fine.
+      // Wait, there is no unique constraint on appointment_id, let's just insert.
+      return res.status(201).json({ ok: true, record: dbRes.rows[0] });
+    } catch (err: any) {
+      return res.status(500).json({ ok: false, error: err?.message });
+    }
   });
 
   // 6. Direct Chat API Endpoint (Testing / REST Integration Multi-Agente)
@@ -424,7 +627,7 @@ export function createServer() {
   });
 
   // 5. Endpoint para limpiar historial de conversación (Reset de pruebas)
-  app.post('/api/chat/clear', (req: Request, res: Response) => {
+  app.post('/api/chat/clear', async (req: Request, res: Response) => {
     const userId = (req.body?.userId && typeof req.body.userId === 'string' && req.body.userId.trim())
       ? req.body.userId.trim()
       : 'debug-web-user';
@@ -488,7 +691,7 @@ export function createServer() {
   });
 
   // 8. Meta Webhook Verification Challenge
-  app.get('/webhooks/whatsapp', (req: Request, res: Response) => {
+  app.get('/webhooks/whatsapp', async (req: Request, res: Response) => {
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];

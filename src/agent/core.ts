@@ -179,7 +179,9 @@ export class OdontoAgentCore {
     const startTime = Date.now();
     const reasoningSteps: string[] = [];
 
-    const clinic = (clinicId ? clinicsRegistry.getById(clinicId) : null) || clinicsRegistry.getDefault();
+    let clinic: any;
+    if (clinicId) clinic = await clinicsRegistry.getById(clinicId);
+    if (!clinic) clinic = await clinicsRegistry.getDefault();
 
     // 1. Guardrail de entrada: Detección de Jailbreak y desvío de rol
     const inputCheck = OdontoGuardrails.inspectInput(incomingText);

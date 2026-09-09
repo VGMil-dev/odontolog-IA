@@ -13,6 +13,7 @@ export interface AppEvents {
     doctorName: string;
     specialty?: string;
     appointmentTimeIso: string;
+    clinicId?: string;
   }) => void;
   'appointment:reminder_due': (data: {
     channel: string;

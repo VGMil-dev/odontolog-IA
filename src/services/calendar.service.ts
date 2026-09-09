@@ -130,7 +130,9 @@ export class CalendarService {
     targetDate?: string,
     clinicId?: string
   ): Promise<{ doctor: Doctor; slots: TimeSlot[]; clinic: ClinicConfig }> {
-    const clinic: ClinicEntity = (clinicId ? clinicsRegistry.getById(clinicId) : null) || clinicsRegistry.getDefault();
+    let clinic: ClinicEntity | undefined;
+    if (clinicId) clinic = await clinicsRegistry.getById(clinicId);
+    if (!clinic) clinic = await clinicsRegistry.getDefault();
     
     // Filtrar únicamente doctores activos (no marcados como ausentes por la secretaria)
     const activeDoctors = (clinic.doctors || []).filter(d => d.isActive !== false);
@@ -279,7 +281,9 @@ export class CalendarService {
     notes?: string;
     clinicId?: string;
   }): Promise<AppointmentResult> {
-    const clinic: ClinicEntity = (params.clinicId ? clinicsRegistry.getById(params.clinicId) : null) || clinicsRegistry.getDefault();
+    let clinic: ClinicEntity | undefined;
+    if (params.clinicId) clinic = await clinicsRegistry.getById(params.clinicId);
+    if (!clinic) clinic = await clinicsRegistry.getDefault();
 
     const doctor = clinic.doctors.find(d => 
       d.specialty.toLowerCase() === params.specialty.toLowerCase() ||

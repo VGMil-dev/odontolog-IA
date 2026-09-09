@@ -1,0 +1,48 @@
+- generic [ref=e10]:
+  - complementary [ref=e11]:
+    - generic [ref=e12]: OdontoCare IA
+    - generic [ref=e13]:
+      - generic [ref=e14] [cursor=pointer]: Dashboard Global
+      - generic [ref=e15] [cursor=pointer]: Directorio de Clínicas
+      - generic [ref=e16] [cursor=pointer]: Planes y Pricing
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]: Juan Pérez
+        - generic [ref=e20]: Súper Administrador
+      - button "Cerrar Sesión" [ref=e21] [cursor=pointer]
+  - generic [ref=e22]:
+    - banner [ref=e23]:
+      - generic [ref=e24]: Dashboard Global
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - generic [ref=e29]: Clínicas Activas
+          - generic [ref=e30]: "124"
+        - generic [ref=e31]:
+          - generic [ref=e32]: MRR (Mensual)
+          - generic [ref=e33]: $15,400
+        - generic [ref=e34]:
+          - generic [ref=e35]: Doctores Activos
+          - generic [ref=e36]: "458"
+      - generic [ref=e37]:
+        - heading "Crecimiento de Ingresos" [level=3] [ref=e38]
+        - generic [ref=e40]:
+          - 'application "area chart with 1 data series: MRR (USD)" [ref=e41]':
+            - generic [ref=e44]:
+              - generic "$16000" [ref=e45]
+              - generic "$14000" [ref=e46]
+              - generic "$12000" [ref=e47]
+              - generic "$10000" [ref=e48]
+              - generic "$8000" [ref=e49]
+              - generic "$6000" [ref=e50]
+              - generic "$4000" [ref=e51]
+            - generic [ref=e58]:
+              - generic "Ene" [ref=e59]
+              - generic "Feb" [ref=e60]
+              - generic "Mar" [ref=e61]
+              - generic "Abr" [ref=e62]
+              - generic "May" [ref=e63]
+              - generic "Jun" [ref=e64]
+              - generic "Jul" [ref=e65]
+          - status [ref=e66]
+          - tooltip [aria-hidden]

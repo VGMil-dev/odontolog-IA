@@ -5,20 +5,20 @@ import { messageBuffer } from '../src/channels/buffer.js';
 import { adminConsole } from '../src/admin/console.js';
 
 describe('Triage & Guardrails Verification', () => {
-  it('el prompt del sistema debe contener guardrail estricto contra fármacos', () => {
+  it('el prompt del sistema debe contener guardrail estricto contra fármacos', async () => {
     const prompt = buildSystemPrompt();
     expect(prompt).toContain('PROHIBICIÓN ESTRICTA DE PRESCRIBIR FÁRMACOS');
     expect(prompt).toContain('BAJO NINGUNA CIRCUNSTANCIA');
     expect(prompt).toContain('compresa fría');
   });
 
-  it('el prompt del sistema debe incluir soporte para expats en Cuenca', () => {
+  it('el prompt del sistema debe incluir soporte para expats en Cuenca', async () => {
     const prompt = buildSystemPrompt();
     expect(prompt).toContain('DETECCIÓN BILINGÜE AUTOMÁTICA (EXPATS EN CUENCA)');
     expect(prompt).toContain('Cuenca');
   });
 
-  it('clinicManager debe permitir recarga en caliente (hot reload)', () => {
+  it('clinicManager debe permitir recarga en caliente (hot reload)', async () => {
     const res = clinicManager.reload();
     expect(res.success).toBe(true);
     expect(res.doctorCount).toBeGreaterThan(0);

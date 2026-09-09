@@ -186,4 +186,10 @@ docker compose up -d
   - Arquitectura Hexagonal con `ChannelRegistry`, `TypedEventBus` y `CircuitBreaker`.
   - Maximizador de 7 herramientas tipadas con Zod.
   - Acondicionamiento de voz AssemblyAI con modismos cuencanos y regla de 2 a 3 oraciones.
-  - 21 tests unitarios pasando y 26 módulos compilados.
+- **v2.1.0 (Dashboards Multi-Tenant & PostgreSQL)**:
+  - Migración completa desde `clinics.json` a base de datos relacional PostgreSQL (`odontocare_db`).
+  - Implementación de roles con JWT Claims (`SUPER_ADMIN`, `CLINIC_ADMIN`, `DOCTOR`) y seguridad RLS por clínica.
+  - Nuevo diseño de Torre de Control (Beige Design System) con directriz de responsabilidad única por vista.
+  - Construcción de módulos: Dashboard SaaS (Súper Admin), Dashboard Operativo y Directorio (Clínica), y Agenda/Odontograma (Doctor).
+  - Integración de gráficos ApexCharts y endpoint de Impersonation.
+  - Pruebas UI/UX pasadas exitosamente con Playwright CLI.

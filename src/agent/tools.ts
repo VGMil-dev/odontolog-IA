@@ -11,7 +11,12 @@ import { PrivacyService } from '../services/privacy.service.js';
 import { SecureLogger } from '../utils/logger.js';
 
 export function createOdontoTools(userId: string, clinicId?: string) {
-  const getClinic = () => (clinicId ? clinicsRegistry.getById(clinicId) : null) || clinicsRegistry.getDefault();
+  const getClinic = async () => {
+    let clinic;
+    if (clinicId) clinic = await clinicsRegistry.getById(clinicId);
+    if (!clinic) clinic = await clinicsRegistry.getDefault();
+    return clinic;
+  };
 
   return {
     /**
@@ -32,7 +37,7 @@ export function createOdontoTools(userId: string, clinicId?: string) {
       }),
       execute: async ({ terminoBusqueda, especialidad }) => {
         SecureLogger.info('Tool:consultarServiciosYPrecios', `Búsqueda: "${terminoBusqueda || 'todos'}" | Especialidad: ${especialidad}`);
-        const config = getClinic();
+        const config = await getClinic();
         let treatments = config.treatments;
 
         if (especialidad && especialidad !== 'todas') {
@@ -73,7 +78,7 @@ export function createOdontoTools(userId: string, clinicId?: string) {
         termino: z.string().optional().describe('Palabra clave como limpieza, implante, brackets o carillas.'),
       }),
       execute: async ({ termino }) => {
-        const config = getClinic();
+        const config = await getClinic();
         if (!termino) {
           return { tratamientos: config.treatments };
         }
@@ -103,7 +108,7 @@ export function createOdontoTools(userId: string, clinicId?: string) {
       }),
       execute: async ({ especialidad, fechaDeseada, doctorId }) => {
         SecureLogger.info('Tool:obtenerHorariosDisponibles', `Esp: ${especialidad} | Fecha: ${fechaDeseada || 'Próxima'} | Doc: ${doctorId || 'Auto'}`);
-        const result = await calendarService.getAvailableSlots(especialidad, fechaDeseada, getClinic().clinicId);
+        const result = await calendarService.getAvailableSlots(especialidad, fechaDeseada, (await getClinic()).clinicId);
 
         return {
           doctorAsignado: result.doctor.name,
@@ -156,7 +161,7 @@ export function createOdontoTools(userId: string, clinicId?: string) {
             patientName: nombrePaciente,
             patientPhone: telefonoPaciente,
             notes: motivoConsulta,
-            clinicId: getClinic().clinicId,
+            clinicId: (await getClinic()).clinicId,
           });
 
           if (booking.success) {
@@ -183,10 +188,11 @@ export function createOdontoTools(userId: string, clinicId?: string) {
               doctorName: booking.doctorName,
               specialty: booking.specialty,
               appointmentTimeIso: horarioSeleccionadoIso,
+              clinicId: (await getClinic()).clinicId,
             });
           }
 
-          const config = getClinic();
+          const config = await getClinic();
           return {
             success: booking.success,
             codigoCita: booking.appointmentId,
@@ -225,7 +231,7 @@ export function createOdontoTools(userId: string, clinicId?: string) {
       }),
       execute: async ({ especialidad, nombreODoctorId }) => {
         SecureLogger.info('Tool:obtenerPerfilDoctor', `Esp: ${especialidad || 'Todas'} | Doc: ${nombreODoctorId || 'Cualquiera'}`);
-        const config = getClinic();
+        const config = await getClinic();
         let docs = config.doctors;
 
         if (especialidad && especialidad !== 'todas') {
@@ -372,7 +378,7 @@ export function createOdontoTools(userId: string, clinicId?: string) {
           summary: sintomas,
         });
 
-        const cfg = getClinic();
+        const cfg = await getClinic();
         return {
           alertaActivada: true,
           botPausadoParaHumano: true,

@@ -2,44 +2,52 @@ import crypto from 'crypto';
 import { Request, Response, NextFunction } from 'express';
 import { env } from '../config/env.js';
 import { SecureLogger } from '../utils/logger.js';
+import { pgService } from './pg.service.js';
 
 export class AuthService {
   private secret: string;
 
   constructor() {
-    this.secret = env.ADMIN_SESSION_SECRET;
+    this.secret = env.ADMIN_SESSION_SECRET || 'fallback_secret';
+  }
+
+  private hashPassword(password: string): string {
+    return crypto.createHash('sha256').update(password).digest('hex');
   }
 
   /**
-   * Valida credenciales contra las variables de entorno con prevención de timing attacks.
+   * Valida credenciales contra la base de datos de PostgreSQL
    */
-  public validateCredentials(user: string, pass: string): boolean {
-    if (!user || !pass) return false;
+  public async validateCredentials(user: string, pass: string): Promise<{ valid: boolean, role?: string, clinicId?: string | null }> {
+    if (!user || !pass) return { valid: false };
 
-    const expectedUser = env.ADMIN_USER;
-    const expectedPass = env.ADMIN_PASSWORD;
+    try {
+      const res = await pgService.query('SELECT * FROM users WHERE email = $1', [user]);
+      if (res.rows.length === 0) return { valid: false };
 
-    const userBuffer = Buffer.from(user);
-    const expectedUserBuffer = Buffer.from(expectedUser);
+      const dbUser = res.rows[0];
+      const hashedPass = this.hashPassword(pass);
 
-    const passBuffer = Buffer.from(pass);
-    const expectedPassBuffer = Buffer.from(expectedPass);
+      const passBuffer = Buffer.from(hashedPass);
+      const expectedPassBuffer = Buffer.from(dbUser.password_hash);
 
-    const userMatch = userBuffer.length === expectedUserBuffer.length && 
-      crypto.timingSafeEqual(userBuffer, expectedUserBuffer);
-
-    const passMatch = passBuffer.length === expectedPassBuffer.length && 
-      crypto.timingSafeEqual(passBuffer, expectedPassBuffer);
-
-    return userMatch && passMatch;
+      if (passBuffer.length === expectedPassBuffer.length && crypto.timingSafeEqual(passBuffer, expectedPassBuffer)) {
+        return { valid: true, role: dbUser.role, clinicId: dbUser.clinic_id };
+      }
+      return { valid: false };
+    } catch (err) {
+      SecureLogger.error('AuthService', 'Error validating credentials', err);
+      return { valid: false };
+    }
   }
 
   /**
    * Genera un token firmado con HMAC-SHA256 con validez de 7 días.
    */
-  public createSessionToken(user: string): string {
+  public createSessionToken(user: string, role: string, clinicId: string | null): string {
     const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000;
-    const payload = `${user}:${expiresAt}`;
+    const clinicStr = clinicId || 'null';
+    const payload = `${user}:${role}:${clinicStr}:${expiresAt}`;
     const signature = crypto.createHmac('sha256', this.secret).update(payload).digest('hex');
     const token = Buffer.from(`${payload}:${signature}`).toString('base64');
     return token;
@@ -48,22 +56,22 @@ export class AuthService {
   /**
    * Verifica la firma y expiración del token.
    */
-  public verifyToken(token: string): { valid: boolean; user?: string } {
+  public verifyToken(token: string): { valid: boolean; user?: string, role?: string, clinicId?: string | null } {
     try {
       if (!token) return { valid: false };
 
       const decoded = Buffer.from(token, 'base64').toString('utf-8');
       const parts = decoded.split(':');
-      if (parts.length !== 3) return { valid: false };
+      if (parts.length !== 5) return { valid: false };
 
-      const [user, expiresAtStr, signature] = parts;
+      const [user, role, clinicStr, expiresAtStr, signature] = parts;
       const expiresAt = parseInt(expiresAtStr, 10);
 
       if (Date.now() > expiresAt) {
         return { valid: false };
       }
 
-      const payload = `${user}:${expiresAtStr}`;
+      const payload = `${user}:${role}:${clinicStr}:${expiresAtStr}`;
       const expectedSig = crypto.createHmac('sha256', this.secret).update(payload).digest('hex');
 
       const sigBuffer = Buffer.from(signature);
@@ -73,7 +81,7 @@ export class AuthService {
         return { valid: false };
       }
 
-      return { valid: true, user };
+      return { valid: true, user, role, clinicId: clinicStr === 'null' ? null : clinicStr };
     } catch {
       return { valid: false };
     }
@@ -95,9 +103,9 @@ export class AuthService {
       if (match) token = match[1].trim();
     }
 
-    const { valid, user } = authService.verifyToken(token);
+    const { valid, user, role, clinicId } = authService.verifyToken(token);
 
-    if (!valid) {
+    if (!valid || role !== 'admin') {
       SecureLogger.warn('AuthService', `Acceso denegado a ruta protegida: ${req.path}`);
       return res.status(401).json({
         ok: false,
@@ -106,6 +114,8 @@ export class AuthService {
     }
 
     (req as any).adminUser = user;
+    (req as any).adminRole = role;
+    (req as any).adminClinicId = clinicId;
     next();
   }
 }

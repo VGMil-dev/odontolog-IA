@@ -3,7 +3,7 @@ import { calendarService } from '../src/services/calendar.service.js';
 import { clinicManager } from '../src/config/clinic.js';
 
 describe('CalendarService - Multi-Doctor Dynamic Scheduling', () => {
-  it('debe cargar la lista de doctores y especialidades correctamente', () => {
+  it('debe cargar la lista de doctores y especialidades correctamente', async () => {
     const config = clinicManager.getConfig();
     expect(config.doctors.length).toBeGreaterThan(0);
     

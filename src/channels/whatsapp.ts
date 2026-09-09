@@ -160,7 +160,7 @@ export class WhatsAppChannel {
     const metadataPhoneNumberId = value.metadata?.phone_number_id || '';
 
     // Enrutamiento multitenant por Phone Number ID
-    const clinic = clinicsRegistry.findByPhoneNumberId(metadataPhoneNumberId) || clinicsRegistry.getDefault();
+    const clinic = await clinicsRegistry.findByPhoneNumberId(metadataPhoneNumberId) || await clinicsRegistry.getDefault();
     SecureLogger.info('WhatsApp', `Mensaje Meta Cloud para clínica "${clinic.name}" (${clinic.clinicId}) desde ${SecureLogger.maskPhone(fromNumber)}`);
 
     // Verificar si el bot está en pausa por atención médica humana en Chatwoot

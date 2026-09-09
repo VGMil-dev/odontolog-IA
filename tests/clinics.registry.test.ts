@@ -3,22 +3,22 @@ import { clinicsRegistry, ClinicEntity } from '../src/config/clinics.registry.js
 import { calendarService } from '../src/services/calendar.service.js';
 
 describe('ClinicsRegistry - Multi-Tenant Architecture', () => {
-  it('debe contener al menos la clínica principal y la clínica secundaria sembrada', () => {
-    const all = clinicsRegistry.getAll();
+  it('debe contener al menos la clínica principal y la clínica secundaria sembrada', async () => {
+    const all = await clinicsRegistry.getAll();
     expect(all.length).toBeGreaterThanOrEqual(2);
 
-    const cuenca = clinicsRegistry.getById('odontocare_cuenca') || all[0];
+    const cuenca = await clinicsRegistry.getById('odontocare_cuenca') || all[0];
     expect(cuenca).toBeDefined();
     expect(cuenca.city).toBe('Cuenca');
 
-    const quito = clinicsRegistry.getById('dental_plus_quito');
+    const quito = await clinicsRegistry.getById('dental_plus_quito');
     expect(quito).toBeDefined();
     expect(quito?.city).toBe('Quito');
     expect(quito?.doctors.length).toBeGreaterThan(0);
     expect(quito?.calendarId).toBe('quito.dental.plus@gmail.com');
   });
 
-  it('debe permitir crear y recuperar una nueva clínica odontológica con su propio calendario', () => {
+  it('debe permitir crear y recuperar una nueva clínica odontológica con su propio calendario', async () => {
     const newClinic: ClinicEntity = {
       clinicId: 'dental_test_ambato',
       name: 'Clínica Dental Ambato Test',
@@ -54,17 +54,17 @@ describe('ClinicsRegistry - Multi-Tenant Architecture', () => {
       ],
     };
 
-    const saved = clinicsRegistry.save(newClinic);
+    const saved = await clinicsRegistry.save(newClinic);
     expect(saved.clinicId).toBe('dental_test_ambato');
 
-    const retrieved = clinicsRegistry.getById('dental_test_ambato');
+    const retrieved = await clinicsRegistry.getById('dental_test_ambato');
     expect(retrieved).toBeDefined();
     expect(retrieved?.name).toBe('Clínica Dental Ambato Test');
     expect(retrieved?.calendarId).toBe('ambato.test.calendar@gmail.com');
 
     // Limpieza
-    clinicsRegistry.delete('dental_test_ambato');
-    expect(clinicsRegistry.getById('dental_test_ambato')).toBeUndefined();
+    await clinicsRegistry.delete('dental_test_ambato');
+    expect(await clinicsRegistry.getById('dental_test_ambato')).toBeUndefined();
   });
 
   it('debe generar turnos diferenciados para cada clínica con su respectivo doctor', async () => {

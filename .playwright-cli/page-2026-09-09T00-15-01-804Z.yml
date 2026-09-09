@@ -1,0 +1,137 @@
+- generic [ref=e22]:
+  - complementary [ref=e23]:
+    - generic [ref=e28]:
+      - text: ODONTOCARE
+      - generic [ref=e29]: "2026"
+    - navigation [ref=e30]:
+      - button "Overview" [ref=e31] [cursor=pointer]
+      - button "Clínicas 6" [ref=e38] [cursor=pointer]:
+        - generic [ref=e41]: Clínicas
+        - generic [ref=e42]: "6"
+      - button "Precios & Doctores" [ref=e43] [cursor=pointer]
+      - button "Canales Meta/TG" [ref=e47] [cursor=pointer]
+      - button "Flujos Bot 6" [ref=e51] [cursor=pointer]:
+        - generic [ref=e56]: Flujos Bot
+        - generic [ref=e57]: "6"
+      - button "Citas Médicas" [ref=e58] [cursor=pointer]
+      - button "Playground IA" [ref=e62] [cursor=pointer]
+    - generic [ref=e66]:
+      - generic [ref=e67]:
+        - generic [ref=e68]: Directora Médica
+        - generic [ref=e69]: Supervisión
+      - generic [ref=e76]:
+        - generic [ref=e77]: Dra. Selen Swift
+        - generic [ref=e78]: Director Clínico General
+      - generic [ref=e79]:
+        - generic [ref=e80]:
+          - generic [ref=e81]: Precisión IA
+          - generic [ref=e82]: 100% Grounded
+        - generic [ref=e83]:
+          - generic [ref=e84]: Canal Activo
+          - generic [ref=e85]: Telegram Live
+  - generic [ref=e86]:
+    - banner [ref=e87]:
+      - heading "Dashboard" [level=1] [ref=e89]
+      - generic [ref=e90]:
+        - textbox "Buscar clínica o servicio..." [ref=e95]
+        - button "Notificaciones del Sistema" [ref=e96] [cursor=pointer]
+        - generic [ref=e106]:
+          - generic [ref=e107]: Selen Swift
+          - generic [ref=e108]: Superadmin
+        - button "Salir" [ref=e109] [cursor=pointer]
+    - main [ref=e110]:
+      - generic [ref=e112]:
+        - generic [ref=e113]:
+          - generic [ref=e115]:
+            - generic [ref=e116]: Total Citas Agendadas
+            - generic [ref=e119]: Google Calendar sincronizado en vivo
+          - generic [ref=e120]:
+            - generic [ref=e121]: 0 Citas
+            - generic [ref=e122]: Live Sync
+          - button "Ver Agenda de Citas" [ref=e124] [cursor=pointer]
+        - generic [ref=e129]:
+          - generic [ref=e130]:
+            - generic [ref=e131]:
+              - generic [ref=e132]: Pacientes en Línea
+              - generic [ref=e138]: Sesiones activas atendidas por Valeria IA
+            - button "Ver Chat" [ref=e139] [cursor=pointer]
+          - generic [ref=e140]: 10 Sesiones
+          - generic [ref=e146]:
+            - generic [ref=e147]: Lun
+            - generic [ref=e148]: Mar
+            - generic [ref=e149]: Mié
+            - generic [ref=e150]: Jue
+            - generic [ref=e151]: Vie
+            - generic [ref=e152]: Sáb
+            - generic [ref=e153]: Dom
+        - generic [ref=e154]:
+          - generic [ref=e155]:
+            - generic [ref=e156]:
+              - generic [ref=e157]: Distribución Canales
+              - generic [ref=e160]: Tráfico real por plataforma
+            - button "Config" [ref=e161] [cursor=pointer]
+          - generic [ref=e162]:
+            - generic [ref=e163]:
+              - generic [ref=e164]: "TG: 0%"
+              - generic [ref=e165]: "WA: 100%"
+            - generic [ref=e166]:
+              - generic "Telegram"
+              - generic "Meta WhatsApp" [ref=e167]
+            - generic [ref=e168]:
+              - generic [ref=e169]: Telegram Gateway (100% activo)
+              - generic [ref=e172]: Meta WhatsApp Cloud API (Standby)
+        - generic [ref=e175]:
+          - generic [ref=e176]:
+            - generic [ref=e177]:
+              - generic [ref=e178]: Eficiencia de Agenda
+              - generic [ref=e182]: Conversión consultas a agendamiento
+            - button "Tiempo Real" [ref=e183] [cursor=pointer]
+          - generic [ref=e184]:
+            - generic [ref=e185]: Lun
+            - generic [ref=e188]: Mar
+            - generic [ref=e191]: Mié
+            - generic [ref=e194]:
+              - generic [ref=e195]: 0% conv.
+              - generic [ref=e197]: Hoy
+            - generic [ref=e198]: Vie
+        - generic [ref=e201]:
+          - generic [ref=e202]:
+            - generic [ref=e203]: Tasa Retención
+            - button "Semanal" [ref=e206] [cursor=pointer]
+          - generic [ref=e207]: 100%
+          - generic [ref=e212]: Confirmaciones de citas sobre consultas
+        - generic [ref=e213]:
+          - generic [ref=e214]:
+            - generic [ref=e215]:
+              - generic [ref=e216]: Doctores & Especialidades
+              - generic [ref=e221]: Especialistas registrados en clínicas
+            - button "Gestionar" [ref=e222] [cursor=pointer]
+          - generic [ref=e223]:
+            - generic [ref=e224]: "3"
+            - generic [ref=e230]:
+              - generic [ref=e231]:
+                - generic [ref=e237]:
+                  - generic [ref=e238]: Dr. Carlos Vega
+                  - generic [ref=e239]: Odontología General
+                - generic [ref=e240]: Activo
+              - generic [ref=e241]:
+                - generic [ref=e247]:
+                  - generic [ref=e248]: Dra. Gabriela Morales
+                  - generic [ref=e249]: Ortodoncia
+                - generic [ref=e250]: Activo
+        - generic [ref=e251]:
+          - generic [ref=e252]:
+            - generic [ref=e253]:
+              - generic [ref=e254]: Seguridad Clínica & Guardrails ISO/LOPDP
+              - generic [ref=e257]: Validaciones deterministas activas en Valeria IA
+            - generic [ref=e258]: 100% Cobertura
+          - generic [ref=e259]:
+            - generic [ref=e260]:
+              - generic [ref=e261]: Triaje EVA 1-10
+              - generic [ref=e264]: Activo
+            - generic [ref=e265]:
+              - generic [ref=e266]: Consentimiento LOPDP
+              - generic [ref=e269]: Activo
+            - generic [ref=e270]:
+              - generic [ref=e271]: Google Calendar Live Sync
+              - generic [ref=e274]: Activo
