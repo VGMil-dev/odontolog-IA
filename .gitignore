@@ -40,3 +40,10 @@ Thumbs.db
 *.swp
 test-results/
 .appointments.json
+
+# Playwright CLI snapshots (artefactos de auditoría, no código)
+.playwright-cli/
+
+# Archivos temporales de debugging
+temp.html
+scripts/fix_*.py
