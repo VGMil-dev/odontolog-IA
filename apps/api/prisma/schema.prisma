@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  CLINIC_ADMIN
+  DOCTOR
+}
+
+model User {
+  id           String   @id @default(cuid())
+  clinicId     String?  @map("clinic_id")
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  role         Role     @default(DOCTOR)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Clinic {
+  id                  String @id @default(cuid())
+  name                String
+  city                String?
+  address             String?
+  phone               String?
+  emergencyPhone      String?  @map("emergency_phone")
+  contactPerson       String?  @map("contact_person")
+  chairsCount         Int      @default(1) @map("chairs_count")
+  telegramBotToken    String?  @map("telegram_bot_token")
+  metaPhoneNumberId   String?  @map("meta_phone_number_id")
+  metaWabaId          String?  @map("meta_waba_id")
+  metaAccessToken     String?  @map("meta_access_token")
+  calendarId          String?  @map("calendar_id")
+  config              Json?    @default("{}")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@map("clinics")
+}
+
+model Doctor {
+  id                  String    @id @default(cuid())
+  clinicId            String    @map("clinic_id")
+  name                String
+  specialty           String?
+  specialtyLabel      String?   @map("specialty_label")
+  calendarId          String?   @map("calendar_id")
+  slotDurationMin     Int       @default(30) @map("slot_duration_minutes")
+  isActive            Boolean   @default(true) @map("is_active")
+  availableDays       Int[]     @map("available_days")
+  workingHoursStart   DateTime? @map("working_hours_start")
+  workingHoursEnd     DateTime? @map("working_hours_end")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  @@map("doctors")
+}
+
+model Appointment {
+  id          String   @id @default(cuid())
+  clinicId    String   @map("clinic_id")
+  name        String
+  startTime   DateTime @map("start_time")
+  endTime     DateTime @map("end_time")
+  status      String   @default("scheduled")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("appointments")
+}
+
+model Treatment {
+  id               String  @id @default(cuid())
+  clinicId         String  @map("clinic_id")
+  name             String
+  specialty        String?
+  priceRange       String? @map("price_range")
+  assignedDoctorId String? @map("assigned_doctor_id")
+  description      String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("treatments")
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  clinicId  String   @map("clinic_id")
+  planName  String   @map("plan_name")
+  status    String   @default("active")
+  expiresAt DateTime? @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("subscriptions")
+}

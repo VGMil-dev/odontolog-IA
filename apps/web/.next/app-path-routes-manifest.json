@@ -1,0 +1,11 @@
+{
+  "/api/auth/login/route": "/api/auth/login",
+  "/_not-found/page": "/_not-found",
+  "/api/auth/logout/route": "/api/auth/logout",
+  "/chat/page": "/chat",
+  "/login/page": "/login",
+  "/dashboard/page": "/dashboard",
+  "/clinics/[id]/page": "/clinics/[id]",
+  "/clinics/page": "/clinics",
+  "/clinics/[id]/catalog/page": "/clinics/[id]/catalog"
+}

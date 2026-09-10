@@ -12,7 +12,7 @@ Este documento constituye la memoria técnica, guía metodológica y bitácora d
 1. **Playground Web Interactivo (`/chat`)**: Consola gráfica para pruebas locales y demostraciones en tiempo real (`http://localhost:3000/chat`).
 2. **Endpoint REST Debugging (`POST /api/chat`)**: API JSON directa para pruebas automatizadas o integración con frontends externos.
 3. **Telegram Bot Oficial**: `@odonto_agent_bot` (con soporte para texto y notas de voz transcritas con AssemblyAI).
-4. **WhatsApp Evolution API / Meta Cloud API**: Conector webhook para números de teléfono y WhatsApp Business.
+4. **WhatsApp Meta Cloud API**: Conector webhook para números de teléfono y WhatsApp Business.
 5. **Chatwoot CRM (Human Handoff)**: Bandeja de entrada compartida para recepción humana con pausa/reanudación bidireccional del bot.
 6. **Google Calendar API v3**: Sincronización de agendas por especialista con prevención de colisiones.
 
@@ -112,7 +112,7 @@ flowchart TB
 
   subgraph ENTRADA ["Canales de Entrada"]
     TG["Telegram Bot"]:::client
-    WA["WhatsApp Evolution"]:::client
+    WA["WhatsApp Meta Cloud"]:::client
     WEB["Web Playground"]:::client
   end
 
@@ -168,7 +168,7 @@ pnpm run build
 # Iniciar suite de pruebas de personalidades en vivo
 pnpm exec tsx scripts/test-personas.ts
 
-# Iniciar infraestructura contenerizada (Redis + Evolution API + OdontoCare)
+# Iniciar infraestructura contenerizada (Redis + PostgreSQL + OdontoCare)
 docker compose up -d
 ```
 
@@ -177,7 +177,7 @@ docker compose up -d
 ## 📈 7. Registro de Versiones y Cambios Clave
 
 - **v1.0.0 (Base)**: Creación inicial del agente con Vercel AI SDK Core, AssemblyAI y Telegraf.
-- **v1.1.0 (Desacoplamiento)**: Integración de Redis buffer anti-ráfagas, Chatwoot human handoff y Evolution API WhatsApp.
+- **v1.1.0 (Desacoplamiento)**: Integración de Redis buffer anti-ráfagas y Chatwoot human handoff.
 - **v1.2.0 (Playground)**: Adición de endpoints `POST /api/chat` y `GET /chat` con UI interactiva para pruebas directas.
 - **v2.0.0 (SOTA 2026)**:
   - Certificación y remediación ISO/IEC 42001:2026 y LOPDP Ecuador.

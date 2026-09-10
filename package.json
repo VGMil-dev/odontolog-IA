@@ -1,49 +1,42 @@
 {
   "name": "odontolog-ia",
-  "version": "1.0.0",
-  "description": "Ecosistema conversacional con IA para clínicas odontológicas en WhatsApp y Telegram",
-  "main": "dist/index.js",
-  "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "test": "vitest run --exclude 'tests/e2e/**'",
-    "test:e2e": "playwright test",
-    "simular": "tsx src/test-simulator.ts"
-  },
-  "keywords": [
-    "ai",
-    "dentist",
-    "whatsapp",
-    "telegram",
-    "assemblyai",
-    "vercel-ai"
-  ],
-  "author": "OdontoCare Team",
+  "version": "2.0.0",
   "license": "MIT",
-  "dependencies": {
-    "@ai-sdk/google": "^1.1.0",
-    "@ai-sdk/openai": "^1.1.0",
-    "ai": "^4.1.0",
-    "assemblyai": "^4.9.0",
-    "axios": "^1.7.9",
-    "dotenv": "^16.4.7",
-    "express": "^5.2.1",
-    "googleapis": "^144.0.0",
-    "ioredis": "^6.0.0",
-    "pg": "^8.23.0",
-    "telegraf": "^4.16.3",
-    "zod": "^3.24.2"
+  "packageManager": "pnpm@11.25.0",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "start": "turbo start",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "db:generate": "turbo db:generate",
+    "db:push": "pnpm --filter api exec prisma db push",
+    "db:studio": "pnpm --filter api exec prisma studio",
+    "db:seed": "pnpm --filter api exec prisma db seed",
+    "db:migrate": "pnpm --filter api exec prisma migrate dev",
+    "clean": "rimraf dist .next node_modules .turbo"
   },
   "devDependencies": {
-    "@playwright/test": "^1.63.0",
-    "@types/express": "^5.0.6",
-    "@types/ioredis": "^5.0.0",
-    "@types/node": "^22.13.0",
-    "@types/pg": "^8.23.1",
-    "playwright": "^1.63.0",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.3",
-    "vitest": "^3.0.5"
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "prisma": "^6",
+    "rimraf": "^6",
+    "turbo": "^2.3.0",
+    "typescript": "^5.7"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "bcrypt",
+      "prisma",
+      "@google/genai",
+      "protobufjs"
+    ]
   }
 }
